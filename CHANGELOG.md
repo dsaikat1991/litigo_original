@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Calendar view (`/calendar`) — a month grid showing every case's next hearing date, with month navigation and a nav bar link.
 - Edit and delete for cases (`/cases/[id]/edit`), including a status change (active/adjourned/disposed) and a confirmed, cascading delete of the case's hearings and notes.
 - Inline edit and delete for individual hearing entries and notes on the case detail page.
 - Mobile-responsive case list (card layout below `md`, table at `md` and up) and stacked form fields on narrow screens.

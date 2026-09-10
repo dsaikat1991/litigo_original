@@ -12,6 +12,15 @@ export function listCases(supabase: TypedClient) {
     .order("next_hearing_date", { ascending: true, nullsFirst: false });
 }
 
+export function listUpcomingCases(supabase: TypedClient) {
+  return supabase
+    .from("cases")
+    .select(CASE_LIST_COLUMNS)
+    .not("next_hearing_date", "is", null)
+    .neq("status", "disposed")
+    .order("next_hearing_date", { ascending: true });
+}
+
 export function getCase(supabase: TypedClient, id: string) {
   return supabase.from("cases").select("*").eq("id", id).single();
 }
