@@ -6,15 +6,17 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ### Added
 - Edit and delete for cases (`/cases/[id]/edit`), including a status change (active/adjourned/disposed) and a confirmed, cascading delete of the case's hearings and notes.
+- Inline edit and delete for individual hearing entries and notes on the case detail page.
 - Mobile-responsive case list (card layout below `md`, table at `md` and up) and stacked form fields on narrow screens.
+- `README.md` with real setup instructions, project structure, and conventions.
+- `docs/ENGINEERING_HANDOFF.md` covering architecture decisions and rationale.
+
+### Fixed
+- `cases.next_hearing_date` was left stale when the hearing that set it was deleted (the sync trigger only ran on insert/update). Migration `0002_hearing_delete_sync.sql` adds an `AFTER DELETE` trigger that recomputes it from the remaining hearings.
 
 ### Changed
 - Restructured the codebase: introduced a typed `lib/data/` data-access layer so Supabase queries no longer live inline in pages/components, added a hand-written `types/database.ts` matching the Postgres schema, moved `lib/constants.ts` to be the single source of truth for enum-like values, and reorganized `components/` into `layout/` and `cases/`.
 - Migrated `middleware.ts` to Next.js 16's `proxy.ts` convention.
-
-### Added
-- `README.md` with real setup instructions, project structure, and conventions.
-- `docs/ENGINEERING_HANDOFF.md` covering architecture decisions and rationale.
 
 ## [0.1.0] — 2026-09-09
 

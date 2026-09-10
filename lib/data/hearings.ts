@@ -19,3 +19,16 @@ export type NewHearingInput = Omit<
 export function createHearing(supabase: TypedClient, input: NewHearingInput) {
   return supabase.from("hearings").insert(input);
 }
+
+export type HearingUpdateInput = Omit<
+  Database["public"]["Tables"]["hearings"]["Update"],
+  "id" | "case_id" | "advocate_id" | "created_at"
+>;
+
+export function updateHearing(supabase: TypedClient, id: string, input: HearingUpdateInput) {
+  return supabase.from("hearings").update(input).eq("id", id);
+}
+
+export function deleteHearing(supabase: TypedClient, id: string) {
+  return supabase.from("hearings").delete().eq("id", id);
+}

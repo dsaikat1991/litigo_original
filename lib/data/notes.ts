@@ -19,3 +19,16 @@ export type NewNoteInput = Omit<
 export function createNote(supabase: TypedClient, input: NewNoteInput) {
   return supabase.from("notes").insert(input);
 }
+
+export type NoteUpdateInput = Omit<
+  Database["public"]["Tables"]["notes"]["Update"],
+  "id" | "case_id" | "advocate_id" | "created_at"
+>;
+
+export function updateNote(supabase: TypedClient, id: string, input: NoteUpdateInput) {
+  return supabase.from("notes").update(input).eq("id", id);
+}
+
+export function deleteNote(supabase: TypedClient, id: string) {
+  return supabase.from("notes").delete().eq("id", id);
+}

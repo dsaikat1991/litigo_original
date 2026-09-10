@@ -7,6 +7,8 @@ import { listNotesForCase } from "@/lib/data/notes";
 import { NavBar } from "@/components/layout/nav-bar";
 import { AddHearingForm } from "@/components/cases/add-hearing-form";
 import { AddNoteForm } from "@/components/cases/add-note-form";
+import { HearingItem } from "@/components/cases/hearing-item";
+import { NoteItem } from "@/components/cases/note-item";
 
 export default async function CaseDetailPage({
   params,
@@ -76,18 +78,7 @@ export default async function CaseDetailPage({
             {!hearings || hearings.length === 0 ? (
               <p className="text-sm text-gray-500">No hearings logged yet.</p>
             ) : (
-              hearings.map((h) => (
-                <div key={h.id} className="rounded-md border border-gray-200 bg-white p-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900">{h.hearing_date}</span>
-                    {h.purpose && <span className="text-xs text-gray-500">{h.purpose}</span>}
-                  </div>
-                  {h.order_notes && <p className="mt-1 text-gray-600">{h.order_notes}</p>}
-                  {h.next_date && (
-                    <p className="mt-1 text-xs text-gray-400">Next date: {h.next_date}</p>
-                  )}
-                </div>
-              ))
+              hearings.map((h) => <HearingItem key={h.id} hearing={h} />)
             )}
           </div>
         </section>
@@ -101,23 +92,7 @@ export default async function CaseDetailPage({
             {!notes || notes.length === 0 ? (
               <p className="text-sm text-gray-500">No notes yet.</p>
             ) : (
-              notes.map((n) => (
-                <div key={n.id} className="rounded-md border border-gray-200 bg-white p-3 text-sm">
-                  <span className="mb-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
-                    {n.type}
-                  </span>
-                  <p className="text-gray-700">{n.content}</p>
-                  {n.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {n.tags.map((tag) => (
-                        <span key={tag} className="rounded-full bg-gray-50 px-2 py-0.5 text-xs text-gray-500">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))
+              notes.map((n) => <NoteItem key={n.id} note={n} />)
             )}
           </div>
         </section>
