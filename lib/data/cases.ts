@@ -24,3 +24,16 @@ export type NewCaseInput = Omit<
 export function createCase(supabase: TypedClient, input: NewCaseInput) {
   return supabase.from("cases").insert(input).select("id").single();
 }
+
+export type CaseUpdateInput = Omit<
+  Database["public"]["Tables"]["cases"]["Update"],
+  "id" | "advocate_id" | "created_at" | "updated_at" | "next_hearing_date"
+>;
+
+export function updateCase(supabase: TypedClient, id: string, input: CaseUpdateInput) {
+  return supabase.from("cases").update(input).eq("id", id);
+}
+
+export function deleteCase(supabase: TypedClient, id: string) {
+  return supabase.from("cases").delete().eq("id", id);
+}

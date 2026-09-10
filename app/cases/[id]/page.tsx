@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCase } from "@/lib/data/cases";
@@ -33,9 +34,17 @@ export default async function CaseDetailPage({
         <div className="mb-6 rounded-md border border-gray-200 bg-white p-6">
           <div className="mb-2 flex items-start justify-between">
             <h1 className="text-lg font-semibold text-gray-900">{caseRow.case_title}</h1>
-            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
-              {caseRow.status}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+                {caseRow.status}
+              </span>
+              <Link
+                href={`/cases/${id}/edit`}
+                className="text-sm font-medium text-gray-500 hover:text-gray-900"
+              >
+                Edit
+              </Link>
+            </div>
           </div>
           <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-600">
             <div><dt className="inline text-gray-400">Client: </dt><dd className="inline">{caseRow.client_name ?? "—"}</dd></div>

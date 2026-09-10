@@ -56,7 +56,7 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 rounded-md border border-gray-200 bg-white p-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-700">Hearing date *</label>
           <input

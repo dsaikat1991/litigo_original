@@ -27,40 +27,63 @@ export default async function DashboardPage() {
             No cases yet. Add your first one to start your diary.
           </p>
         ) : (
-          <div className="overflow-hidden rounded-md border border-gray-200 bg-white">
-            <table className="w-full text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
-                <tr>
-                  <th className="px-4 py-2 font-medium">Case</th>
-                  <th className="px-4 py-2 font-medium">Client</th>
-                  <th className="px-4 py-2 font-medium">Court</th>
-                  <th className="px-4 py-2 font-medium">Next date</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cases.map((c) => (
-                  <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <Link href={`/cases/${c.id}`} className="font-medium text-gray-900 hover:underline">
-                        {c.case_title}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">{c.client_name ?? "—"}</td>
-                    <td className="px-4 py-3 text-gray-600">{c.court ?? "—"}</td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {c.next_hearing_date ?? "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
-                        {c.status}
-                      </span>
-                    </td>
+          <>
+            {/* Card list — small screens */}
+            <div className="space-y-2 md:hidden">
+              {cases.map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/cases/${c.id}`}
+                  className="block rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-50"
+                >
+                  <div className="mb-1 flex items-start justify-between gap-2">
+                    <span className="font-medium text-gray-900">{c.case_title}</span>
+                    <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+                      {c.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">{c.client_name ?? "—"} · {c.court ?? "—"}</p>
+                  <p className="mt-1 text-sm text-gray-500">Next date: {c.next_hearing_date ?? "—"}</p>
+                </Link>
+              ))}
+            </div>
+
+            {/* Table — medium screens and up */}
+            <div className="hidden overflow-hidden rounded-md border border-gray-200 bg-white md:block">
+              <table className="w-full text-sm">
+                <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
+                  <tr>
+                    <th className="px-4 py-2 font-medium">Case</th>
+                    <th className="px-4 py-2 font-medium">Client</th>
+                    <th className="px-4 py-2 font-medium">Court</th>
+                    <th className="px-4 py-2 font-medium">Next date</th>
+                    <th className="px-4 py-2 font-medium">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {cases.map((c) => (
+                    <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <Link href={`/cases/${c.id}`} className="font-medium text-gray-900 hover:underline">
+                          {c.case_title}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">{c.client_name ?? "—"}</td>
+                      <td className="px-4 py-3 text-gray-600">{c.court ?? "—"}</td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {c.next_hearing_date ?? "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+                          {c.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </main>
     </div>
