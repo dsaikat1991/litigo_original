@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { createHearing } from "@/lib/data/hearings";
 
 export function AddHearingForm({ caseId }: { caseId: string }) {
   const router = useRouter();
@@ -30,7 +31,7 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
       return;
     }
 
-    const { error } = await supabase.from("hearings").insert({
+    const { error } = await createHearing(supabase, {
       advocate_id: user.id,
       case_id: caseId,
       hearing_date: hearingDate,

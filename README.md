@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# mylitigo
 
-## Getting Started
+A digital case diary for solo advocates practicing in Indian courts — case records, hearing history, next dates, and quick notes/learnings, replacing the physical diary + WhatsApp + Excel workflow most solo practitioners currently rely on.
 
-First, run the development server:
+## Tech stack
+
+- [Next.js](https://nextjs.org) (App Router, TypeScript)
+- [Supabase](https://supabase.com) (Postgres, Auth, Row-Level Security)
+- [Tailwind CSS](https://tailwindcss.com)
+- Deployed on [Vercel](https://vercel.com)
+
+## Project status
+
+Early MVP. Scope is deliberately limited to the "digital diary": cases, hearings, next dates, notes/learnings. No billing, client portal, or multi-user/firm features yet — see [docs/ENGINEERING_HANDOFF.md](docs/ENGINEERING_HANDOFF.md) for the reasoning and roadmap.
+
+## Getting started
+
+### 1. Set up Supabase
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the SQL Editor, run every file in [`supabase/migrations/`](supabase/migrations) in order.
+3. Under **Settings → API**, copy the **Project URL** and **anon public key**.
+4. Under **Authentication → URL Configuration**, set the **Site URL** and add a redirect URL for `<your-url>/auth/callback` (both your local `http://localhost:3000` and your deployed domain).
+
+### 2. Configure environment variables
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from step 1.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Run the app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/                  Routes only (Next.js App Router) — pages, layouts, route handlers
+components/
+  layout/             Chrome shared across authenticated pages (nav bar, etc.)
+  cases/              Feature components for the case-detail screen
+lib/
+  supabase/           Supabase client constructors (browser, server, proxy/session refresh)
+  data/               Data-access layer — every Supabase table query lives here, not in components
+  constants.ts         Single source of truth for enum-like values (case types, statuses, note types)
+types/
+  database.ts         Hand-written type mirroring the Postgres schema (see note in the file re: supabase gen types)
+supabase/
+  migrations/         SQL migrations, applied manually via the Supabase SQL Editor for now
+docs/
+  ENGINEERING_HANDOFF.md   Architecture decisions, rationale, and open questions for whoever picks this up next
+CHANGELOG.md          Notable changes, in Keep a Changelog format
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Convention:** pages and client components never call `supabase.from(...)` directly — they call a function from `lib/data/`. This keeps every query in one place, makes them independently testable, and means a schema change only touches one file per table.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm run lint` | Lint the codebase |

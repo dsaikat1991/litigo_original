@@ -1,14 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { NavBar } from "@/components/nav-bar";
+import { listCases } from "@/lib/data/cases";
+import { NavBar } from "@/components/layout/nav-bar";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-
-  const { data: cases } = await supabase
-    .from("cases")
-    .select("id, case_title, client_name, court, status, next_hearing_date")
-    .order("next_hearing_date", { ascending: true, nullsFirst: false });
+  const { data: cases } = await listCases(supabase);
 
   return (
     <div className="min-h-screen bg-gray-50">

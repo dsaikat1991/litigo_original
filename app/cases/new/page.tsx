@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { NavBar } from "@/components/nav-bar";
-
-const CASE_TYPES = ["civil", "criminal", "writ", "appeal", "execution", "other"] as const;
+import { createCase } from "@/lib/data/cases";
+import { CASE_TYPES, type CaseType } from "@/lib/constants";
+import { NavBar } from "@/components/layout/nav-bar";
 
 export default function NewCasePage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function NewCasePage() {
   const [court, setCourt] = useState("");
   const [caseNumber, setCaseNumber] = useState("");
   const [cnrNumber, setCnrNumber] = useState("");
-  const [caseType, setCaseType] = useState<(typeof CASE_TYPES)[number]>("other");
+  const [caseType, setCaseType] = useState<CaseType>("other");
   const [filingDate, setFilingDate] = useState("");
   const [tags, setTags] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -38,24 +38,20 @@ export default function NewCasePage() {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("cases")
-      .insert({
-        advocate_id: user.id,
-        case_title: caseTitle,
-        client_name: clientName || null,
-        opposing_party: opposingParty || null,
-        court: court || null,
-        case_number: caseNumber || null,
-        cnr_number: cnrNumber || null,
-        case_type: caseType,
-        filing_date: filingDate || null,
-        tags: tags
-          ? tags.split(",").map((t) => t.trim()).filter(Boolean)
-          : [],
-      })
-      .select("id")
-      .single();
+    const { data, error } = await createCase(supabase, {
+      advocate_id: user.id,
+      case_title: caseTitle,
+      client_name: clientName || null,
+      opposing_party: opposingParty || null,
+      court: court || null,
+      case_number: caseNumber || null,
+      cnr_number: cnrNumber || null,
+      case_type: caseType,
+      filing_date: filingDate || null,
+      tags: tags
+        ? tags.split(",").map((t) => t.trim()).filter(Boolean)
+        : [],
+    });
 
     if (error) {
       setError(error.message);
@@ -117,7 +113,7 @@ export default function NewCasePage() {
               <label className="mb-1 block text-sm font-medium text-gray-700">Case type</label>
               <select
                 value={caseType}
-                onChange={(e) => setCaseType(e.target.value as (typeof CASE_TYPES)[number])}
+                onChange={(e) => setCaseType(e.target.value as CaseType)}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
               >
                 {CASE_TYPES.map((t) => (

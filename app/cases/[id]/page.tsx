@@ -1,8 +1,11 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { NavBar } from "@/components/nav-bar";
-import { AddHearingForm } from "@/components/add-hearing-form";
-import { AddNoteForm } from "@/components/add-note-form";
+import { getCase } from "@/lib/data/cases";
+import { listHearingsForCase } from "@/lib/data/hearings";
+import { listNotesForCase } from "@/lib/data/notes";
+import { NavBar } from "@/components/layout/nav-bar";
+import { AddHearingForm } from "@/components/cases/add-hearing-form";
+import { AddNoteForm } from "@/components/cases/add-note-form";
 
 export default async function CaseDetailPage({
   params,
@@ -12,27 +15,16 @@ export default async function CaseDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: caseRow } = await supabase
-    .from("cases")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data: caseRow } = await getCase(supabase, id);
 
   if (!caseRow) {
     notFound();
   }
 
-  const { data: hearings } = await supabase
-    .from("hearings")
-    .select("*")
-    .eq("case_id", id)
-    .order("hearing_date", { ascending: false });
-
-  const { data: notes } = await supabase
-    .from("notes")
-    .select("*")
-    .eq("case_id", id)
-    .order("created_at", { ascending: false });
+  const [{ data: hearings }, { data: notes }] = await Promise.all([
+    listHearingsForCase(supabase, id),
+    listNotesForCase(supabase, id),
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -55,9 +47,9 @@ export default async function CaseDetailPage({
             <div><dt className="inline text-gray-400">Filing date: </dt><dd className="inline">{caseRow.filing_date ?? "—"}</dd></div>
             <div><dt className="inline text-gray-400">Next hearing: </dt><dd className="inline font-medium text-gray-900">{caseRow.next_hearing_date ?? "—"}</dd></div>
           </dl>
-          {caseRow.tags?.length > 0 && (
+          {caseRow.tags.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1">
-              {caseRow.tags.map((tag: string) => (
+              {caseRow.tags.map((tag) => (
                 <span key={tag} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                   {tag}
                 </span>
@@ -106,9 +98,9 @@ export default async function CaseDetailPage({
                     {n.type}
                   </span>
                   <p className="text-gray-700">{n.content}</p>
-                  {n.tags?.length > 0 && (
+                  {n.tags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {n.tags.map((tag: string) => (
+                      {n.tags.map((tag) => (
                         <span key={tag} className="rounded-full bg-gray-50 px-2 py-0.5 text-xs text-gray-500">
                           {tag}
                         </span>

@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-
-const NOTE_TYPES = ["note", "learning", "update"] as const;
+import { createNote } from "@/lib/data/notes";
+import { NOTE_TYPES, type NoteType } from "@/lib/constants";
 
 export function AddNoteForm({ caseId }: { caseId?: string }) {
   const router = useRouter();
   const supabase = createClient();
 
-  const [type, setType] = useState<(typeof NOTE_TYPES)[number]>("note");
+  const [type, setType] = useState<NoteType>("note");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
       return;
     }
 
-    const { error } = await supabase.from("notes").insert({
+    const { error } = await createNote(supabase, {
       advocate_id: user.id,
       case_id: caseId ?? null,
       type,
@@ -58,7 +58,7 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
           <label className="mb-1 block text-xs font-medium text-gray-700">Type</label>
           <select
             value={type}
-            onChange={(e) => setType(e.target.value as (typeof NOTE_TYPES)[number])}
+            onChange={(e) => setType(e.target.value as NoteType)}
             className="rounded-md border border-gray-300 px-3 py-1.5 text-sm capitalize focus:border-gray-500 focus:outline-none"
           >
             {NOTE_TYPES.map((t) => (
