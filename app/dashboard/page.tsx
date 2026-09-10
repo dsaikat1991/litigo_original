@@ -4,8 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { listCases, listCasesWithHearingWithin } from "@/lib/data/cases";
 import { listUpcomingTasks } from "@/lib/data/tasks";
 import { buildReminders } from "@/lib/reminders";
-import { daysAwayLabel, daysAwayStyle } from "@/lib/dates";
 import { NavBar } from "@/components/layout/nav-bar";
+import { ReminderRow } from "@/components/reminders/reminder-row";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Cases" };
@@ -29,27 +29,17 @@ export default async function DashboardPage() {
       <main className="mx-auto max-w-4xl px-6 py-8">
         {reminders.length > 0 && (
           <div className="mb-8">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">
-              Upcoming in the next {REMINDER_WINDOW_DAYS} days
-            </h2>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-gray-900">
+                Upcoming in the next {REMINDER_WINDOW_DAYS} days
+              </h2>
+              <Link href="/notifications" className="text-xs font-medium text-gray-500 transition-colors hover:text-gray-900">
+                View all
+              </Link>
+            </div>
             <div className="space-y-2">
               {reminders.map((r) => (
-                <Link
-                  key={r.id}
-                  href={`/cases/${r.caseId}`}
-                  className="flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-gray-900">
-                      {r.kind === "hearing" ? "Hearing — " : "Task — "}
-                      {r.title}
-                    </p>
-                    {r.kind === "task" && <p className="truncate text-xs text-gray-500">{r.caseTitle}</p>}
-                  </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(r.date)}`}>
-                    {daysAwayLabel(r.date)}
-                  </span>
-                </Link>
+                <ReminderRow key={r.id} item={r} />
               ))}
             </div>
           </div>

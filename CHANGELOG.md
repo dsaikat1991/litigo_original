@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Notification bell dropdown: clicking the bell opens the 5 most urgent upcoming reminders with a "View all" button to the new `/notifications` page (the full list). Extracted the reminder row markup into a shared `ReminderRow` component, now used by the bell dropdown, the dashboard panel, and `/notifications`.
 - Notification bell in the nav bar (next to Profile), showing a live count of upcoming reminders (same 7-day window as the dashboard panel) from anywhere in the app, not just the dashboard.
 - In-app "Upcoming" reminders on the dashboard: hearings and task due dates within the next 7 days (including anything overdue), merged and sorted by date, each tagged Overdue/Today/Tomorrow/In N days. Email/push reminders are planned as a later phase.
 - Per-case tasks: a "Tasks" section on the case detail page for actionable to-dos (title, optional due date, done/not-done) — distinct from notes and hearings since a task has a completion state. Overdue tasks are flagged. New `tasks` table (`0005_tasks.sql`), included in search.
