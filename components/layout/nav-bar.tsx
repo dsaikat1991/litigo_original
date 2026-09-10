@@ -2,10 +2,10 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 import { NavSearchBox } from "./nav-search-box";
 import { NotificationBell } from "./notification-bell";
+import { UserMenu } from "./user-menu";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Cases" },
@@ -24,15 +24,7 @@ const SEARCH_BOX_FALLBACK = (
 );
 
 export function NavBar() {
-  const router = useRouter();
   const pathname = usePathname();
-  const supabase = createClient();
-
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  }
 
   const navLinks = NAV_LINKS.map((link) => (
     <Link
@@ -64,22 +56,7 @@ export function NavBar() {
         </div>
         <div className="flex shrink-0 items-center gap-4">
           <NotificationBell />
-          <Link
-            href="/profile"
-            className={
-              pathname.startsWith("/profile")
-                ? "text-sm font-medium text-gray-900"
-                : "text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-            }
-          >
-            Profile
-          </Link>
-          <button
-            onClick={handleSignOut}
-            className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-          >
-            Sign out
-          </button>
+          <UserMenu />
         </div>
       </div>
       <div className="mt-3 flex items-center gap-4 sm:hidden">

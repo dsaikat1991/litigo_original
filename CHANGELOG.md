@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Profile picture upload via Supabase Storage (new `avatars` bucket, public read / owner-only write, `0006_avatars.sql`) and a nav bar user menu replacing the old plain "Profile"/"Sign out" text links: an avatar (uploaded photo, or an initial-letter fallback) with a "Hi, {first name}" greeting (hidden on mobile — avatar + chevron only there) that opens a dropdown with Profile, Settings, and Logout.
+- `/settings` page with a change-password form (the other natural destination now that account menu has a Profile/Settings split — Profile holds practice details, Settings holds account-level things).
+- Shared `useClickOutside` hook, now used by both the notification bell and the new user menu dropdown.
 - Notification bell dropdown: clicking the bell opens the 5 most urgent upcoming reminders with a "View all" button to the new `/notifications` page (the full list). Extracted the reminder row markup into a shared `ReminderRow` component, now used by the bell dropdown, the dashboard panel, and `/notifications`.
 - Notification bell in the nav bar (next to Profile), showing a live count of upcoming reminders (same 7-day window as the dashboard panel) from anywhere in the app, not just the dashboard.
 - In-app "Upcoming" reminders on the dashboard: hearings and task due dates within the next 7 days (including anything overdue), merged and sorted by date, each tagged Overdue/Today/Tomorrow/In N days. Email/push reminders are planned as a later phase.

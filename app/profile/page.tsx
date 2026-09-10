@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/data/profiles";
 import { NavBar } from "@/components/layout/nav-bar";
 import { ProfileForm } from "@/components/profile/profile-form";
+import { AvatarUploader } from "@/components/profile/avatar-uploader";
 
 export const metadata: Metadata = { title: "Profile" };
 
@@ -28,6 +29,9 @@ export default async function ProfilePage() {
       <NavBar />
       <main className="mx-auto max-w-2xl px-6 py-8">
         <h1 className="mb-6 text-lg font-semibold text-gray-900">Your profile</h1>
+        <div className="mb-6">
+          <AvatarUploader userId={user.id} avatarUrl={profile.avatar_url} />
+        </div>
         <ProfileForm profile={profile} email={user.email ?? ""} />
       </main>
     </div>

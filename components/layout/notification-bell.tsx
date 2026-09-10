@@ -8,6 +8,7 @@ import { listCasesWithHearingWithin } from "@/lib/data/cases";
 import { listUpcomingTasks } from "@/lib/data/tasks";
 import { buildReminders, type ReminderItem } from "@/lib/reminders";
 import { ReminderRow } from "@/components/reminders/reminder-row";
+import { useClickOutside } from "@/lib/hooks/use-click-outside";
 
 const REMINDER_WINDOW_DAYS = 7;
 const DROPDOWN_LIMIT = 5;
@@ -37,18 +38,7 @@ export function NotificationBell() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
+  useClickOutside(containerRef, open, () => setOpen(false));
 
   const count = reminders?.length ?? 0;
 
@@ -57,7 +47,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative text-gray-500 transition-colors hover:text-gray-900"
+        className="relative cursor-pointer text-gray-500 transition-colors hover:text-gray-900"
         aria-label="Notifications"
       >
         <Bell className="h-5 w-5" strokeWidth={1.75} />

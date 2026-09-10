@@ -22,6 +22,7 @@ export type Database = {
           bar_enrollment_no: string | null;
           practice_city: string | null;
           courts: string[];
+          avatar_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           bar_enrollment_no?: string | null;
           practice_city?: string | null;
           courts?: string[];
+          avatar_url?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
