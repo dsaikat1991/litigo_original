@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Public landing page at `/` — hero, a stylized product preview, feature grid, "how it works" steps, and a closing CTA, with sign-in/sign-up in the header. Authenticated visitors are redirected straight to the dashboard; `/` is now public (updated `lib/supabase/middleware.ts`'s route allowlist, matched by exact path rather than prefix so it doesn't accidentally allow everything).
 - Password reset flow: "Forgot password?" on login sends a reset email; `/reset-password` (guarded, requires the session established by the reset link) lets the advocate set a new password. `/auth/callback` now accepts a `next` param so it can redirect to a destination other than the dashboard.
 - Profile page (`/profile`): view/edit full name, phone, bar enrollment number, practice city, and courts — the `profiles` table existed since v0.1.0 but had no UI until now.
 - Placeholder Privacy Policy (`/privacy`) and Terms of Service (`/terms`) pages, linked from signup. Explicitly marked as drafts pending legal review — not yet suitable as a binding policy for real users' client data.
