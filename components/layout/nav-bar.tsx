@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { NavSearchBox } from "./nav-search-box";
+import { NotificationBell } from "./notification-bell";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Cases" },
@@ -62,6 +63,7 @@ export function NavBar() {
           </Suspense>
         </div>
         <div className="flex shrink-0 items-center gap-4">
+          <NotificationBell />
           <Link
             href="/profile"
             className={
@@ -85,19 +87,7 @@ export function NavBar() {
           <NavSearchBox />
         </Suspense>
       </div>
-      <div className="mt-2 flex gap-4 sm:hidden">
-        {navLinks}
-        <Link
-          href="/profile"
-          className={
-            pathname.startsWith("/profile")
-              ? "text-sm font-medium text-gray-900"
-              : "text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-          }
-        >
-          Profile
-        </Link>
-      </div>
+      <div className="mt-2 flex gap-4 sm:hidden">{navLinks}</div>
     </nav>
   );
 }

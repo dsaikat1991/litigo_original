@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Notification bell in the nav bar (next to Profile), showing a live count of upcoming reminders (same 7-day window as the dashboard panel) from anywhere in the app, not just the dashboard.
 - In-app "Upcoming" reminders on the dashboard: hearings and task due dates within the next 7 days (including anything overdue), merged and sorted by date, each tagged Overdue/Today/Tomorrow/In N days. Email/push reminders are planned as a later phase.
 - Per-case tasks: a "Tasks" section on the case detail page for actionable to-dos (title, optional due date, done/not-done) — distinct from notes and hearings since a task has a completion state. Overdue tasks are flagged. New `tasks` table (`0005_tasks.sql`), included in search.
 - Notes library (`/notes`), reachable from anywhere in the nav: a running feed of every note the advocate has written, standalone or case-linked, with a quick-add box at the top. Addresses notes/learnings from things like a hearing or a government-office visit that don't belong to any specific case and were previously impossible to add or browse (the `notes.case_id` column has been nullable since v0.1.0, but no UI ever created or listed a standalone note until now).
