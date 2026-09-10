@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Global search (`/search`, nav bar search box) across cases (title, client, opposing party, case/CNR number, court), hearings (purpose, order notes), and notes/learnings (content). Uses Postgres trigram indexes (`0003_search_indexes.sql`) so it stays fast and tolerates partial/typo'd terms as the number of cases grows.
 - Calendar view (`/calendar`) — a month grid showing every case's next hearing date, with month navigation and a nav bar link.
 - Edit and delete for cases (`/cases/[id]/edit`), including a status change (active/adjourned/disposed) and a confirmed, cascading delete of the case's hearings and notes.
 - Inline edit and delete for individual hearing entries and notes on the case detail page.
