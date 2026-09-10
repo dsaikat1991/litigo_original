@@ -7,6 +7,7 @@ import { ChevronDown, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { getProfile } from "@/lib/data/profiles";
 import { useClickOutside } from "@/lib/hooks/use-click-outside";
+import { onProfileUpdated } from "@/lib/profile-events";
 
 export function UserMenu() {
   const router = useRouter();
@@ -33,8 +34,10 @@ export function UserMenu() {
     }
 
     load();
+    const unsubscribe = onProfileUpdated(load);
     return () => {
       cancelled = true;
+      unsubscribe();
     };
   }, []);
 

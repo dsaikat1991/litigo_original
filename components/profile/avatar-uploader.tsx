@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateProfile } from "@/lib/data/profiles";
+import { emitProfileUpdated } from "@/lib/profile-events";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -55,6 +56,7 @@ export function AvatarUploader({ userId, avatarUrl }: { userId: string; avatarUr
 
     setPreview(bustedUrl);
     setUploading(false);
+    emitProfileUpdated();
     router.refresh();
   }
 

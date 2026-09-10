@@ -27,6 +27,8 @@ All notable changes to this project are documented here. Format follows [Keep a 
 - `docs/ENGINEERING_HANDOFF.md` covering architecture decisions and rationale.
 
 ### Fixed
+- The nav bar's user menu (avatar/name) didn't update after editing the profile or uploading a photo without a full page reload — it's a client component that fetches its own data once on mount, so `router.refresh()` (which only re-renders server components) didn't reach it. Added a small `profile-events` pub/sub so `ProfileForm` and `AvatarUploader` can tell the user menu to refetch immediately after a successful save.
+- The notification bell icon sat slightly off-center — its SVG glyph occupies roughly y=8–21 of its 24-unit box (more empty space above than below), not exactly centered within its own bounding box. Nudged it up 2px to compensate.
 - Date-vs-"today" comparisons (task overdue check, the new dashboard reminders) used `Date.toISOString()`, which converts to UTC — for any timezone ahead of UTC (e.g. IST) during its early morning hours, this silently rolled "today" back a day, throwing off overdue/day-count calculations. Replaced with a local-calendar-date helper (`lib/dates.ts`).
 - `cases.next_hearing_date` was left stale when the hearing that set it was deleted (the sync trigger only ran on insert/update). Migration `0002_hearing_delete_sync.sql` adds an `AFTER DELETE` trigger that recomputes it from the remaining hearings.
 - The Geist font loaded via `next/font` was never actually applied — `globals.css` hardcoded `font-family: Arial` on `body`, overriding it. Also removed an incomplete `prefers-color-scheme: dark` block that didn't match the rest of the UI (all components use explicit light colors), which would have rendered a broken half-dark page.

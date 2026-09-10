@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateProfile } from "@/lib/data/profiles";
+import { emitProfileUpdated } from "@/lib/profile-events";
 import type { Profile } from "@/types/database";
 
 export function ProfileForm({ profile, email }: { profile: Profile; email: string }) {
@@ -41,6 +42,7 @@ export function ProfileForm({ profile, email }: { profile: Profile; email: strin
 
     setSaving(false);
     setSaved(true);
+    emitProfileUpdated();
     router.refresh();
   }
 

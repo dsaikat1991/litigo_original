@@ -50,7 +50,7 @@ export function NotificationBell() {
         className="relative cursor-pointer text-gray-500 transition-colors hover:text-gray-900"
         aria-label="Notifications"
       >
-        <Bell className="h-5 w-5" strokeWidth={1.75} />
+        <Bell className="h-5 w-5 -translate-y-[2px]" strokeWidth={1.75} />
         {count > 0 && (
           <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-medium leading-none text-white">
             {count > 9 ? "9+" : count}
