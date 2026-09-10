@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
+import type { Database, Note, Case } from "@/types/database";
 
 type TypedClient = SupabaseClient<Database>;
 
@@ -9,6 +9,17 @@ export function listNotesForCase(supabase: TypedClient, caseId: string) {
     .select("*")
     .eq("case_id", caseId)
     .order("created_at", { ascending: false });
+}
+
+export type NoteWithCase = Note & { case: Pick<Case, "id" | "case_title"> | null };
+
+/** Every note the advocate has written, standalone or case-linked, most recent first. */
+export function listAllNotes(supabase: TypedClient) {
+  return supabase
+    .from("notes")
+    .select("*, case:cases(id, case_title)")
+    .order("created_at", { ascending: false })
+    .limit(100);
 }
 
 export type NewNoteInput = Omit<

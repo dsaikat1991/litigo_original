@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateNote, deleteNote } from "@/lib/data/notes";
 import { NOTE_TYPES, NOTE_TYPE_STYLES, type NoteType } from "@/lib/constants";
 import type { Note } from "@/types/database";
 
-export function NoteItem({ note }: { note: Note }) {
+type LinkedCase = { id: string; case_title: string } | null;
+
+export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: LinkedCase }) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -120,6 +123,14 @@ export function NoteItem({ note }: { note: Note }) {
 
   return (
     <div className="rounded-md border border-gray-200 bg-white p-3 text-sm">
+      {linkedCase && (
+        <Link
+          href={`/cases/${linkedCase.id}`}
+          className="mb-1.5 inline-block text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
+        >
+          {linkedCase.case_title} →
+        </Link>
+      )}
       <div className="flex items-start justify-between gap-2">
         <span className={`inline-block rounded-full px-2 py-0.5 text-xs capitalize ${NOTE_TYPE_STYLES[note.type]}`}>
           {note.type}

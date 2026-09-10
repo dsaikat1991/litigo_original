@@ -5,11 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 import { getCase } from "@/lib/data/cases";
 import { listHearingsForCase } from "@/lib/data/hearings";
 import { listNotesForCase } from "@/lib/data/notes";
+import { listTasksForCase } from "@/lib/data/tasks";
 import { NavBar } from "@/components/layout/nav-bar";
 import { AddHearingForm } from "@/components/cases/add-hearing-form";
 import { AddNoteForm } from "@/components/cases/add-note-form";
+import { AddTaskForm } from "@/components/cases/add-task-form";
 import { HearingItem } from "@/components/cases/hearing-item";
 import { NoteItem } from "@/components/cases/note-item";
+import { TaskItem } from "@/components/cases/task-item";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
 
 export async function generateMetadata({
@@ -37,9 +40,10 @@ export default async function CaseDetailPage({
     notFound();
   }
 
-  const [{ data: hearings }, { data: notes }] = await Promise.all([
+  const [{ data: hearings }, { data: notes }, { data: tasks }] = await Promise.all([
     listHearingsForCase(supabase, id),
     listNotesForCase(supabase, id),
+    listTasksForCase(supabase, id),
   ]);
 
   return (
@@ -81,6 +85,20 @@ export default async function CaseDetailPage({
             </div>
           )}
         </div>
+
+        <section className="mb-8">
+          <h2 className="mb-3 text-sm font-semibold text-gray-900">Tasks</h2>
+          <div className="mb-4">
+            <AddTaskForm caseId={id} />
+          </div>
+          <div className="space-y-2">
+            {!tasks || tasks.length === 0 ? (
+              <p className="text-sm text-gray-500">No tasks yet.</p>
+            ) : (
+              tasks.map((t) => <TaskItem key={t.id} task={t} />)
+            )}
+          </div>
+        </section>
 
         <section className="mb-8">
           <h2 className="mb-3 text-sm font-semibold text-gray-900">Hearings</h2>

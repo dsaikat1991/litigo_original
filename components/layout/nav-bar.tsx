@@ -9,6 +9,7 @@ import { NavSearchBox } from "./nav-search-box";
 const NAV_LINKS = [
   { href: "/dashboard", label: "Cases" },
   { href: "/calendar", label: "Calendar" },
+  { href: "/notes", label: "Notes" },
 ];
 
 const SEARCH_BOX_FALLBACK = (

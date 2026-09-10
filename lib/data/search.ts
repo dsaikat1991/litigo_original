@@ -39,6 +39,7 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
     .from("hearings")
     .select("id, case_id, hearing_date, purpose, order_notes, next_date");
   let notesQuery = supabase.from("notes").select("id, case_id, type, content, tags, created_at");
+  let tasksQuery = supabase.from("tasks").select("id, case_id, title, due_date, is_done");
 
   if (pattern) {
     casesQuery = casesQuery.or(
@@ -53,34 +54,40 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
     );
     hearingsQuery = hearingsQuery.or([`purpose.ilike.${pattern}`, `order_notes.ilike.${pattern}`].join(","));
     notesQuery = notesQuery.ilike("content", `%${query}%`);
+    tasksQuery = tasksQuery.ilike("title", `%${query}%`);
   }
 
   if (dateFrom) {
     casesQuery = casesQuery.gte("next_hearing_date", dateFrom);
     hearingsQuery = hearingsQuery.gte("hearing_date", dateFrom);
     notesQuery = notesQuery.gte("created_at", dateFrom);
+    tasksQuery = tasksQuery.gte("due_date", dateFrom);
   }
   if (dateTo) {
     casesQuery = casesQuery.lte("next_hearing_date", dateTo);
     hearingsQuery = hearingsQuery.lte("hearing_date", dateTo);
     notesQuery = notesQuery.lt("created_at", dayAfter(dateTo));
+    tasksQuery = tasksQuery.lte("due_date", dateTo);
   }
 
-  // hearings have no tags column, so the tag filter only narrows cases and notes
+  // hearings and tasks have no tags column, so the tag filter only narrows cases and notes
   if (tags && tags.length > 0) {
     casesQuery = casesQuery.overlaps("tags", tags);
     notesQuery = notesQuery.overlaps("tags", tags);
   }
 
-  // if tags is the only active filter, hearings have nothing to filter by —
-  // return none rather than every hearing unfiltered
-  const hearingsHaveApplicableFilter = Boolean(pattern) || Boolean(dateFrom) || Boolean(dateTo);
+  // if tags is the only active filter, hearings/tasks have nothing to filter by —
+  // return none rather than everything unfiltered
+  const noTagOnlyFilters = Boolean(pattern) || Boolean(dateFrom) || Boolean(dateTo);
 
-  const [casesRes, notesRes, hearingsRes] = await Promise.all([
+  const [casesRes, notesRes, hearingsRes, tasksRes] = await Promise.all([
     casesQuery.order("next_hearing_date", { ascending: true, nullsFirst: false }).limit(20),
     notesQuery.order("created_at", { ascending: false }).limit(20),
-    hearingsHaveApplicableFilter
+    noTagOnlyFilters
       ? hearingsQuery.order("hearing_date", { ascending: false }).limit(20)
+      : Promise.resolve({ data: [] as never[] }),
+    noTagOnlyFilters
+      ? tasksQuery.order("due_date", { ascending: true, nullsFirst: false }).limit(20)
       : Promise.resolve({ data: [] as never[] }),
   ]);
 
@@ -88,5 +95,6 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
     cases: casesRes.data ?? [],
     notes: notesRes.data ?? [],
     hearings: hearingsRes.data ?? [],
+    tasks: tasksRes.data ?? [],
   };
 }

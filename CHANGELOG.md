@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Per-case tasks: a "Tasks" section on the case detail page for actionable to-dos (title, optional due date, done/not-done) — distinct from notes and hearings since a task has a completion state. Overdue tasks are flagged. New `tasks` table (`0005_tasks.sql`), included in search.
+- Notes library (`/notes`), reachable from anywhere in the nav: a running feed of every note the advocate has written, standalone or case-linked, with a quick-add box at the top. Addresses notes/learnings from things like a hearing or a government-office visit that don't belong to any specific case and were previously impossible to add or browse (the `notes.case_id` column has been nullable since v0.1.0, but no UI ever created or listed a standalone note until now).
 - Public landing page at `/` — hero, a stylized product preview, feature grid, "how it works" steps, and a closing CTA, with sign-in/sign-up in the header. Authenticated visitors are redirected straight to the dashboard; `/` is now public (updated `lib/supabase/middleware.ts`'s route allowlist, matched by exact path rather than prefix so it doesn't accidentally allow everything).
 - Password reset flow: "Forgot password?" on login sends a reset email; `/reset-password` (guarded, requires the session established by the reset link) lets the advocate set a new password. `/auth/callback` now accepts a `next` param so it can redirect to a destination other than the dashboard.
 - Profile page (`/profile`): view/edit full name, phone, bar enrollment number, practice city, and courts — the `profiles` table existed since v0.1.0 but had no UI until now.

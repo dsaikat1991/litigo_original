@@ -158,6 +158,45 @@ export type Database = {
           },
         ];
       };
+      tasks: {
+        Row: {
+          id: string;
+          case_id: string;
+          advocate_id: string;
+          title: string;
+          due_date: string | null;
+          is_done: boolean;
+          completed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          case_id: string;
+          advocate_id: string;
+          title: string;
+          due_date?: string | null;
+          is_done?: boolean;
+          completed_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["tasks"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "tasks_case_id_fkey";
+            columns: ["case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tasks_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -174,3 +213,4 @@ export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Case = Database["public"]["Tables"]["cases"]["Row"];
 export type Hearing = Database["public"]["Tables"]["hearings"]["Row"];
 export type Note = Database["public"]["Tables"]["notes"]["Row"];
+export type Task = Database["public"]["Tables"]["tasks"]["Row"];

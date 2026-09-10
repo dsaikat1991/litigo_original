@@ -34,7 +34,9 @@ export default async function SearchPage({
     listAllTags(supabase),
   ]);
 
-  const totalResults = results ? results.cases.length + results.notes.length + results.hearings.length : 0;
+  const totalResults = results
+    ? results.cases.length + results.notes.length + results.hearings.length + results.tasks.length
+    : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -138,6 +140,26 @@ export default async function SearchPage({
                         </span>
                       </div>
                       <p className="mt-0.5 text-gray-500">{c.client_name ?? "—"} · {c.court ?? "—"}</p>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {results!.tasks.length > 0 && (
+              <section>
+                <h2 className="mb-3 text-sm font-semibold text-gray-900">Tasks</h2>
+                <div className="space-y-2">
+                  {results!.tasks.map((t) => (
+                    <Link
+                      key={t.id}
+                      href={`/cases/${t.case_id}`}
+                      className="block rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={t.is_done ? "text-gray-400 line-through" : "text-gray-900"}>{t.title}</span>
+                        {t.due_date && <span className="shrink-0 text-xs text-gray-500">Due {t.due_date}</span>}
+                      </div>
                     </Link>
                   ))}
                 </div>
