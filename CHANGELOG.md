@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Password reset flow: "Forgot password?" on login sends a reset email; `/reset-password` (guarded, requires the session established by the reset link) lets the advocate set a new password. `/auth/callback` now accepts a `next` param so it can redirect to a destination other than the dashboard.
+- Profile page (`/profile`): view/edit full name, phone, bar enrollment number, practice city, and courts — the `profiles` table existed since v0.1.0 but had no UI until now.
+- Placeholder Privacy Policy (`/privacy`) and Terms of Service (`/terms`) pages, linked from signup. Explicitly marked as drafts pending legal review — not yet suitable as a binding policy for real users' client data.
 - Advanced search filters on `/search`: date range (matches a case's next hearing date, a hearing's date, or a note's creation date) and tag filtering (cases and notes), combinable with the keyword search. Backed by new indexes (`0004_advanced_search_indexes.sql`).
 - Global search (`/search`, nav bar search box) across cases (title, client, opposing party, case/CNR number, court), hearings (purpose, order notes), and notes/learnings (content). Uses Postgres trigram indexes (`0003_search_indexes.sql`) so it stays fast and tolerates partial/typo'd terms as the number of cases grows.
 - Calendar view (`/calendar`) — a month grid showing every case's next hearing date, with month navigation and a nav bar link.

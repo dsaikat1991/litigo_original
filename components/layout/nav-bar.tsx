@@ -60,19 +60,43 @@ export function NavBar() {
             <NavSearchBox />
           </Suspense>
         </div>
-        <button
-          onClick={handleSignOut}
-          className="shrink-0 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-        >
-          Sign out
-        </button>
+        <div className="flex shrink-0 items-center gap-4">
+          <Link
+            href="/profile"
+            className={
+              pathname.startsWith("/profile")
+                ? "text-sm font-medium text-gray-900"
+                : "text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
+            }
+          >
+            Profile
+          </Link>
+          <button
+            onClick={handleSignOut}
+            className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
       <div className="mt-3 flex items-center gap-4 sm:hidden">
         <Suspense fallback={SEARCH_BOX_FALLBACK}>
           <NavSearchBox />
         </Suspense>
       </div>
-      <div className="mt-2 flex gap-4 sm:hidden">{navLinks}</div>
+      <div className="mt-2 flex gap-4 sm:hidden">
+        {navLinks}
+        <Link
+          href="/profile"
+          className={
+            pathname.startsWith("/profile")
+              ? "text-sm font-medium text-gray-900"
+              : "text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
+          }
+        >
+          Profile
+        </Link>
+      </div>
     </nav>
   );
 }
