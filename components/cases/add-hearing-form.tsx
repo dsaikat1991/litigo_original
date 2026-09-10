@@ -64,7 +64,7 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
             required
             value={hearingDate}
             onChange={(e) => setHearingDate(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
         <div>
@@ -73,7 +73,7 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
             placeholder="e.g. arguments, evidence, mention"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
       </div>
@@ -83,7 +83,7 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
           value={orderNotes}
           onChange={(e) => setOrderNotes(e.target.value)}
           rows={2}
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-500 focus:outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
         />
       </div>
       <div>
@@ -92,7 +92,7 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
           type="date"
           value={nextDate}
           onChange={(e) => setNextDate(e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-500 focus:outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
         />
       </div>
 

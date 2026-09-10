@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "mylitigo",
+  title: { default: "mylitigo", template: "%s · mylitigo" },
   description: "A digital case diary for advocates",
 };
 

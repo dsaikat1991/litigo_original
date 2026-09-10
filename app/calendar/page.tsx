@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { listUpcomingCases } from "@/lib/data/cases";
 import { NavBar } from "@/components/layout/nav-bar";
 import { MonthCalendar } from "@/components/calendar/month-calendar";
+
+export const metadata: Metadata = { title: "Calendar" };
 
 export default async function CalendarPage() {
   const supabase = await createClient();

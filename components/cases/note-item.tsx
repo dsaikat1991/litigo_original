@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateNote, deleteNote } from "@/lib/data/notes";
-import { NOTE_TYPES, type NoteType } from "@/lib/constants";
+import { NOTE_TYPES, NOTE_TYPE_STYLES, type NoteType } from "@/lib/constants";
 import type { Note } from "@/types/database";
 
 export function NoteItem({ note }: { note: Note }) {
@@ -68,7 +68,7 @@ export function NoteItem({ note }: { note: Note }) {
             <select
               value={type}
               onChange={(e) => setType(e.target.value as NoteType)}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm capitalize focus:border-gray-500 focus:outline-none"
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm capitalize transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             >
               {NOTE_TYPES.map((t) => (
                 <option key={t} value={t} className="capitalize">
@@ -82,7 +82,7 @@ export function NoteItem({ note }: { note: Note }) {
             <input
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
@@ -92,7 +92,7 @@ export function NoteItem({ note }: { note: Note }) {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={3}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 
@@ -121,7 +121,7 @@ export function NoteItem({ note }: { note: Note }) {
   return (
     <div className="rounded-md border border-gray-200 bg-white p-3 text-sm">
       <div className="flex items-start justify-between gap-2">
-        <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+        <span className={`inline-block rounded-full px-2 py-0.5 text-xs capitalize ${NOTE_TYPE_STYLES[note.type]}`}>
           {note.type}
         </span>
         <div className="flex shrink-0 gap-2">

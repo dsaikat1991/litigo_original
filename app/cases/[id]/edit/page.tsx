@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCase } from "@/lib/data/cases";
 import { NavBar } from "@/components/layout/nav-bar";
 import { EditCaseForm } from "@/components/cases/edit-case-form";
+
+export const metadata: Metadata = { title: "Edit case" };
 
 export default async function EditCasePage({
   params,

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCase } from "@/lib/data/cases";
@@ -9,6 +10,18 @@ import { AddHearingForm } from "@/components/cases/add-hearing-form";
 import { AddNoteForm } from "@/components/cases/add-note-form";
 import { HearingItem } from "@/components/cases/hearing-item";
 import { NoteItem } from "@/components/cases/note-item";
+import { CASE_STATUS_STYLES } from "@/lib/constants";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data } = await supabase.from("cases").select("case_title").eq("id", id).single();
+  return { title: data?.case_title ?? "Case" };
+}
 
 export default async function CaseDetailPage({
   params,
@@ -37,12 +50,12 @@ export default async function CaseDetailPage({
           <div className="mb-2 flex items-start justify-between">
             <h1 className="text-lg font-semibold text-gray-900">{caseRow.case_title}</h1>
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+              <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[caseRow.status]}`}>
                 {caseRow.status}
               </span>
               <Link
                 href={`/cases/${id}/edit`}
-                className="text-sm font-medium text-gray-500 hover:text-gray-900"
+                className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
               >
                 Edit
               </Link>

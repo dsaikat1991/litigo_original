@@ -76,7 +76,7 @@ export default function NewCasePage() {
               value={caseTitle}
               onChange={(e) => setCaseTitle(e.target.value)}
               placeholder="e.g. Sharma vs Verma"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
 
@@ -86,7 +86,7 @@ export default function NewCasePage() {
               <input
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
             <div>
@@ -94,7 +94,7 @@ export default function NewCasePage() {
               <input
                 value={opposingParty}
                 onChange={(e) => setOpposingParty(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function NewCasePage() {
                 value={court}
                 onChange={(e) => setCourt(e.target.value)}
                 placeholder="e.g. Alipore District Court"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
             <div>
@@ -114,7 +114,7 @@ export default function NewCasePage() {
               <select
                 value={caseType}
                 onChange={(e) => setCaseType(e.target.value as CaseType)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               >
                 {CASE_TYPES.map((t) => (
                   <option key={t} value={t} className="capitalize">
@@ -131,7 +131,7 @@ export default function NewCasePage() {
               <input
                 value={caseNumber}
                 onChange={(e) => setCaseNumber(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
             <div>
@@ -139,7 +139,7 @@ export default function NewCasePage() {
               <input
                 value={cnrNumber}
                 onChange={(e) => setCnrNumber(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function NewCasePage() {
                 type="date"
                 value={filingDate}
                 onChange={(e) => setFilingDate(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
             <div>
@@ -160,7 +160,7 @@ export default function NewCasePage() {
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="e.g. bail, urgent"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
           </div>

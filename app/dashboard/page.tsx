@@ -1,7 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { listCases } from "@/lib/data/cases";
 import { NavBar } from "@/components/layout/nav-bar";
+import { CASE_STATUS_STYLES } from "@/lib/constants";
+
+export const metadata: Metadata = { title: "Cases" };
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -16,7 +20,7 @@ export default async function DashboardPage() {
           <h1 className="text-lg font-semibold text-gray-900">Your cases</h1>
           <Link
             href="/cases/new"
-            className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
           >
             + New case
           </Link>
@@ -34,11 +38,11 @@ export default async function DashboardPage() {
                 <Link
                   key={c.id}
                   href={`/cases/${c.id}`}
-                  className="block rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-50"
+                  className="block rounded-md border border-gray-200 bg-white p-4 transition-colors hover:bg-gray-50"
                 >
                   <div className="mb-1 flex items-start justify-between gap-2">
                     <span className="font-medium text-gray-900">{c.case_title}</span>
-                    <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
                       {c.status}
                     </span>
                   </div>
@@ -62,7 +66,7 @@ export default async function DashboardPage() {
                 </thead>
                 <tbody>
                   {cases.map((c) => (
-                    <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                    <tr key={c.id} className="border-b border-gray-100 transition-colors last:border-0 hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <Link href={`/cases/${c.id}`} className="font-medium text-gray-900 hover:underline">
                           {c.case_title}
@@ -74,7 +78,7 @@ export default async function DashboardPage() {
                         {c.next_hearing_date ?? "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">
+                        <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
                           {c.status}
                         </span>
                       </td>

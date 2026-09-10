@@ -83,7 +83,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             required
             value={caseTitle}
             onChange={(e) => setCaseTitle(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 
@@ -93,7 +93,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <input
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -101,7 +101,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <input
               value={opposingParty}
               onChange={(e) => setOpposingParty(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
@@ -112,7 +112,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <input
               value={court}
               onChange={(e) => setCourt(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -120,7 +120,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <select
               value={caseType}
               onChange={(e) => setCaseType(e.target.value as CaseType)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             >
               {CASE_TYPES.map((t) => (
                 <option key={t} value={t} className="capitalize">
@@ -137,7 +137,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <input
               value={caseNumber}
               onChange={(e) => setCaseNumber(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -145,7 +145,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <input
               value={cnrNumber}
               onChange={(e) => setCnrNumber(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
@@ -157,7 +157,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
               type="date"
               value={filingDate}
               onChange={(e) => setFilingDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -165,7 +165,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as CaseStatus)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm capitalize focus:border-gray-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm capitalize transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             >
               {CASE_STATUSES.map((s) => (
                 <option key={s} value={s} className="capitalize">
@@ -181,7 +181,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
           <input
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 

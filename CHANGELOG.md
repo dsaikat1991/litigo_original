@@ -14,10 +14,12 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ### Fixed
 - `cases.next_hearing_date` was left stale when the hearing that set it was deleted (the sync trigger only ran on insert/update). Migration `0002_hearing_delete_sync.sql` adds an `AFTER DELETE` trigger that recomputes it from the remaining hearings.
+- The Geist font loaded via `next/font` was never actually applied — `globals.css` hardcoded `font-family: Arial` on `body`, overriding it. Also removed an incomplete `prefers-color-scheme: dark` block that didn't match the rest of the UI (all components use explicit light colors), which would have rendered a broken half-dark page.
 
 ### Changed
 - Restructured the codebase: introduced a typed `lib/data/` data-access layer so Supabase queries no longer live inline in pages/components, added a hand-written `types/database.ts` matching the Postgres schema, moved `lib/constants.ts` to be the single source of truth for enum-like values, and reorganized `components/` into `layout/` and `cases/`.
 - Migrated `middleware.ts` to Next.js 16's `proxy.ts` convention.
+- UI polish: color-coded case status (active/adjourned/disposed) and note type (note/learning/update) badges for at-a-glance scanning, transition/focus-ring polish on inputs and primary buttons, a custom favicon (`app/icon.svg`), and per-page browser tab titles (e.g. a case's own title, "Calendar", "Edit case").
 
 ## [0.1.0] — 2026-09-09
 
