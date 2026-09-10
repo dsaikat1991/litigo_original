@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateNote, deleteNote } from "@/lib/data/notes";
 import { NOTE_TYPES, NOTE_TYPE_STYLES, type NoteType } from "@/lib/constants";
+import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import type { Note } from "@/types/database";
 
 type LinkedCase = { id: string; case_title: string } | null;
@@ -45,9 +46,6 @@ export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: Linked
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm("Delete this note? This cannot be undone.");
-    if (!confirmed) return;
-
     setDeleting(true);
     setError(null);
 
@@ -143,14 +141,20 @@ export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: Linked
           >
             Edit
           </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting}
-            className="text-xs font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
-          >
-            {deleting ? "Deleting..." : "Delete"}
-          </button>
+          <ConfirmDeleteDialog
+            trigger={
+              <button
+                type="button"
+                disabled={deleting}
+                className="text-xs font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            }
+            title="Delete this note?"
+            description="This cannot be undone."
+            onConfirm={handleDelete}
+          />
         </div>
       </div>
       <p className="mt-1 text-gray-700">{note.content}</p>

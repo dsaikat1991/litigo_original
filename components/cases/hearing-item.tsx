@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateHearing, deleteHearing } from "@/lib/data/hearings";
+import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import type { Hearing } from "@/types/database";
 
 export function HearingItem({ hearing }: { hearing: Hearing }) {
@@ -43,9 +44,6 @@ export function HearingItem({ hearing }: { hearing: Hearing }) {
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm("Delete this hearing entry? This cannot be undone.");
-    if (!confirmed) return;
-
     setDeleting(true);
     setError(null);
 
@@ -139,14 +137,20 @@ export function HearingItem({ hearing }: { hearing: Hearing }) {
           >
             Edit
           </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting}
-            className="text-xs font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
-          >
-            {deleting ? "Deleting..." : "Delete"}
-          </button>
+          <ConfirmDeleteDialog
+            trigger={
+              <button
+                type="button"
+                disabled={deleting}
+                className="text-xs font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            }
+            title="Delete this hearing entry?"
+            description="This cannot be undone."
+            onConfirm={handleDelete}
+          />
         </div>
       </div>
       {hearing.order_notes && <p className="mt-1 text-gray-600">{hearing.order_notes}</p>}

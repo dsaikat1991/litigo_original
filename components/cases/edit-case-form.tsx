@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateCase, deleteCase } from "@/lib/data/cases";
 import { CASE_TYPES, CASE_STATUSES, type CaseType, type CaseStatus } from "@/lib/constants";
+import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import type { Case } from "@/types/database";
 
 export function EditCaseForm({ caseRow }: { caseRow: Case }) {
@@ -54,11 +55,6 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm(
-      `Delete "${caseRow.case_title}"? This also deletes all its hearings and notes. This cannot be undone.`
-    );
-    if (!confirmed) return;
-
     setDeleting(true);
     setError(null);
 
@@ -203,14 +199,20 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
         <p className="mb-3 text-sm text-red-700">
           Deleting a case also permanently deletes all of its hearings and notes.
         </p>
-        <button
-          type="button"
-          onClick={handleDelete}
-          disabled={deleting}
-          className="rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
-        >
-          {deleting ? "Deleting..." : "Delete case"}
-        </button>
+        <ConfirmDeleteDialog
+          trigger={
+            <button
+              type="button"
+              disabled={deleting}
+              className="rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+            >
+              {deleting ? "Deleting..." : "Delete case"}
+            </button>
+          }
+          title={`Delete "${caseRow.case_title}"?`}
+          description="This also deletes all of its hearings, notes, and tasks. This cannot be undone."
+          onConfirm={handleDelete}
+        />
       </div>
     </div>
   );

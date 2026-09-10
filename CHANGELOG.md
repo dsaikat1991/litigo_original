@@ -5,9 +5,9 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Adopted shadcn/ui (Radix UI primitives + Tailwind): the notification bell and user menu dropdowns are now built on shadcn's `DropdownMenu` (real keyboard navigation, focus management, Escape-to-close, all handled by Radix instead of hand-rolled click-outside logic), and every delete confirmation (case, hearing, note, task) now uses a shared `ConfirmDeleteDialog` (shadcn `AlertDialog`) instead of the native `window.confirm()` — which also means these are now actually testable via browser automation, unlike a native dialog.
 - Profile picture upload via Supabase Storage (new `avatars` bucket, public read / owner-only write, `0006_avatars.sql`) and a nav bar user menu replacing the old plain "Profile"/"Sign out" text links: an avatar (uploaded photo, or an initial-letter fallback) with a "Hi, {first name}" greeting (hidden on mobile — avatar + chevron only there) that opens a dropdown with Profile, Settings, and Logout.
 - `/settings` page with a change-password form (the other natural destination now that account menu has a Profile/Settings split — Profile holds practice details, Settings holds account-level things).
-- Shared `useClickOutside` hook, now used by both the notification bell and the new user menu dropdown.
 - Notification bell dropdown: clicking the bell opens the 5 most urgent upcoming reminders with a "View all" button to the new `/notifications` page (the full list). Extracted the reminder row markup into a shared `ReminderRow` component, now used by the bell dropdown, the dashboard panel, and `/notifications`.
 - Notification bell in the nav bar (next to Profile), showing a live count of upcoming reminders (same 7-day window as the dashboard panel) from anywhere in the app, not just the dashboard.
 - In-app "Upcoming" reminders on the dashboard: hearings and task due dates within the next 7 days (including anything overdue), merged and sorted by date, each tagged Overdue/Today/Tomorrow/In N days. Email/push reminders are planned as a later phase.
@@ -27,6 +27,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 - `docs/ENGINEERING_HANDOFF.md` covering architecture decisions and rationale.
 
 ### Fixed
+- shadcn's init step renamed the expected font CSS variable from `--font-geist-sans` to `--font-sans` in `globals.css`, but didn't update `layout.tsx`'s `next/font` config to match — would have silently broken the font again (same class of bug as the earlier Arial fallback issue) had it not been caught before committing.
 - The nav bar's user menu (avatar/name) didn't update after editing the profile or uploading a photo without a full page reload — it's a client component that fetches its own data once on mount, so `router.refresh()` (which only re-renders server components) didn't reach it. Added a small `profile-events` pub/sub so `ProfileForm` and `AvatarUploader` can tell the user menu to refetch immediately after a successful save.
 - The notification bell icon sat slightly off-center — its SVG glyph occupies roughly y=8–21 of its 24-unit box (more empty space above than below), not exactly centered within its own bounding box. Nudged it up 2px to compensate.
 - Date-vs-"today" comparisons (task overdue check, the new dashboard reminders) used `Date.toISOString()`, which converts to UTC — for any timezone ahead of UTC (e.g. IST) during its early morning hours, this silently rolled "today" back a day, throwing off overdue/day-count calculations. Replaced with a local-calendar-date helper (`lib/dates.ts`).

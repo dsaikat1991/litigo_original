@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateTask, deleteTask } from "@/lib/data/tasks";
 import { isoDateDaysFromNow } from "@/lib/dates";
+import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import type { Task } from "@/types/database";
 
 function isOverdue(dueDate: string | null, isDone: boolean) {
@@ -58,9 +59,6 @@ export function TaskItem({ task }: { task: Task }) {
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm("Delete this task?");
-    if (!confirmed) return;
-
     const { error } = await deleteTask(supabase, task.id);
     if (error) {
       setError(error.message);
@@ -137,13 +135,16 @@ export function TaskItem({ task }: { task: Task }) {
         >
           Edit
         </button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="text-xs font-medium text-red-600 hover:text-red-800"
-        >
-          Delete
-        </button>
+        <ConfirmDeleteDialog
+          trigger={
+            <button type="button" className="text-xs font-medium text-red-600 hover:text-red-800">
+              Delete
+            </button>
+          }
+          title="Delete this task?"
+          description="This cannot be undone."
+          onConfirm={handleDelete}
+        />
       </div>
       {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
