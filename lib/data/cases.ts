@@ -1,9 +1,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
+import { isoDateDaysFromNow } from "@/lib/dates";
 
 type TypedClient = SupabaseClient<Database>;
 
 const CASE_LIST_COLUMNS = "id, case_title, client_name, court, status, next_hearing_date" as const;
+
+export type CaseListItem = Pick<
+  Database["public"]["Tables"]["cases"]["Row"],
+  "id" | "case_title" | "client_name" | "court" | "status" | "next_hearing_date"
+>;
 
 export function listCases(supabase: TypedClient) {
   return supabase
@@ -18,6 +24,17 @@ export function listUpcomingCases(supabase: TypedClient) {
     .select(CASE_LIST_COLUMNS)
     .not("next_hearing_date", "is", null)
     .neq("status", "disposed")
+    .order("next_hearing_date", { ascending: true });
+}
+
+/** Cases (not disposed) with a next hearing date within `days` from today — includes overdue. */
+export function listCasesWithHearingWithin(supabase: TypedClient, days: number) {
+  return supabase
+    .from("cases")
+    .select(CASE_LIST_COLUMNS)
+    .not("next_hearing_date", "is", null)
+    .neq("status", "disposed")
+    .lte("next_hearing_date", isoDateDaysFromNow(days))
     .order("next_hearing_date", { ascending: true });
 }
 

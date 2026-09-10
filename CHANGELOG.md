@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- In-app "Upcoming" reminders on the dashboard: hearings and task due dates within the next 7 days (including anything overdue), merged and sorted by date, each tagged Overdue/Today/Tomorrow/In N days. Email/push reminders are planned as a later phase.
 - Per-case tasks: a "Tasks" section on the case detail page for actionable to-dos (title, optional due date, done/not-done) — distinct from notes and hearings since a task has a completion state. Overdue tasks are flagged. New `tasks` table (`0005_tasks.sql`), included in search.
 - Notes library (`/notes`), reachable from anywhere in the nav: a running feed of every note the advocate has written, standalone or case-linked, with a quick-add box at the top. Addresses notes/learnings from things like a hearing or a government-office visit that don't belong to any specific case and were previously impossible to add or browse (the `notes.case_id` column has been nullable since v0.1.0, but no UI ever created or listed a standalone note until now).
 - Public landing page at `/` — hero, a stylized product preview, feature grid, "how it works" steps, and a closing CTA, with sign-in/sign-up in the header. Authenticated visitors are redirected straight to the dashboard; `/` is now public (updated `lib/supabase/middleware.ts`'s route allowlist, matched by exact path rather than prefix so it doesn't accidentally allow everything).
@@ -21,6 +22,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 - `docs/ENGINEERING_HANDOFF.md` covering architecture decisions and rationale.
 
 ### Fixed
+- Date-vs-"today" comparisons (task overdue check, the new dashboard reminders) used `Date.toISOString()`, which converts to UTC — for any timezone ahead of UTC (e.g. IST) during its early morning hours, this silently rolled "today" back a day, throwing off overdue/day-count calculations. Replaced with a local-calendar-date helper (`lib/dates.ts`).
 - `cases.next_hearing_date` was left stale when the hearing that set it was deleted (the sync trigger only ran on insert/update). Migration `0002_hearing_delete_sync.sql` adds an `AFTER DELETE` trigger that recomputes it from the remaining hearings.
 - The Geist font loaded via `next/font` was never actually applied — `globals.css` hardcoded `font-family: Arial` on `body`, overriding it. Also removed an incomplete `prefers-color-scheme: dark` block that didn't match the rest of the UI (all components use explicit light colors), which would have rendered a broken half-dark page.
 

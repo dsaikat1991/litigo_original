@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
+import type { Database, Task, Case } from "@/types/database";
+import { isoDateDaysFromNow } from "@/lib/dates";
 
 type TypedClient = SupabaseClient<Database>;
 
@@ -11,6 +12,18 @@ export function listTasksForCase(supabase: TypedClient, caseId: string) {
     .order("is_done", { ascending: true })
     .order("due_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
+}
+
+export type TaskWithCase = Task & { case: Pick<Case, "id" | "case_title"> | null };
+
+/** Not-done tasks with a due date within `days` from today — includes overdue. */
+export function listUpcomingTasks(supabase: TypedClient, days: number) {
+  return supabase
+    .from("tasks")
+    .select("*, case:cases(id, case_title)")
+    .eq("is_done", false)
+    .lte("due_date", isoDateDaysFromNow(days))
+    .order("due_date", { ascending: true, nullsFirst: false });
 }
 
 export type NewTaskInput = Omit<

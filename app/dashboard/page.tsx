@@ -1,21 +1,60 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { listCases } from "@/lib/data/cases";
+import { listCases, listCasesWithHearingWithin } from "@/lib/data/cases";
+import { listUpcomingTasks } from "@/lib/data/tasks";
+import { buildReminders } from "@/lib/reminders";
+import { daysAwayLabel, daysAwayStyle } from "@/lib/dates";
 import { NavBar } from "@/components/layout/nav-bar";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Cases" };
 
+const REMINDER_WINDOW_DAYS = 7;
+
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data: cases } = await listCases(supabase);
+  const [{ data: cases }, { data: reminderCases }, { data: reminderTasks }] = await Promise.all([
+    listCases(supabase),
+    listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
+    listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
+  ]);
+
+  const reminders = buildReminders(reminderCases ?? [], reminderTasks ?? []);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <NavBar />
 
       <main className="mx-auto max-w-4xl px-6 py-8">
+        {reminders.length > 0 && (
+          <div className="mb-8">
+            <h2 className="mb-3 text-sm font-semibold text-gray-900">
+              Upcoming in the next {REMINDER_WINDOW_DAYS} days
+            </h2>
+            <div className="space-y-2">
+              {reminders.map((r) => (
+                <Link
+                  key={r.id}
+                  href={`/cases/${r.caseId}`}
+                  className="flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-gray-900">
+                      {r.kind === "hearing" ? "Hearing — " : "Task — "}
+                      {r.title}
+                    </p>
+                    {r.kind === "task" && <p className="truncate text-xs text-gray-500">{r.caseTitle}</p>}
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(r.date)}`}>
+                    {daysAwayLabel(r.date)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-lg font-semibold text-gray-900">Your cases</h1>
           <Link

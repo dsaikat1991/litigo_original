@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateTask, deleteTask } from "@/lib/data/tasks";
+import { isoDateDaysFromNow } from "@/lib/dates";
 import type { Task } from "@/types/database";
 
 function isOverdue(dueDate: string | null, isDone: boolean) {
   if (!dueDate || isDone) return false;
-  const today = new Date().toISOString().slice(0, 10);
-  return dueDate < today;
+  return dueDate < isoDateDaysFromNow(0);
 }
 
 export function TaskItem({ task }: { task: Task }) {
