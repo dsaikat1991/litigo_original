@@ -1,4 +1,4 @@
-import type { CaseStatus, CaseType, NoteType } from "@/lib/constants";
+import type { CaseStatus, CaseType, NoteType, ResearchSourceType } from "@/lib/constants";
 
 /**
  * Hand-written to mirror `supabase/migrations/0001_init.sql`, matching the
@@ -199,6 +199,47 @@ export type Database = {
           },
         ];
       };
+      research_items: {
+        Row: {
+          id: string;
+          case_id: string;
+          advocate_id: string;
+          source_type: ResearchSourceType;
+          citation: string;
+          notes: string | null;
+          link: string | null;
+          tags: string[];
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          case_id: string;
+          advocate_id: string;
+          source_type?: ResearchSourceType;
+          citation: string;
+          notes?: string | null;
+          link?: string | null;
+          tags?: string[];
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["research_items"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "research_items_case_id_fkey";
+            columns: ["case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "research_items_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -206,6 +247,7 @@ export type Database = {
       case_status: CaseStatus;
       case_type: CaseType;
       note_type: NoteType;
+      research_source_type: ResearchSourceType;
     };
     CompositeTypes: Record<string, never>;
   };
@@ -216,3 +258,4 @@ export type Case = Database["public"]["Tables"]["cases"]["Row"];
 export type Hearing = Database["public"]["Tables"]["hearings"]["Row"];
 export type Note = Database["public"]["Tables"]["notes"]["Row"];
 export type Task = Database["public"]["Tables"]["tasks"]["Row"];
+export type ResearchItem = Database["public"]["Tables"]["research_items"]["Row"];

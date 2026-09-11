@@ -6,13 +6,16 @@ import { getCase } from "@/lib/data/cases";
 import { listHearingsForCase } from "@/lib/data/hearings";
 import { listNotesForCase } from "@/lib/data/notes";
 import { listTasksForCase } from "@/lib/data/tasks";
+import { listResearchForCase } from "@/lib/data/research";
 import { NavBar } from "@/components/layout/nav-bar";
 import { AddHearingForm } from "@/components/cases/add-hearing-form";
 import { AddNoteForm } from "@/components/cases/add-note-form";
 import { AddTaskForm } from "@/components/cases/add-task-form";
+import { AddResearchForm } from "@/components/cases/add-research-form";
 import { HearingItem } from "@/components/cases/hearing-item";
 import { NoteItem } from "@/components/cases/note-item";
 import { TaskItem } from "@/components/cases/task-item";
+import { ResearchItem } from "@/components/cases/research-item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
 
@@ -41,10 +44,11 @@ export default async function CaseDetailPage({
     notFound();
   }
 
-  const [{ data: hearings }, { data: notes }, { data: tasks }] = await Promise.all([
+  const [{ data: hearings }, { data: notes }, { data: tasks }, { data: research }] = await Promise.all([
     listHearingsForCase(supabase, id),
     listNotesForCase(supabase, id),
     listTasksForCase(supabase, id),
+    listResearchForCase(supabase, id),
   ]);
 
   return (
@@ -92,6 +96,7 @@ export default async function CaseDetailPage({
             <TabsTrigger value="tasks">Tasks{tasks && tasks.length > 0 ? ` · ${tasks.length}` : ""}</TabsTrigger>
             <TabsTrigger value="hearings">Hearings{hearings && hearings.length > 0 ? ` · ${hearings.length}` : ""}</TabsTrigger>
             <TabsTrigger value="notes">Notes &amp; learnings{notes && notes.length > 0 ? ` · ${notes.length}` : ""}</TabsTrigger>
+            <TabsTrigger value="research">Research{research && research.length > 0 ? ` · ${research.length}` : ""}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="tasks">
@@ -129,6 +134,19 @@ export default async function CaseDetailPage({
                 <p className="text-sm text-gray-500">No notes yet.</p>
               ) : (
                 notes.map((n) => <NoteItem key={n.id} note={n} />)
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="research">
+            <div className="mb-4">
+              <AddResearchForm caseId={id} />
+            </div>
+            <div className="space-y-2">
+              {!research || research.length === 0 ? (
+                <p className="text-sm text-gray-500">No research logged yet.</p>
+              ) : (
+                research.map((r) => <ResearchItem key={r.id} item={r} />)
               )}
             </div>
           </TabsContent>

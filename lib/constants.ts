@@ -18,3 +18,13 @@ export const NOTE_TYPE_STYLES: Record<NoteType, string> = {
   learning: "bg-purple-50 text-purple-700",
   update: "bg-blue-50 text-blue-700",
 };
+
+export const RESEARCH_SOURCE_TYPES = ["statute", "judgement", "article", "other"] as const;
+export type ResearchSourceType = (typeof RESEARCH_SOURCE_TYPES)[number];
+
+export const RESEARCH_SOURCE_TYPE_STYLES: Record<ResearchSourceType, string> = {
+  statute: "bg-blue-50 text-blue-700",
+  judgement: "bg-indigo-50 text-indigo-700",
+  article: "bg-green-50 text-green-700",
+  other: "bg-gray-100 text-gray-600",
+};

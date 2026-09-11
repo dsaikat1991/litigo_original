@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { searchAll } from "@/lib/data/search";
 import { listAllTags } from "@/lib/data/tags";
 import { NavBar } from "@/components/layout/nav-bar";
-import { CASE_STATUS_STYLES, NOTE_TYPE_STYLES } from "@/lib/constants";
+import { CASE_STATUS_STYLES, NOTE_TYPE_STYLES, RESEARCH_SOURCE_TYPE_STYLES } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Search" };
 
@@ -35,7 +35,11 @@ export default async function SearchPage({
   ]);
 
   const totalResults = results
-    ? results.cases.length + results.notes.length + results.hearings.length + results.tasks.length
+    ? results.cases.length +
+      results.notes.length +
+      results.hearings.length +
+      results.tasks.length +
+      results.research.length
     : 0;
 
   return (
@@ -210,6 +214,27 @@ export default async function SearchPage({
                           ))}
                         </div>
                       )}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {results!.research.length > 0 && (
+              <section>
+                <h2 className="mb-3 text-sm font-semibold text-gray-900">Research</h2>
+                <div className="space-y-2">
+                  {results!.research.map((r) => (
+                    <Link
+                      key={r.id}
+                      href={`/cases/${r.case_id}`}
+                      className="block rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
+                    >
+                      <span className={`mb-1 inline-block rounded-full px-2 py-0.5 text-xs capitalize ${RESEARCH_SOURCE_TYPE_STYLES[r.source_type]}`}>
+                        {r.source_type}
+                      </span>
+                      <p className="font-medium text-gray-900">{r.citation}</p>
+                      {r.notes && <p className="mt-0.5 text-gray-600">{r.notes}</p>}
                     </Link>
                   ))}
                 </div>
