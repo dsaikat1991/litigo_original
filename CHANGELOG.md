@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Added
+- Case detail page: Tasks/Hearings/Notes are now a horizontal tab bar (shadcn `Tabs`) below the case info card instead of three stacked sections — each tab label shows a count. Case info stays pinned at the top.
 - Adopted shadcn/ui (Radix UI primitives + Tailwind): the notification bell and user menu dropdowns are now built on shadcn's `DropdownMenu` (real keyboard navigation, focus management, Escape-to-close, all handled by Radix instead of hand-rolled click-outside logic), and every delete confirmation (case, hearing, note, task) now uses a shared `ConfirmDeleteDialog` (shadcn `AlertDialog`) instead of the native `window.confirm()` — which also means these are now actually testable via browser automation, unlike a native dialog.
 - Profile picture upload via Supabase Storage (new `avatars` bucket, public read / owner-only write, `0006_avatars.sql`) and a nav bar user menu replacing the old plain "Profile"/"Sign out" text links: an avatar (uploaded photo, or an initial-letter fallback) with a "Hi, {first name}" greeting (hidden on mobile — avatar + chevron only there) that opens a dropdown with Profile, Settings, and Logout.
 - `/settings` page with a change-password form (the other natural destination now that account menu has a Profile/Settings split — Profile holds practice details, Settings holds account-level things).

@@ -13,6 +13,7 @@ import { AddTaskForm } from "@/components/cases/add-task-form";
 import { HearingItem } from "@/components/cases/hearing-item";
 import { NoteItem } from "@/components/cases/note-item";
 import { TaskItem } from "@/components/cases/task-item";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
 
 export async function generateMetadata({
@@ -86,47 +87,52 @@ export default async function CaseDetailPage({
           )}
         </div>
 
-        <section className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold text-gray-900">Tasks</h2>
-          <div className="mb-4">
-            <AddTaskForm caseId={id} />
-          </div>
-          <div className="space-y-2">
-            {!tasks || tasks.length === 0 ? (
-              <p className="text-sm text-gray-500">No tasks yet.</p>
-            ) : (
-              tasks.map((t) => <TaskItem key={t.id} task={t} />)
-            )}
-          </div>
-        </section>
+        <Tabs defaultValue="tasks">
+          <TabsList className="mb-4">
+            <TabsTrigger value="tasks">Tasks{tasks && tasks.length > 0 ? ` · ${tasks.length}` : ""}</TabsTrigger>
+            <TabsTrigger value="hearings">Hearings{hearings && hearings.length > 0 ? ` · ${hearings.length}` : ""}</TabsTrigger>
+            <TabsTrigger value="notes">Notes &amp; learnings{notes && notes.length > 0 ? ` · ${notes.length}` : ""}</TabsTrigger>
+          </TabsList>
 
-        <section className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold text-gray-900">Hearings</h2>
-          <div className="mb-4">
-            <AddHearingForm caseId={id} />
-          </div>
-          <div className="space-y-2">
-            {!hearings || hearings.length === 0 ? (
-              <p className="text-sm text-gray-500">No hearings logged yet.</p>
-            ) : (
-              hearings.map((h) => <HearingItem key={h.id} hearing={h} />)
-            )}
-          </div>
-        </section>
+          <TabsContent value="tasks">
+            <div className="mb-4">
+              <AddTaskForm caseId={id} />
+            </div>
+            <div className="space-y-2">
+              {!tasks || tasks.length === 0 ? (
+                <p className="text-sm text-gray-500">No tasks yet.</p>
+              ) : (
+                tasks.map((t) => <TaskItem key={t.id} task={t} />)
+              )}
+            </div>
+          </TabsContent>
 
-        <section>
-          <h2 className="mb-3 text-sm font-semibold text-gray-900">Notes & learnings</h2>
-          <div className="mb-4">
-            <AddNoteForm caseId={id} />
-          </div>
-          <div className="space-y-2">
-            {!notes || notes.length === 0 ? (
-              <p className="text-sm text-gray-500">No notes yet.</p>
-            ) : (
-              notes.map((n) => <NoteItem key={n.id} note={n} />)
-            )}
-          </div>
-        </section>
+          <TabsContent value="hearings">
+            <div className="mb-4">
+              <AddHearingForm caseId={id} />
+            </div>
+            <div className="space-y-2">
+              {!hearings || hearings.length === 0 ? (
+                <p className="text-sm text-gray-500">No hearings logged yet.</p>
+              ) : (
+                hearings.map((h) => <HearingItem key={h.id} hearing={h} />)
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="notes">
+            <div className="mb-4">
+              <AddNoteForm caseId={id} />
+            </div>
+            <div className="space-y-2">
+              {!notes || notes.length === 0 ? (
+                <p className="text-sm text-gray-500">No notes yet.</p>
+              ) : (
+                notes.map((n) => <NoteItem key={n.id} note={n} />)
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
