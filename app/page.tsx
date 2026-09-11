@@ -51,7 +51,8 @@ export default async function HomePage() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-        <span className="text-lg font-semibold text-gray-900">mylitigo</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
             Sign in
@@ -186,7 +187,7 @@ export default async function HomePage() {
       </section>
 
       <footer className="border-t border-gray-100 py-8 text-center text-xs text-gray-400">
-        <p className="mb-2">mylitigo</p>
+        <p className="mb-2">Litigo</p>
         <Link href="/privacy" className="hover:text-gray-600">
           Privacy
         </Link>

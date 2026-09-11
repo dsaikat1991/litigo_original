@@ -44,8 +44,9 @@ export function NavBar() {
     <nav className="border-b border-gray-200 bg-white px-6 py-3">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="text-lg font-semibold text-gray-900">
-            mylitigo
+          <Link href="/dashboard" className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
           </Link>
           <div className="hidden gap-4 sm:flex">{navLinks}</div>
         </div>

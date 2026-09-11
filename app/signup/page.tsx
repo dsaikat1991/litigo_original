@@ -52,10 +52,13 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-gray-900">mylitigo</h1>
-        <p className="mb-6 text-sm text-gray-500">Create your account</p>
+    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="w-full max-w-sm p-8">
+        <div className="text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Litigo" className="mx-auto mb-3 h-6 w-auto" />
+          <p className="mb-6 text-sm text-gray-500">Create your account</p>
+        </div>
 
         <GoogleSignInButton />
 

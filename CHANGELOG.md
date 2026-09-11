@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Changed
+- Renamed the product from "mylitigo" to **Litigo** — new logo/wordmark (`public/logo.svg`) used in the nav bar, landing page header, and login/signup pages; new icon (`public/icon.svg`, also now `app/icon.svg` as the site favicon) replacing the earlier hand-drawn monogram; page titles, landing footer, and the Privacy/Terms pages updated to match. (The Supabase project itself is still literally named `mylitigo` — that's an external, unrenamed fact, not app branding.)
+- Simplified login, signup, and forgot-password to a plain white background with no card/border around the form — logo and subtitle centered above left-aligned fields. Chosen deliberately over an earlier, more elaborate split-screen "premium" redesign that was tried and reverted.
+
 ### Added
 - "Continue with Google" on login and signup, via Supabase's Google OAuth provider — verified end-to-end (button correctly redirects to a real Google account chooser scoped to the Supabase project).
 - Research tab on the case detail page: source type (Statute/Judgement/Article/Other), citation, notes, tags, and a link — for tracking case law, statutes, and articles found while preparing a case. New `research_items` table (`0007_research.sql`), included in search and date-range filtering.

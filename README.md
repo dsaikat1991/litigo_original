@@ -1,4 +1,4 @@
-# mylitigo
+# Litigo
 
 A digital case diary for solo advocates practicing in Indian courts — case records, hearing history, next dates, and quick notes/learnings, replacing the physical diary + WhatsApp + Excel workflow most solo practitioners currently rely on.
 
