@@ -39,7 +39,8 @@ export default async function SearchPage({
       results.notes.length +
       results.hearings.length +
       results.tasks.length +
-      results.research.length
+      results.research.length +
+      results.documents.length
     : 0;
 
   return (
@@ -235,6 +236,24 @@ export default async function SearchPage({
                       </span>
                       <p className="font-medium text-gray-900">{r.citation}</p>
                       {r.notes && <p className="mt-0.5 text-gray-600">{r.notes}</p>}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {results!.documents.length > 0 && (
+              <section>
+                <h2 className="mb-3 text-sm font-semibold text-gray-900">Documents</h2>
+                <div className="space-y-2">
+                  {results!.documents.map((d) => (
+                    <Link
+                      key={d.id}
+                      href={`/cases/${d.case_id}`}
+                      className="block rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
+                    >
+                      <span className="font-medium text-gray-900">{d.file_name}</span>
+                      <p className="mt-0.5 text-gray-500">{d.created_at.slice(0, 10)}</p>
                     </Link>
                   ))}
                 </div>

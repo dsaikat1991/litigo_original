@@ -59,7 +59,7 @@ export default async function CaseDetailPage({
       listChildCases(supabase, id),
     ]);
 
-  const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? []);
+  const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? [], childCases ?? []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,14 +155,20 @@ export default async function CaseDetailPage({
 
           <TabsContent value="hearings">
             <div className="mb-4">
-              <AddHearingForm caseId={id} />
+              <AddHearingForm caseId={id} childCases={childCases ?? []} />
             </div>
             <div className="space-y-2">
               {!hearings || hearings.length === 0 ? (
                 <p className="text-sm text-gray-500">No hearings logged yet.</p>
               ) : (
                 hearings.map((h) => (
-                  <HearingItem key={h.id} hearing={h} tasks={(tasks ?? []).filter((t) => t.hearing_id === h.id)} />
+                  <HearingItem
+                    key={h.id}
+                    hearing={h}
+                    tasks={(tasks ?? []).filter((t) => t.hearing_id === h.id)}
+                    documents={(documents ?? []).filter((d) => d.hearing_id === h.id)}
+                    childCases={childCases ?? []}
+                  />
                 ))
               )}
             </div>
@@ -196,13 +202,19 @@ export default async function CaseDetailPage({
 
           <TabsContent value="documents">
             <div className="mb-4">
-              <UploadDocumentForm caseId={id} />
+              <UploadDocumentForm caseId={id} hearings={hearings ?? []} />
             </div>
             <div className="space-y-2">
               {!documents || documents.length === 0 ? (
                 <p className="text-sm text-gray-500">No documents uploaded yet.</p>
               ) : (
-                documents.map((d) => <DocumentItem key={d.id} document={d} />)
+                documents.map((d) => (
+                  <DocumentItem
+                    key={d.id}
+                    document={d}
+                    hearing={(hearings ?? []).find((h) => h.id === d.hearing_id)}
+                  />
+                ))
               )}
             </div>
           </TabsContent>

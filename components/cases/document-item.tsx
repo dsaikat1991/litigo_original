@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { deleteCaseDocument } from "@/lib/data/case-documents";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
-import type { CaseDocument } from "@/types/database";
+import type { CaseDocument, Hearing } from "@/types/database";
 
 function formatFileSize(bytes: number | null) {
   if (bytes === null) return null;
@@ -14,7 +14,7 @@ function formatFileSize(bytes: number | null) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function DocumentItem({ document: doc }: { document: CaseDocument }) {
+export function DocumentItem({ document: doc, hearing }: { document: CaseDocument; hearing?: Hearing }) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -77,6 +77,7 @@ export function DocumentItem({ document: doc }: { document: CaseDocument }) {
         <p className="text-xs text-gray-500">
           {doc.created_at.slice(0, 10)}
           {size ? ` · ${size}` : ""}
+          {hearing ? ` · Hearing on ${hearing.hearing_date}` : ""}
         </p>
       </div>
       <div className="flex shrink-0 gap-2">

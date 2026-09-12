@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarClock, Search, ShieldCheck, FileText, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { SiteFooter } from "@/components/marketing/site-footer";
 
 const FEATURES = [
   {
@@ -135,7 +136,7 @@ export default async function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
+      <section id="features" className="mx-auto max-w-5xl scroll-mt-16 px-6 py-24 sm:py-32">
         <div className="mx-auto max-w-xl text-center">
           <h2 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
             Everything a solo practice actually needs
@@ -186,16 +187,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-gray-100 py-8 text-center text-xs text-gray-400">
-        <p className="mb-2">Litigo</p>
-        <Link href="/privacy" className="hover:text-gray-600">
-          Privacy
-        </Link>
-        {" · "}
-        <Link href="/terms" className="hover:text-gray-600">
-          Terms
-        </Link>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

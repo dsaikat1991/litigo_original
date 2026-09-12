@@ -1,5 +1,6 @@
 import type { Hearing, Note, Task } from "@/types/database";
 import type { TimelineItem } from "@/lib/timeline";
+import type { ChildCase } from "@/lib/data/cases";
 import { NOTE_TYPE_STYLES } from "@/lib/constants";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -40,7 +41,13 @@ export function CaseTimeline({ items }: { items: TimelineItem[] }) {
                 <span className="relative z-10 h-2.5 w-2.5 rounded-full border-2 border-gray-300 bg-white" />
               </div>
               <div className="min-w-0 flex-1 pb-1">
-                {item.kind === "hearing" && <HearingEntry hearing={item.hearing} hearingTasks={item.hearingTasks} />}
+                {item.kind === "hearing" && (
+                  <HearingEntry
+                    hearing={item.hearing}
+                    hearingTasks={item.hearingTasks}
+                    applicationCase={item.applicationCase}
+                  />
+                )}
                 {item.kind === "task" && <TaskEntry task={item.task} />}
                 {item.kind === "note" && <NoteEntry note={item.note} />}
               </div>
@@ -52,13 +59,33 @@ export function CaseTimeline({ items }: { items: TimelineItem[] }) {
   );
 }
 
-function HearingEntry({ hearing, hearingTasks }: { hearing: Hearing; hearingTasks: Task[] }) {
+function HearingEntry({
+  hearing,
+  hearingTasks,
+  applicationCase,
+}: {
+  hearing: Hearing;
+  hearingTasks: Task[];
+  applicationCase: ChildCase | null;
+}) {
   return (
     <div className="rounded-md border border-gray-200 bg-white p-4">
       <span className="mb-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
         Hearing
       </span>
       {hearing.purpose && <p className="text-sm font-medium text-gray-900">{hearing.purpose}</p>}
+      {(hearing.bench || hearing.judge || hearing.courtroom || hearing.stage) && (
+        <p className="mt-0.5 text-xs text-gray-500">
+          {[
+            hearing.stage,
+            hearing.bench,
+            hearing.judge && `Judge: ${hearing.judge}`,
+            hearing.courtroom && `Room ${hearing.courtroom}`,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+        </p>
+      )}
       {hearing.order_notes && <p className="mt-1 whitespace-pre-wrap text-sm text-gray-600">{hearing.order_notes}</p>}
 
       {hearing.arguments_made && (
@@ -71,6 +98,31 @@ function HearingEntry({ hearing, hearingTasks }: { hearing: Hearing; hearingTask
         <div className="mt-2">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court direction</p>
           <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.court_direction}</p>
+        </div>
+      )}
+      {hearing.court_observations && (
+        <div className="mt-2">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court observations</p>
+          <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.court_observations}</p>
+        </div>
+      )}
+      {applicationCase && (
+        <p className="mt-2 text-xs text-gray-500">
+          Application heard: <span className="font-medium text-gray-700">{applicationCase.case_title}</span>
+        </p>
+      )}
+      {(hearing.parties_present.length > 0 || hearing.advocates_appearing.length > 0) && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {hearing.parties_present.map((p) => (
+            <span key={`party-${p}`} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+              {p}
+            </span>
+          ))}
+          {hearing.advocates_appearing.map((a) => (
+            <span key={`adv-${a}`} className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
+              {a}
+            </span>
+          ))}
         </div>
       )}
       {hearing.documents_filed.length > 0 && (
@@ -114,6 +166,7 @@ function HearingEntry({ hearing, hearingTasks }: { hearing: Hearing; hearingTask
       {hearing.next_date && (
         <p className="mt-2 text-xs text-gray-500">
           Next hearing: <span className="font-medium text-gray-700">{formatDate(hearing.next_date)}</span>
+          {hearing.next_purpose ? ` — ${hearing.next_purpose}` : ""}
         </p>
       )}
     </div>

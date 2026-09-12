@@ -108,6 +108,15 @@ export type Database = {
           arguments_made: string | null;
           court_direction: string | null;
           documents_filed: string[];
+          bench: string | null;
+          judge: string | null;
+          courtroom: string | null;
+          stage: string | null;
+          parties_present: string[];
+          advocates_appearing: string[];
+          application_case_id: string | null;
+          court_observations: string | null;
+          next_purpose: string | null;
           next_date: string | null;
           created_at: string;
         };
@@ -121,6 +130,15 @@ export type Database = {
           arguments_made?: string | null;
           court_direction?: string | null;
           documents_filed?: string[];
+          bench?: string | null;
+          judge?: string | null;
+          courtroom?: string | null;
+          stage?: string | null;
+          parties_present?: string[];
+          advocates_appearing?: string[];
+          application_case_id?: string | null;
+          court_observations?: string | null;
+          next_purpose?: string | null;
           next_date?: string | null;
           created_at?: string;
         };
@@ -129,6 +147,13 @@ export type Database = {
           {
             foreignKeyName: "hearings_case_id_fkey";
             columns: ["case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "hearings_application_case_id_fkey";
+            columns: ["application_case_id"];
             isOneToOne: false;
             referencedRelation: "cases";
             referencedColumns: ["id"];
@@ -279,6 +304,7 @@ export type Database = {
           storage_path: string;
           file_size: number | null;
           mime_type: string | null;
+          hearing_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -289,6 +315,7 @@ export type Database = {
           storage_path: string;
           file_size?: number | null;
           mime_type?: string | null;
+          hearing_id?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["case_documents"]["Insert"]>;
@@ -298,6 +325,13 @@ export type Database = {
             columns: ["case_id"];
             isOneToOne: false;
             referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "case_documents_hearing_id_fkey";
+            columns: ["hearing_id"];
+            isOneToOne: false;
+            referencedRelation: "hearings";
             referencedColumns: ["id"];
           },
           {

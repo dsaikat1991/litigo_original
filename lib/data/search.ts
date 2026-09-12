@@ -43,6 +43,9 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
   let researchQuery = supabase
     .from("research_items")
     .select("id, case_id, source_type, citation, notes, link, tags, created_at");
+  let documentsQuery = supabase
+    .from("case_documents")
+    .select("id, case_id, file_name, mime_type, created_at");
 
   if (pattern) {
     casesQuery = casesQuery.or(
@@ -55,10 +58,22 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
         `court.ilike.${pattern}`,
       ].join(",")
     );
-    hearingsQuery = hearingsQuery.or([`purpose.ilike.${pattern}`, `order_notes.ilike.${pattern}`].join(","));
+    hearingsQuery = hearingsQuery.or(
+      [
+        `purpose.ilike.${pattern}`,
+        `order_notes.ilike.${pattern}`,
+        `bench.ilike.${pattern}`,
+        `judge.ilike.${pattern}`,
+        `courtroom.ilike.${pattern}`,
+        `stage.ilike.${pattern}`,
+        `court_observations.ilike.${pattern}`,
+        `next_purpose.ilike.${pattern}`,
+      ].join(","),
+    );
     notesQuery = notesQuery.ilike("content", `%${query}%`);
     tasksQuery = tasksQuery.ilike("title", `%${query}%`);
     researchQuery = researchQuery.or([`citation.ilike.${pattern}`, `notes.ilike.${pattern}`].join(","));
+    documentsQuery = documentsQuery.ilike("file_name", `%${query}%`);
   }
 
   if (dateFrom) {
@@ -67,6 +82,7 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
     notesQuery = notesQuery.gte("created_at", dateFrom);
     tasksQuery = tasksQuery.gte("due_date", dateFrom);
     researchQuery = researchQuery.gte("created_at", dateFrom);
+    documentsQuery = documentsQuery.gte("created_at", dateFrom);
   }
   if (dateTo) {
     casesQuery = casesQuery.lte("next_hearing_date", dateTo);
@@ -74,20 +90,21 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
     notesQuery = notesQuery.lt("created_at", dayAfter(dateTo));
     tasksQuery = tasksQuery.lte("due_date", dateTo);
     researchQuery = researchQuery.lt("created_at", dayAfter(dateTo));
+    documentsQuery = documentsQuery.lt("created_at", dayAfter(dateTo));
   }
 
-  // hearings and tasks have no tags column, so the tag filter only narrows cases, notes, and research
+  // hearings, tasks, and documents have no tags column, so the tag filter only narrows cases, notes, and research
   if (tags && tags.length > 0) {
     casesQuery = casesQuery.overlaps("tags", tags);
     notesQuery = notesQuery.overlaps("tags", tags);
     researchQuery = researchQuery.overlaps("tags", tags);
   }
 
-  // if tags is the only active filter, hearings/tasks have nothing to filter by —
+  // if tags is the only active filter, hearings/tasks/documents have nothing to filter by —
   // return none rather than everything unfiltered
   const noTagOnlyFilters = Boolean(pattern) || Boolean(dateFrom) || Boolean(dateTo);
 
-  const [casesRes, notesRes, hearingsRes, tasksRes, researchRes] = await Promise.all([
+  const [casesRes, notesRes, hearingsRes, tasksRes, researchRes, documentsRes] = await Promise.all([
     casesQuery.order("next_hearing_date", { ascending: true, nullsFirst: false }).limit(20),
     notesQuery.order("created_at", { ascending: false }).limit(20),
     noTagOnlyFilters
@@ -97,6 +114,9 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
       ? tasksQuery.order("due_date", { ascending: true, nullsFirst: false }).limit(20)
       : Promise.resolve({ data: [] as never[] }),
     researchQuery.order("created_at", { ascending: false }).limit(20),
+    noTagOnlyFilters
+      ? documentsQuery.order("created_at", { ascending: false }).limit(20)
+      : Promise.resolve({ data: [] as never[] }),
   ]);
 
   return {
@@ -105,5 +125,6 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
     hearings: hearingsRes.data ?? [],
     tasks: tasksRes.data ?? [],
     research: researchRes.data ?? [],
+    documents: documentsRes.data ?? [],
   };
 }

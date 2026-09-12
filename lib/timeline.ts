@@ -1,7 +1,8 @@
 import type { Hearing, Note, Task } from "@/types/database";
+import type { ChildCase } from "@/lib/data/cases";
 
 export type TimelineItem =
-  | { id: string; date: string; kind: "hearing"; hearing: Hearing; hearingTasks: Task[] }
+  | { id: string; date: string; kind: "hearing"; hearing: Hearing; hearingTasks: Task[]; applicationCase: ChildCase | null }
   | { id: string; date: string; kind: "task"; task: Task & { completed_at: string } }
   | { id: string; date: string; kind: "note"; note: Note };
 
@@ -15,15 +16,22 @@ export type TimelineItem =
  * Tasks tied to a specific hearing (`hearing_id`, e.g. "tasks before next
  * hearing") are nested under that hearing's entry instead of appearing as
  * their own standalone timeline item, done or not — they're part of that
- * hearing's record, not a separate event.
+ * hearing's record, not a separate event. Same for `application_case_id` —
+ * resolved here to the actual child case so the Timeline can show its title.
  */
-export function buildTimeline(hearings: Hearing[], tasks: Task[], notes: Note[]): TimelineItem[] {
+export function buildTimeline(
+  hearings: Hearing[],
+  tasks: Task[],
+  notes: Note[],
+  childCases: ChildCase[] = [],
+): TimelineItem[] {
   const hearingItems: TimelineItem[] = hearings.map((h) => ({
     id: `hearing-${h.id}`,
     date: h.hearing_date,
     kind: "hearing",
     hearing: h,
     hearingTasks: tasks.filter((t) => t.hearing_id === h.id),
+    applicationCase: childCases.find((c) => c.id === h.application_case_id) ?? null,
   }));
 
   const taskItems: TimelineItem[] = tasks

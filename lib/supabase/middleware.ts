@@ -29,7 +29,27 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const PUBLIC_PATH_PREFIXES = ["/login", "/signup", "/forgot-password", "/auth", "/privacy", "/terms"];
+  const PUBLIC_PATH_PREFIXES = [
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/auth",
+    "/privacy",
+    "/terms",
+    "/pricing",
+    "/security",
+    "/changelog",
+    "/about",
+    "/our-story",
+    "/careers",
+    "/contact",
+    "/blog",
+    "/docs",
+    "/help",
+    "/cookie-policy",
+    "/refund-policy",
+    "/acceptable-use",
+  ];
   const isAuthRoute =
     request.nextUrl.pathname === "/" ||
     PUBLIC_PATH_PREFIXES.some((prefix) => request.nextUrl.pathname.startsWith(prefix));
