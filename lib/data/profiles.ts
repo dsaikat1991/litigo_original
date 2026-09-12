@@ -12,3 +12,8 @@ export type ProfileUpdateInput = Omit<Database["public"]["Tables"]["profiles"]["
 export function updateProfile(supabase: TypedClient, id: string, input: ProfileUpdateInput) {
   return supabase.from("profiles").update(input).eq("id", id);
 }
+
+/** Deletes the signed-in user's account and everything they own (cases, hearings, notes, tasks, research). */
+export function deleteOwnAccount(supabase: TypedClient) {
+  return supabase.rpc("delete_own_account");
+}

@@ -46,7 +46,7 @@ export function NavBar() {
         <div className="flex items-center gap-6">
           <Link href="/dashboard" className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+            <img src="/logo.svg" alt="Litigo" className="h-4 w-auto" />
           </Link>
           <div className="hidden gap-4 sm:flex">{navLinks}</div>
         </div>

@@ -32,7 +32,12 @@ export default function ForgotPasswordPage() {
 
   if (done) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="relative flex min-h-screen items-center justify-center bg-white px-4">
+        <Link href="/" className="absolute left-6 top-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+        </Link>
+
         <div className="w-full max-w-sm p-8 text-center">
           <h1 className="mb-2 text-lg font-semibold text-gray-900">Check your email</h1>
           <p className="text-sm text-gray-500">
@@ -44,7 +49,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-white px-4">
+      <Link href="/" className="absolute left-6 top-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+      </Link>
+
       <div className="w-full max-w-sm p-8">
         <div className="text-center">
           <h1 className="mb-1 text-xl font-semibold text-gray-900">Forgot password</h1>

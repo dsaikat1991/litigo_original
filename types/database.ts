@@ -23,6 +23,8 @@ export type Database = {
           practice_city: string | null;
           courts: string[];
           avatar_url: string | null;
+          reminder_days: number[];
+          reminder_email_days: number[];
           created_at: string;
         };
         Insert: {
@@ -33,6 +35,8 @@ export type Database = {
           practice_city?: string | null;
           courts?: string[];
           avatar_url?: string | null;
+          reminder_days?: number[];
+          reminder_email_days?: number[];
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
@@ -92,6 +96,9 @@ export type Database = {
           hearing_date: string;
           purpose: string | null;
           order_notes: string | null;
+          arguments_made: string | null;
+          court_direction: string | null;
+          documents_filed: string[];
           next_date: string | null;
           created_at: string;
         };
@@ -102,6 +109,9 @@ export type Database = {
           hearing_date: string;
           purpose?: string | null;
           order_notes?: string | null;
+          arguments_made?: string | null;
+          court_direction?: string | null;
+          documents_filed?: string[];
           next_date?: string | null;
           created_at?: string;
         };
@@ -165,6 +175,7 @@ export type Database = {
           id: string;
           case_id: string;
           advocate_id: string;
+          hearing_id: string | null;
           title: string;
           due_date: string | null;
           is_done: boolean;
@@ -175,6 +186,7 @@ export type Database = {
           id?: string;
           case_id: string;
           advocate_id: string;
+          hearing_id?: string | null;
           title: string;
           due_date?: string | null;
           is_done?: boolean;
@@ -195,6 +207,13 @@ export type Database = {
             columns: ["advocate_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tasks_hearing_id_fkey";
+            columns: ["hearing_id"];
+            isOneToOne: false;
+            referencedRelation: "hearings";
             referencedColumns: ["id"];
           },
         ];
@@ -242,7 +261,12 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      delete_own_account: {
+        Args: Record<string, never>;
+        Returns: undefined;
+      };
+    };
     Enums: {
       case_status: CaseStatus;
       case_type: CaseType;

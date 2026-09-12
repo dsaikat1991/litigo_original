@@ -40,8 +40,13 @@ export default function SignupPage() {
 
   if (done) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-        <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
+      <div className="relative flex min-h-screen items-center justify-center bg-white px-4">
+        <Link href="/" className="absolute left-6 top-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+        </Link>
+
+        <div className="w-full max-w-sm p-8 text-center">
           <h1 className="mb-2 text-lg font-semibold text-gray-900">Check your email</h1>
           <p className="text-sm text-gray-500">
             We sent a confirmation link to {email}. Click it to activate your account.
@@ -52,12 +57,16 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-white px-4">
+      <Link href="/" className="absolute left-6 top-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+      </Link>
+
       <div className="w-full max-w-sm p-8">
         <div className="text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Litigo" className="mx-auto mb-3 h-6 w-auto" />
-          <p className="mb-6 text-sm text-gray-500">Create your account</p>
+          <h1 className="mb-1 text-2xl font-semibold text-gray-900">Create an account</h1>
+          <p className="mb-6 text-sm text-gray-500">Start your digital case diary</p>
         </div>
 
         <GoogleSignInButton />

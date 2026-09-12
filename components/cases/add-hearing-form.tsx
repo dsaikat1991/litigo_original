@@ -12,6 +12,9 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
   const [hearingDate, setHearingDate] = useState("");
   const [purpose, setPurpose] = useState("");
   const [orderNotes, setOrderNotes] = useState("");
+  const [argumentsMade, setArgumentsMade] = useState("");
+  const [courtDirection, setCourtDirection] = useState("");
+  const [documentsFiled, setDocumentsFiled] = useState("");
   const [nextDate, setNextDate] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,6 +40,11 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
       hearing_date: hearingDate,
       purpose: purpose || null,
       order_notes: orderNotes || null,
+      arguments_made: argumentsMade || null,
+      court_direction: courtDirection || null,
+      documents_filed: documentsFiled
+        ? documentsFiled.split(",").map((d) => d.trim()).filter(Boolean)
+        : [],
       next_date: nextDate || null,
     });
 
@@ -49,6 +57,9 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
     setHearingDate("");
     setPurpose("");
     setOrderNotes("");
+    setArgumentsMade("");
+    setCourtDirection("");
+    setDocumentsFiled("");
     setNextDate("");
     setLoading(false);
     router.refresh();
@@ -86,14 +97,44 @@ export function AddHearingForm({ caseId }: { caseId: string }) {
           className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
         />
       </div>
-      <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Next date fixed</label>
-        <input
-          type="date"
-          value={nextDate}
-          onChange={(e) => setNextDate(e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-        />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Arguments made</label>
+          <textarea
+            value={argumentsMade}
+            onChange={(e) => setArgumentsMade(e.target.value)}
+            rows={2}
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Court direction</label>
+          <textarea
+            value={courtDirection}
+            onChange={(e) => setCourtDirection(e.target.value)}
+            rows={2}
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Documents filed (comma separated)</label>
+          <input
+            value={documentsFiled}
+            onChange={(e) => setDocumentsFiled(e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Next date fixed</label>
+          <input
+            type="date"
+            value={nextDate}
+            onChange={(e) => setNextDate(e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

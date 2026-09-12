@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { listCasesWithHearingWithin } from "@/lib/data/cases";
 import { listUpcomingTasks } from "@/lib/data/tasks";
-import { buildReminders } from "@/lib/reminders";
+import { getProfile } from "@/lib/data/profiles";
+import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
 import { NavBar } from "@/components/layout/nav-bar";
 import { ReminderRow } from "@/components/reminders/reminder-row";
 
@@ -12,12 +13,20 @@ const REMINDER_WINDOW_DAYS = 7;
 
 export default async function NotificationsPage() {
   const supabase = await createClient();
-  const [{ data: reminderCases }, { data: reminderTasks }] = await Promise.all([
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: reminderCases }, { data: reminderTasks }, { data: profile }] = await Promise.all([
     listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
     listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
+    user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
   ]);
 
-  const reminders = buildReminders(reminderCases ?? [], reminderTasks ?? []);
+  const reminders = filterRemindersByPreference(
+    buildReminders(reminderCases ?? [], reminderTasks ?? []),
+    profile?.reminder_days ?? [7, 3, 1, 0],
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">

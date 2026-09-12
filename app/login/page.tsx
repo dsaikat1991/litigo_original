@@ -32,11 +32,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-white px-4">
+      <Link href="/" className="absolute left-6 top-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+      </Link>
+
       <div className="w-full max-w-sm p-8">
         <div className="text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Litigo" className="mx-auto mb-3 h-6 w-auto" />
+          <h1 className="mb-1 text-2xl font-semibold text-gray-900">Welcome back</h1>
           <p className="mb-6 text-sm text-gray-500">Sign in to your case diary</p>
         </div>
 

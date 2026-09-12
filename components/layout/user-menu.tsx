@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronDown, User } from "lucide-react";
@@ -15,10 +15,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+// useLayoutEffect only on the client (it's a no-op warning during SSR) —
+// lets us hydrate from the cache before the browser paints, so a remount
+// (page navigation, refresh) shows the last-known avatar/name immediately
+// instead of a blank flash while Supabase is re-fetched in the background.
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+const PROFILE_CACHE_KEY = "litigo:user-menu-cache";
+
+type CachedProfile = { fullName: string | null; avatarUrl: string | null };
+
+function readCache(): CachedProfile | null {
+  try {
+    const raw = sessionStorage.getItem(PROFILE_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as CachedProfile) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(cached: CachedProfile) {
+  try {
+    sessionStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(cached));
+  } catch {
+    // sessionStorage unavailable (private browsing, etc.) — just skip caching.
+  }
+}
+
 export function UserMenu() {
   const router = useRouter();
   const [fullName, setFullName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    const cached = readCache();
+    if (cached) {
+      setFullName(cached.fullName);
+      setAvatarUrl(cached.avatarUrl);
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,6 +69,7 @@ export function UserMenu() {
       if (!cancelled && profile) {
         setFullName(profile.full_name);
         setAvatarUrl(profile.avatar_url);
+        writeCache({ fullName: profile.full_name, avatarUrl: profile.avatar_url });
       }
     }
 
@@ -48,6 +84,11 @@ export function UserMenu() {
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
+    try {
+      sessionStorage.removeItem(PROFILE_CACHE_KEY);
+    } catch {
+      // ignore
+    }
     router.push("/login");
     router.refresh();
   }
@@ -58,7 +99,6 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium text-gray-700 outline-none transition-colors hover:text-gray-900">
-        {firstName && <span className="hidden sm:inline">Hi, {firstName}</span>}
         <span className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
           {avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -69,6 +109,7 @@ export function UserMenu() {
             </span>
           )}
         </span>
+        {firstName && <span className="hidden sm:inline">Hi, {firstName}</span>}
         <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">

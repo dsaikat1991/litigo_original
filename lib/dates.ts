@@ -13,11 +13,16 @@ export function isoDateDaysFromNow(days: number = 0): string {
   return `${year}-${month}-${day}`;
 }
 
-/** Human label for how far away a date is: "Overdue", "Today", "Tomorrow", or "In N days". */
-export function daysAwayLabel(dateStr: string): string {
+/** Whole days between today and `dateStr`; negative when `dateStr` is in the past. */
+export function daysAway(dateStr: string): number {
   const today = new Date(`${isoDateDaysFromNow(0)}T00:00:00Z`);
   const target = new Date(`${dateStr}T00:00:00Z`);
-  const diffDays = Math.round((target.getTime() - today.getTime()) / 86_400_000);
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+}
+
+/** Human label for how far away a date is: "Overdue", "Today", "Tomorrow", or "In N days". */
+export function daysAwayLabel(dateStr: string): string {
+  const diffDays = daysAway(dateStr);
 
   if (diffDays < 0) return "Overdue";
   if (diffDays === 0) return "Today";

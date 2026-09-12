@@ -6,9 +6,11 @@ import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { listCasesWithHearingWithin } from "@/lib/data/cases";
 import { listUpcomingTasks } from "@/lib/data/tasks";
-import { buildReminders, type ReminderItem } from "@/lib/reminders";
+import { getProfile } from "@/lib/data/profiles";
+import { buildReminders, filterRemindersByPreference, type ReminderItem } from "@/lib/reminders";
 import { ReminderRow } from "@/components/reminders/reminder-row";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { onProfileUpdated } from "@/lib/profile-events";
 
 const REMINDER_WINDOW_DAYS = 7;
 const DROPDOWN_LIMIT = 5;
@@ -22,18 +24,27 @@ export function NotificationBell() {
     const supabase = createClient();
 
     async function load() {
-      const [{ data: cases }, { data: tasks }] = await Promise.all([
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const [{ data: cases }, { data: tasks }, { data: profile }] = await Promise.all([
         listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
         listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
+        user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
       ]);
       if (!cancelled) {
-        setReminders(buildReminders(cases ?? [], tasks ?? []));
+        setReminders(
+          filterRemindersByPreference(buildReminders(cases ?? [], tasks ?? []), profile?.reminder_days ?? [7, 3, 1, 0]),
+        );
       }
     }
 
     load();
+    const unsubscribe = onProfileUpdated(load);
     return () => {
       cancelled = true;
+      unsubscribe();
     };
   }, []);
 
