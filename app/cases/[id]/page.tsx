@@ -138,14 +138,16 @@ export default async function CaseDetailPage({
         )}
 
         <Tabs defaultValue="timeline">
-          <TabsList className="mb-4">
+          <div className="mb-4 -mx-6 overflow-x-auto overflow-y-hidden px-6 sm:mx-0 sm:px-0">
+            <TabsList>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="hearings">Hearings{hearings && hearings.length > 0 ? ` · ${hearings.length}` : ""}</TabsTrigger>
             <TabsTrigger value="tasks">Tasks{tasks && tasks.length > 0 ? ` · ${tasks.length}` : ""}</TabsTrigger>
             <TabsTrigger value="research">Research{research && research.length > 0 ? ` · ${research.length}` : ""}</TabsTrigger>
             <TabsTrigger value="documents">Documents{documents && documents.length > 0 ? ` · ${documents.length}` : ""}</TabsTrigger>
             <TabsTrigger value="notes">Notes &amp; learnings{notes && notes.length > 0 ? ` · ${notes.length}` : ""}</TabsTrigger>
-          </TabsList>
+            </TabsList>
+          </div>
 
           <TabsContent value="timeline">
             <CaseTimeline items={timeline} />
