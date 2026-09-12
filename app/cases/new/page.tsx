@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { createCase } from "@/lib/data/cases";
+import { createCase, listCases, type CaseListItem } from "@/lib/data/cases";
 import { CASE_TYPES, type CaseType } from "@/lib/constants";
 import { NavBar } from "@/components/layout/nav-bar";
 
@@ -20,8 +20,15 @@ export default function NewCasePage() {
   const [caseType, setCaseType] = useState<CaseType>("other");
   const [filingDate, setFilingDate] = useState("");
   const [tags, setTags] = useState("");
+  const [parentCaseId, setParentCaseId] = useState("");
+  const [otherCases, setOtherCases] = useState<CaseListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    listCases(supabase).then(({ data }) => setOtherCases(data ?? []));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,6 +58,7 @@ export default function NewCasePage() {
       tags: tags
         ? tags.split(",").map((t) => t.trim()).filter(Boolean)
         : [],
+      parent_case_id: parentCaseId || null,
     });
 
     if (error) {
@@ -163,6 +171,27 @@ export default function NewCasePage() {
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Related to an existing case (optional)
+            </label>
+            <select
+              value={parentCaseId}
+              onChange={(e) => setParentCaseId(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            >
+              <option value="">— None —</option>
+              {otherCases.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.case_title}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-gray-400">
+              Use this for an IA, interim application, appeal, or execution arising from another case.
+            </p>
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}

@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { updateCase, deleteCase } from "@/lib/data/cases";
+import { updateCase, deleteCase, type CaseListItem } from "@/lib/data/cases";
 import { CASE_TYPES, CASE_STATUSES, type CaseType, type CaseStatus } from "@/lib/constants";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import type { Case } from "@/types/database";
 
-export function EditCaseForm({ caseRow }: { caseRow: Case }) {
+export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCases: CaseListItem[] }) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -22,6 +22,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
   const [status, setStatus] = useState<CaseStatus>(caseRow.status);
   const [filingDate, setFilingDate] = useState(caseRow.filing_date ?? "");
   const [tags, setTags] = useState(caseRow.tags.join(", "));
+  const [parentCaseId, setParentCaseId] = useState(caseRow.parent_case_id ?? "");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -42,6 +43,7 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
       status,
       filing_date: filingDate || null,
       tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+      parent_case_id: parentCaseId || null,
     });
 
     if (error) {
@@ -179,6 +181,27 @@ export function EditCaseForm({ caseRow }: { caseRow: Case }) {
             onChange={(e) => setTags(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Related to an existing case (optional)
+          </label>
+          <select
+            value={parentCaseId}
+            onChange={(e) => setParentCaseId(e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          >
+            <option value="">— None —</option>
+            {otherCases.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.case_title}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-400">
+            Use this for an IA, interim application, appeal, or execution arising from another case.
+          </p>
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}

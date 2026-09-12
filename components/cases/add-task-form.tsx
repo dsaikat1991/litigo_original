@@ -11,6 +11,7 @@ export function AddTaskForm({ caseId }: { caseId: string }) {
 
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [isCritical, setIsCritical] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +35,7 @@ export function AddTaskForm({ caseId }: { caseId: string }) {
       case_id: caseId,
       title,
       due_date: dueDate || null,
+      is_critical: isCritical,
     });
 
     if (error) {
@@ -44,39 +46,51 @@ export function AddTaskForm({ caseId }: { caseId: string }) {
 
     setTitle("");
     setDueDate("");
+    setIsCritical(false);
     setLoading(false);
     router.refresh();
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-4 sm:flex-row sm:items-end">
-      <div className="flex-1">
-        <label className="mb-1 block text-xs font-medium text-gray-700">Task</label>
-        <input
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. File rejoinder before next date"
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-        />
+    <form onSubmit={handleSubmit} className="space-y-2 rounded-md border border-gray-200 bg-white p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <div className="flex-1">
+          <label className="mb-1 block text-xs font-medium text-gray-700">Task</label>
+          <input
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. File rejoinder before next date"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Due date</label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+        >
+          {loading ? "Adding..." : "Add task"}
+        </button>
       </div>
-      <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Due date</label>
+      <label className="flex items-center gap-2 text-xs text-gray-600">
         <input
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          type="checkbox"
+          checked={isCritical}
+          onChange={(e) => setIsCritical(e.target.checked)}
+          className="h-3.5 w-3.5 rounded border-gray-300 text-red-600 focus:ring-red-600/20"
         />
-      </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
-      >
-        {loading ? "Adding..." : "Add task"}
-      </button>
+        Critical deadline (e.g. limitation period) — missing this is not just a delay
+      </label>
     </form>
   );
 }

@@ -2,21 +2,24 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getCase } from "@/lib/data/cases";
+import { getCase, listChildCases } from "@/lib/data/cases";
 import { listHearingsForCase } from "@/lib/data/hearings";
 import { listNotesForCase } from "@/lib/data/notes";
 import { listTasksForCase } from "@/lib/data/tasks";
 import { listResearchForCase } from "@/lib/data/research";
+import { listDocumentsForCase } from "@/lib/data/case-documents";
 import { buildTimeline } from "@/lib/timeline";
 import { NavBar } from "@/components/layout/nav-bar";
 import { AddHearingForm } from "@/components/cases/add-hearing-form";
 import { AddNoteForm } from "@/components/cases/add-note-form";
 import { AddTaskForm } from "@/components/cases/add-task-form";
 import { AddResearchForm } from "@/components/cases/add-research-form";
+import { UploadDocumentForm } from "@/components/cases/upload-document-form";
 import { HearingItem } from "@/components/cases/hearing-item";
 import { NoteItem } from "@/components/cases/note-item";
 import { TaskItem } from "@/components/cases/task-item";
 import { ResearchItem } from "@/components/cases/research-item";
+import { DocumentItem } from "@/components/cases/document-item";
 import { CaseTimeline } from "@/components/cases/case-timeline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
@@ -46,12 +49,15 @@ export default async function CaseDetailPage({
     notFound();
   }
 
-  const [{ data: hearings }, { data: notes }, { data: tasks }, { data: research }] = await Promise.all([
-    listHearingsForCase(supabase, id),
-    listNotesForCase(supabase, id),
-    listTasksForCase(supabase, id),
-    listResearchForCase(supabase, id),
-  ]);
+  const [{ data: hearings }, { data: notes }, { data: tasks }, { data: research }, { data: documents }, { data: childCases }] =
+    await Promise.all([
+      listHearingsForCase(supabase, id),
+      listNotesForCase(supabase, id),
+      listTasksForCase(supabase, id),
+      listResearchForCase(supabase, id),
+      listDocumentsForCase(supabase, id),
+      listChildCases(supabase, id),
+    ]);
 
   const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? []);
 
@@ -60,6 +66,14 @@ export default async function CaseDetailPage({
       <NavBar />
       <main className="mx-auto max-w-3xl px-6 py-8">
         <div className="mb-6 rounded-md border border-gray-200 bg-white p-6">
+          {caseRow.parent_case && (
+            <Link
+              href={`/cases/${caseRow.parent_case.id}`}
+              className="mb-2 inline-block text-xs font-medium text-gray-500 hover:text-gray-900"
+            >
+              ↳ Related to: {caseRow.parent_case.case_title}
+            </Link>
+          )}
           <div className="mb-2 flex items-start justify-between">
             <h1 className="text-lg font-semibold text-gray-900">{caseRow.case_title}</h1>
             <div className="flex items-center gap-2">
@@ -95,12 +109,41 @@ export default async function CaseDetailPage({
           )}
         </div>
 
+        {childCases && childCases.length > 0 && (
+          <div className="mb-6 rounded-md border border-gray-200 bg-white p-4">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Related proceedings</p>
+            <div className="space-y-1.5">
+              {childCases.map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/cases/${c.id}`}
+                  className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="truncate font-medium text-gray-900">{c.case_title}</span>
+                    <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-600">
+                      {c.case_type}
+                    </span>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="text-xs text-gray-400">{c.next_hearing_date ?? "—"}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
+                      {c.status}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <Tabs defaultValue="timeline">
           <TabsList className="mb-4">
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="hearings">Hearings{hearings && hearings.length > 0 ? ` · ${hearings.length}` : ""}</TabsTrigger>
             <TabsTrigger value="tasks">Tasks{tasks && tasks.length > 0 ? ` · ${tasks.length}` : ""}</TabsTrigger>
             <TabsTrigger value="research">Research{research && research.length > 0 ? ` · ${research.length}` : ""}</TabsTrigger>
+            <TabsTrigger value="documents">Documents{documents && documents.length > 0 ? ` · ${documents.length}` : ""}</TabsTrigger>
             <TabsTrigger value="notes">Notes &amp; learnings{notes && notes.length > 0 ? ` · ${notes.length}` : ""}</TabsTrigger>
           </TabsList>
 
@@ -145,6 +188,19 @@ export default async function CaseDetailPage({
                 <p className="text-sm text-gray-500">No research logged yet.</p>
               ) : (
                 research.map((r) => <ResearchItem key={r.id} item={r} />)
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="documents">
+            <div className="mb-4">
+              <UploadDocumentForm caseId={id} />
+            </div>
+            <div className="space-y-2">
+              {!documents || documents.length === 0 ? (
+                <p className="text-sm text-gray-500">No documents uploaded yet.</p>
+              ) : (
+                documents.map((d) => <DocumentItem key={d.id} document={d} />)
               )}
             </div>
           </TabsContent>

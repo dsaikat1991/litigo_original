@@ -12,6 +12,7 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
   const supabase = createClient();
 
   const [title, setTitle] = useState("");
+  const [isCritical, setIsCritical] = useState(false);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +38,7 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
       hearing_id: hearingId,
       title: title.trim(),
       due_date: null,
+      is_critical: isCritical,
     });
 
     if (error) {
@@ -46,6 +48,7 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
     }
 
     setTitle("");
+    setIsCritical(false);
     setAdding(false);
     router.refresh();
   }
@@ -82,6 +85,11 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
                 className="h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
               />
               <span className={`flex-1 text-sm ${t.is_done ? "text-gray-400 line-through" : "text-gray-700"}`}>
+                {t.is_critical && !t.is_done && (
+                  <span className="mr-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    Critical
+                  </span>
+                )}
                 {t.title}
               </span>
               <button
@@ -95,20 +103,31 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
           ))}
         </ul>
       )}
-      <form onSubmit={handleAdd} className="flex gap-2">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Add a task for before the next hearing..."
-          className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-        />
-        <button
-          type="submit"
-          disabled={adding}
-          className="rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
-        >
-          Add
-        </button>
+      <form onSubmit={handleAdd} className="space-y-1.5">
+        <div className="flex gap-2">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Add a task for before the next hearing..."
+            className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+          <button
+            type="submit"
+            disabled={adding}
+            className="rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+          >
+            Add
+          </button>
+        </div>
+        <label className="flex items-center gap-2 text-xs text-gray-500">
+          <input
+            type="checkbox"
+            checked={isCritical}
+            onChange={(e) => setIsCritical(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-gray-300 text-red-600 focus:ring-red-600/20"
+          />
+          Critical deadline
+        </label>
       </form>
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>

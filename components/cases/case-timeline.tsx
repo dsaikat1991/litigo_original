@@ -97,7 +97,14 @@ function HearingEntry({ hearing, hearingTasks }: { hearing: Hearing; hearingTask
                   disabled
                   className="h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-gray-900"
                 />
-                <span className={t.is_done ? "text-gray-400 line-through" : "text-gray-700"}>{t.title}</span>
+                <span className={t.is_done ? "text-gray-400 line-through" : "text-gray-700"}>
+                  {t.is_critical && !t.is_done && (
+                    <span className="mr-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      Critical
+                    </span>
+                  )}
+                  {t.title}
+                </span>
               </li>
             ))}
           </ul>

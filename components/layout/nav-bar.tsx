@@ -9,6 +9,7 @@ import { UserMenu } from "./user-menu";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Cases" },
+  { href: "/today", label: "Today" },
   { href: "/calendar", label: "Calendar" },
   { href: "/notes", label: "Notes" },
 ];

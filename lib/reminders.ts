@@ -9,6 +9,7 @@ export type ReminderItem = {
   title: string;
   caseId: string;
   caseTitle: string;
+  isCritical: boolean;
 };
 
 /** Merges upcoming hearings and task due dates into one date-sorted list for the dashboard. */
@@ -22,6 +23,7 @@ export function buildReminders(cases: CaseListItem[], tasks: TaskWithCase[]): Re
       title: c.case_title,
       caseId: c.id,
       caseTitle: c.case_title,
+      isCritical: false,
     }));
 
   const taskItems: ReminderItem[] = tasks
@@ -33,6 +35,7 @@ export function buildReminders(cases: CaseListItem[], tasks: TaskWithCase[]): Re
       title: t.title,
       caseId: t.case_id,
       caseTitle: t.case?.case_title ?? "—",
+      isCritical: t.is_critical,
     }));
 
   return [...hearingItems, ...taskItems].sort((a, b) => a.date.localeCompare(b.date));

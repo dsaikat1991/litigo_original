@@ -57,6 +57,7 @@ export type Database = {
           filing_date: string | null;
           next_hearing_date: string | null;
           tags: string[];
+          parent_case_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -74,6 +75,7 @@ export type Database = {
           filing_date?: string | null;
           next_hearing_date?: string | null;
           tags?: string[];
+          parent_case_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -84,6 +86,13 @@ export type Database = {
             columns: ["advocate_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cases_parent_case_id_fkey";
+            columns: ["parent_case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
             referencedColumns: ["id"];
           },
         ];
@@ -179,6 +188,7 @@ export type Database = {
           title: string;
           due_date: string | null;
           is_done: boolean;
+          is_critical: boolean;
           completed_at: string | null;
           created_at: string;
         };
@@ -190,6 +200,7 @@ export type Database = {
           title: string;
           due_date?: string | null;
           is_done?: boolean;
+          is_critical?: boolean;
           completed_at?: string | null;
           created_at?: string;
         };
@@ -259,6 +270,45 @@ export type Database = {
           },
         ];
       };
+      case_documents: {
+        Row: {
+          id: string;
+          case_id: string;
+          advocate_id: string;
+          file_name: string;
+          storage_path: string;
+          file_size: number | null;
+          mime_type: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          case_id: string;
+          advocate_id: string;
+          file_name: string;
+          storage_path: string;
+          file_size?: number | null;
+          mime_type?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["case_documents"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "case_documents_case_id_fkey";
+            columns: ["case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "case_documents_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -283,3 +333,4 @@ export type Hearing = Database["public"]["Tables"]["hearings"]["Row"];
 export type Note = Database["public"]["Tables"]["notes"]["Row"];
 export type Task = Database["public"]["Tables"]["tasks"]["Row"];
 export type ResearchItem = Database["public"]["Tables"]["research_items"]["Row"];
+export type CaseDocument = Database["public"]["Tables"]["case_documents"]["Row"];

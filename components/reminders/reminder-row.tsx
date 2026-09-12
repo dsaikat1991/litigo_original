@@ -10,6 +10,11 @@ export function ReminderRow({ item }: { item: ReminderItem }) {
     >
       <div className="min-w-0">
         <p className="truncate font-medium text-gray-900">
+          {item.isCritical && (
+            <span className="mr-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+              Critical
+            </span>
+          )}
           {item.kind === "hearing" ? "Hearing — " : "Task — "}
           {item.title}
         </p>
