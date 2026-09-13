@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCase, listChildCases } from "@/lib/data/cases";
-import { listHearingsForCase } from "@/lib/data/hearings";
+import { listHearingsForCase, listHearingsForCases } from "@/lib/data/hearings";
 import { listNotesForCase } from "@/lib/data/notes";
 import { listTasksForCase } from "@/lib/data/tasks";
 import { listResearchForCase } from "@/lib/data/research";
@@ -61,6 +61,19 @@ export default async function CaseDetailPage({
 
   const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? [], childCases ?? []);
 
+  const childCaseIds = (childCases ?? []).map((c) => c.id);
+  const { data: childHearings } =
+    childCaseIds.length > 0
+      ? await listHearingsForCases(supabase, childCaseIds)
+      : { data: [] as { case_id: string; hearing_date: string; purpose: string | null }[] };
+
+  const latestHearingByCase = new Map<string, { hearing_date: string; purpose: string | null }>();
+  for (const h of childHearings ?? []) {
+    if (!latestHearingByCase.has(h.case_id)) {
+      latestHearingByCase.set(h.case_id, h);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <NavBar />
@@ -113,26 +126,37 @@ export default async function CaseDetailPage({
           <div className="mb-6 rounded-md border border-gray-200 bg-white p-4">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Related proceedings</p>
             <div className="space-y-1.5">
-              {childCases.map((c) => (
-                <Link
-                  key={c.id}
-                  href={`/cases/${c.id}`}
-                  className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-gray-50"
-                >
-                  <div className="flex min-w-0 items-center gap-2">
-                    <span className="truncate font-medium text-gray-900">{c.case_title}</span>
-                    <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-600">
-                      {c.case_type}
-                    </span>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <span className="text-xs text-gray-400">{c.next_hearing_date ?? "—"}</span>
-                    <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
-                      {c.status}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+              {childCases.map((c) => {
+                const lastHearing = latestHearingByCase.get(c.id);
+                return (
+                  <Link
+                    key={c.id}
+                    href={`/cases/${c.id}`}
+                    className="block rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-gray-50"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span className="truncate font-medium text-gray-900">{c.case_title}</span>
+                        <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-600">
+                          {c.case_type}
+                        </span>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="text-xs text-gray-400">Next: {c.next_hearing_date ?? "—"}</span>
+                        <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
+                          {c.status}
+                        </span>
+                      </div>
+                    </div>
+                    {lastHearing && (
+                      <p className="mt-0.5 truncate text-xs text-gray-400">
+                        Last hearing: {lastHearing.hearing_date}
+                        {lastHearing.purpose ? ` — ${lastHearing.purpose}` : ""}
+                      </p>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

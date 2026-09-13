@@ -68,12 +68,21 @@ function HearingEntry({
   hearingTasks: Task[];
   applicationCase: ChildCase | null;
 }) {
+  const hasDetails =
+    hearing.arguments_made ||
+    hearing.court_direction ||
+    hearing.court_observations ||
+    applicationCase ||
+    hearing.parties_present.length > 0 ||
+    hearing.advocates_appearing.length > 0 ||
+    hearing.documents_filed.length > 0;
+
   return (
     <div className="rounded-md border border-gray-200 bg-white p-4">
-      <span className="mb-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+      <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
         Hearing
       </span>
-      {hearing.purpose && <p className="text-sm font-medium text-gray-900">{hearing.purpose}</p>}
+      {hearing.purpose && <p className="mt-1.5 text-sm font-medium text-gray-900">{hearing.purpose}</p>}
       {(hearing.bench || hearing.judge || hearing.courtroom || hearing.stage) && (
         <p className="mt-0.5 text-xs text-gray-500">
           {[
@@ -86,59 +95,64 @@ function HearingEntry({
             .join(" · ")}
         </p>
       )}
-      {hearing.order_notes && <p className="mt-1 whitespace-pre-wrap text-sm text-gray-600">{hearing.order_notes}</p>}
+      {hearing.order_notes && <p className="mt-2 whitespace-pre-wrap text-sm text-gray-600">{hearing.order_notes}</p>}
 
-      {hearing.arguments_made && (
-        <div className="mt-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Arguments made</p>
-          <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.arguments_made}</p>
+      {hasDetails && (
+        <div className="mt-3 space-y-2.5 border-t border-gray-100 pt-3">
+          {hearing.arguments_made && (
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Arguments made</p>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.arguments_made}</p>
+            </div>
+          )}
+          {hearing.court_direction && (
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court direction</p>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.court_direction}</p>
+            </div>
+          )}
+          {hearing.court_observations && (
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court observations</p>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.court_observations}</p>
+            </div>
+          )}
+          {applicationCase && (
+            <p className="text-xs text-gray-500">
+              Application heard: <span className="font-medium text-gray-700">{applicationCase.case_title}</span>
+            </p>
+          )}
+          {(hearing.parties_present.length > 0 || hearing.advocates_appearing.length > 0) && (
+            <div className="flex flex-wrap gap-1">
+              {hearing.parties_present.map((p) => (
+                <span key={`party-${p}`} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                  {p}
+                </span>
+              ))}
+              {hearing.advocates_appearing.map((a) => (
+                <span key={`adv-${a}`} className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
+                  {a}
+                </span>
+              ))}
+            </div>
+          )}
+          {hearing.documents_filed.length > 0 && (
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Documents filed</p>
+              <div className="mt-1 flex flex-wrap gap-1">
+                {hearing.documents_filed.map((doc) => (
+                  <span key={doc} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                    {doc}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
-      {hearing.court_direction && (
-        <div className="mt-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court direction</p>
-          <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.court_direction}</p>
-        </div>
-      )}
-      {hearing.court_observations && (
-        <div className="mt-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court observations</p>
-          <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.court_observations}</p>
-        </div>
-      )}
-      {applicationCase && (
-        <p className="mt-2 text-xs text-gray-500">
-          Application heard: <span className="font-medium text-gray-700">{applicationCase.case_title}</span>
-        </p>
-      )}
-      {(hearing.parties_present.length > 0 || hearing.advocates_appearing.length > 0) && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {hearing.parties_present.map((p) => (
-            <span key={`party-${p}`} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-              {p}
-            </span>
-          ))}
-          {hearing.advocates_appearing.map((a) => (
-            <span key={`adv-${a}`} className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-              {a}
-            </span>
-          ))}
-        </div>
-      )}
-      {hearing.documents_filed.length > 0 && (
-        <div className="mt-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Documents filed</p>
-          <div className="mt-1 flex flex-wrap gap-1">
-            {hearing.documents_filed.map((doc) => (
-              <span key={doc} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                {doc}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+
       {hearingTasks.length > 0 && (
-        <div className="mt-2">
+        <div className="mt-3 border-t border-gray-100 pt-3">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Tasks before next hearing</p>
           <ul className="mt-1 space-y-1">
             {hearingTasks.map((t) => (
@@ -164,7 +178,7 @@ function HearingEntry({
       )}
 
       {hearing.next_date && (
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="mt-3 rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-500">
           Next hearing: <span className="font-medium text-gray-700">{formatDate(hearing.next_date)}</span>
           {hearing.next_purpose ? ` — ${hearing.next_purpose}` : ""}
         </p>

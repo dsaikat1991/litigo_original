@@ -11,7 +11,7 @@ const CASE_RESULT_COLUMNS = "id, case_title, client_name, court, status, next_he
  * the filter. Wrapping the value in double quotes (doubling any embedded
  * quotes) is PostgREST's documented escape for values with special characters.
  */
-function toOrLikePattern(term: string) {
+export function toOrLikePattern(term: string) {
   const escaped = term.replace(/"/g, '""');
   return `"%${escaped}%"`;
 }
@@ -29,6 +29,107 @@ export type SearchFilters = {
   dateTo?: string;
   tags?: string[];
 };
+
+export type QuickSearchResult = {
+  id: string;
+  type: "case" | "hearing" | "task" | "note" | "research" | "document";
+  title: string;
+  subtitle?: string;
+  href: string;
+};
+
+/**
+ * Lightweight keyword-only lookup for the navbar's live search dropdown —
+ * fetches a few rows per table in parallel and trims to `limit` combined
+ * results, prioritizing cases first. Date/tag filtering lives in `searchAll`
+ * for the full `/search` page instead.
+ */
+export async function quickSearch(
+  supabase: TypedClient,
+  query: string,
+  limit = 5,
+): Promise<QuickSearchResult[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+  const pattern = toOrLikePattern(trimmed);
+
+  const [casesRes, hearingsRes, tasksRes, notesRes, researchRes, documentsRes] = await Promise.all([
+    supabase
+      .from("cases")
+      .select("id, case_title, client_name")
+      .or(
+        [
+          `case_title.ilike.${pattern}`,
+          `client_name.ilike.${pattern}`,
+          `opposing_party.ilike.${pattern}`,
+          `case_number.ilike.${pattern}`,
+          `cnr_number.ilike.${pattern}`,
+          `court.ilike.${pattern}`,
+        ].join(","),
+      )
+      .limit(limit),
+    supabase
+      .from("hearings")
+      .select("id, case_id, purpose, hearing_date")
+      .or([`purpose.ilike.${pattern}`, `order_notes.ilike.${pattern}`, `judge.ilike.${pattern}`].join(","))
+      .limit(limit),
+    supabase.from("tasks").select("id, case_id, title").ilike("title", `%${trimmed}%`).limit(limit),
+    supabase
+      .from("notes")
+      .select("id, case_id, content")
+      .ilike("content", `%${trimmed}%`)
+      .limit(limit),
+    supabase
+      .from("research_items")
+      .select("id, case_id, citation")
+      .or([`citation.ilike.${pattern}`, `notes.ilike.${pattern}`].join(","))
+      .limit(limit),
+    supabase.from("case_documents").select("id, case_id, file_name").ilike("file_name", `%${trimmed}%`).limit(limit),
+  ]);
+
+  const results: QuickSearchResult[] = [
+    ...(casesRes.data ?? []).map((c) => ({
+      id: c.id,
+      type: "case" as const,
+      title: c.case_title,
+      subtitle: c.client_name ?? undefined,
+      href: `/cases/${c.id}`,
+    })),
+    ...(hearingsRes.data ?? []).map((h) => ({
+      id: h.id,
+      type: "hearing" as const,
+      title: h.purpose || "Hearing",
+      subtitle: h.hearing_date,
+      href: `/cases/${h.case_id}`,
+    })),
+    ...(tasksRes.data ?? []).map((t) => ({
+      id: t.id,
+      type: "task" as const,
+      title: t.title,
+      href: `/cases/${t.case_id}`,
+    })),
+    ...(notesRes.data ?? []).map((n) => ({
+      id: n.id,
+      type: "note" as const,
+      title: n.content.length > 80 ? `${n.content.slice(0, 80)}…` : n.content,
+      href: n.case_id ? `/cases/${n.case_id}` : "/notes",
+    })),
+    ...(researchRes.data ?? []).map((r) => ({
+      id: r.id,
+      type: "research" as const,
+      title: r.citation,
+      href: `/cases/${r.case_id}`,
+    })),
+    ...(documentsRes.data ?? []).map((d) => ({
+      id: d.id,
+      type: "document" as const,
+      title: d.file_name,
+      href: `/cases/${d.case_id}`,
+    })),
+  ];
+
+  return results.slice(0, limit);
+}
 
 export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
   const { query, dateFrom, dateTo, tags } = filters;

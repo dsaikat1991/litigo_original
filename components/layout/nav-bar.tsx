@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { NavSearchBox } from "./nav-search-box";
 import { NotificationBell } from "./notification-bell";
 import { UserMenu } from "./user-menu";
@@ -16,11 +17,15 @@ const NAV_LINKS = [
 
 const SEARCH_BOX_FALLBACK = (
   <div className="flex-1">
-    <input
-      disabled
-      placeholder="Search cases, notes, hearings..."
-      className="w-full max-w-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-400"
-    />
+    <div className="flex w-full max-w-sm items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5">
+      <Search className="h-4 w-4 shrink-0 text-gray-400" />
+      <input
+        disabled
+        placeholder="Search cases, notes, hearings..."
+        className="w-full min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-gray-400 focus:outline-none"
+      />
+      <SlidersHorizontal className="h-4 w-4 shrink-0 text-gray-300" />
+    </div>
   </div>
 );
 
@@ -42,7 +47,7 @@ export function NavBar() {
   ));
 
   return (
-    <nav className="border-b border-gray-200 bg-white px-6 py-3">
+    <nav className="sticky top-0 z-40 border-b border-gray-200 bg-white px-6 py-3">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <Link href="/dashboard" className="flex items-center">

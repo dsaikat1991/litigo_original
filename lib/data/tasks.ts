@@ -26,6 +26,16 @@ export function listUpcomingTasks(supabase: TypedClient, days: number) {
     .order("due_date", { ascending: true, nullsFirst: false });
 }
 
+/** Every open (not-done) task flagged as a critical deadline, across all of the advocate's cases. */
+export function listOpenCriticalTasks(supabase: TypedClient) {
+  return supabase
+    .from("tasks")
+    .select("*, case:cases(id, case_title)")
+    .eq("is_done", false)
+    .eq("is_critical", true)
+    .order("due_date", { ascending: true, nullsFirst: false });
+}
+
 export type NewTaskInput = Omit<
   Database["public"]["Tables"]["tasks"]["Insert"],
   "id" | "created_at" | "is_done" | "completed_at"

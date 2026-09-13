@@ -4,11 +4,11 @@ import { isoDateDaysFromNow } from "@/lib/dates";
 
 type TypedClient = SupabaseClient<Database>;
 
-const CASE_LIST_COLUMNS = "id, case_title, client_name, court, status, next_hearing_date" as const;
+const CASE_LIST_COLUMNS = "id, case_title, client_name, court, case_type, status, next_hearing_date" as const;
 
 export type CaseListItem = Pick<
   Database["public"]["Tables"]["cases"]["Row"],
-  "id" | "case_title" | "client_name" | "court" | "status" | "next_hearing_date"
+  "id" | "case_title" | "client_name" | "court" | "case_type" | "status" | "next_hearing_date"
 >;
 
 export function listCases(supabase: TypedClient) {

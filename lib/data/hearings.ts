@@ -11,6 +11,19 @@ export function listHearingsForCase(supabase: TypedClient, caseId: string) {
     .order("hearing_date", { ascending: false });
 }
 
+/**
+ * Every hearing for the given cases, most recent first. Used to find each
+ * case's latest hearing without an N+1 query — caller picks the first row
+ * per case_id since results are already ordered.
+ */
+export function listHearingsForCases(supabase: TypedClient, caseIds: string[]) {
+  return supabase
+    .from("hearings")
+    .select("case_id, hearing_date, purpose")
+    .in("case_id", caseIds)
+    .order("hearing_date", { ascending: false });
+}
+
 export type NewHearingInput = Omit<
   Database["public"]["Tables"]["hearings"]["Insert"],
   "id" | "created_at"

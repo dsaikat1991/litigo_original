@@ -2,9 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { listCases, listCasesWithHearingWithin } from "@/lib/data/cases";
-import { listUpcomingTasks } from "@/lib/data/tasks";
+import { listUpcomingTasks, listOpenCriticalTasks } from "@/lib/data/tasks";
 import { getProfile } from "@/lib/data/profiles";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
+import { daysAwayLabel, daysAwayStyle } from "@/lib/dates";
 import { NavBar } from "@/components/layout/nav-bar";
 import { ReminderRow } from "@/components/reminders/reminder-row";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
@@ -19,23 +20,47 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: cases }, { data: reminderCases }, { data: reminderTasks }, { data: profile }] = await Promise.all([
-    listCases(supabase),
-    listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
-    listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
-    user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
-  ]);
+  const [{ data: cases }, { data: reminderCases }, { data: reminderTasks }, { data: profile }, { data: criticalTasks }] =
+    await Promise.all([
+      listCases(supabase),
+      listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
+      listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
+      user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
+      listOpenCriticalTasks(supabase),
+    ]);
 
   const reminders = filterRemindersByPreference(
     buildReminders(reminderCases ?? [], reminderTasks ?? []),
     profile?.reminder_days ?? [7, 3, 1, 0],
   );
 
+  const activeCount = (cases ?? []).filter((c) => c.status === "active").length;
+  const criticalCount = criticalTasks?.length ?? 0;
+
+  const stats = [
+    { label: "Active cases", value: activeCount, critical: false },
+    { label: "Hearings this week", value: (reminderCases ?? []).length, critical: false },
+    { label: "Tasks due this week", value: (reminderTasks ?? []).length, critical: false },
+    { label: "Critical deadlines open", value: criticalCount, critical: criticalCount > 0 },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <NavBar />
 
       <main className="mx-auto max-w-4xl px-6 py-8">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {stats.map((s) => (
+            <div
+              key={s.label}
+              className={`rounded-md border p-4 ${s.critical ? "border-red-200 bg-red-50/40" : "border-gray-200 bg-white"}`}
+            >
+              <p className={`text-2xl font-semibold ${s.critical ? "text-red-700" : "text-gray-900"}`}>{s.value}</p>
+              <p className="mt-1 text-xs text-gray-500">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
         {reminders.length > 0 && (
           <div className="mb-8">
             <div className="mb-3 flex items-center justify-between">
@@ -79,13 +104,25 @@ export default async function DashboardPage() {
                   className="block rounded-md border border-gray-200 bg-white p-4 transition-colors hover:bg-gray-50"
                 >
                   <div className="mb-1 flex items-start justify-between gap-2">
-                    <span className="font-medium text-gray-900">{c.case_title}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-900">{c.case_title}</span>
+                      <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-500">
+                        {c.case_type}
+                      </span>
+                    </div>
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
                       {c.status}
                     </span>
                   </div>
                   <p className="text-sm text-gray-600">{c.client_name ?? "—"} · {c.court ?? "—"}</p>
-                  <p className="mt-1 text-sm text-gray-500">Next date: {c.next_hearing_date ?? "—"}</p>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <span className="text-sm text-gray-500">{c.next_hearing_date ?? "—"}</span>
+                    {c.next_hearing_date && (
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.next_hearing_date)}`}>
+                        {daysAwayLabel(c.next_hearing_date)}
+                      </span>
+                    )}
+                  </div>
                 </Link>
               ))}
             </div>
@@ -106,14 +143,28 @@ export default async function DashboardPage() {
                   {cases.map((c) => (
                     <tr key={c.id} className="border-b border-gray-100 transition-colors last:border-0 hover:bg-gray-50">
                       <td className="px-4 py-3">
-                        <Link href={`/cases/${c.id}`} className="font-medium text-gray-900 hover:underline">
-                          {c.case_title}
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <Link href={`/cases/${c.id}`} className="font-medium text-gray-900 hover:underline">
+                            {c.case_title}
+                          </Link>
+                          <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-500">
+                            {c.case_type}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-gray-600">{c.client_name ?? "—"}</td>
                       <td className="px-4 py-3 text-gray-600">{c.court ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {c.next_hearing_date ?? "—"}
+                      <td className="px-4 py-3">
+                        {c.next_hearing_date ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-600">{c.next_hearing_date}</span>
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.next_hearing_date)}`}>
+                              {daysAwayLabel(c.next_hearing_date)}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
