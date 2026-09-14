@@ -76,6 +76,41 @@ const MOCK_CASES = [
   },
 ];
 
+const MOCK_CASE_DETAIL = {
+  title: "Sharma vs Verma",
+  status: "Active",
+  statusStyle: "bg-green-50 text-green-700",
+  client: "R.D. Sharma",
+  court: "High Court, Calcutta",
+  caseType: "Writ",
+  nextHearing: "17 Sep 2026",
+};
+
+const MOCK_RELATED_CASE = {
+  title: "IA No. 5 of 2026",
+  type: "Civil",
+  status: "Active",
+  statusStyle: "bg-green-50 text-green-700",
+  lastHearing: "05 Sep 2026",
+  lastPurpose: "Heard and disposed",
+};
+
+const MOCK_TIMELINE = [
+  {
+    date: "12 Sep 2026",
+    kind: "note" as const,
+    badge: "Note",
+    content: "Client confirmed no settlement possible; proceeding to trial.",
+  },
+  {
+    date: "05 Sep 2026",
+    kind: "hearing" as const,
+    badge: "Hearing",
+    purpose: "Arguments on interim application",
+    next: "17 Sep 2026 — Final arguments",
+  },
+];
+
 export default async function HomePage() {
   const supabase = await createClient();
   const {
@@ -235,8 +270,8 @@ export default async function HomePage() {
               Made for the rhythm of court work
             </p>
           </div>
-          <div className="mt-8 border-t border-gray-200" />
         </div>
+        <div className="mt-8 border-t border-gray-200" />
       </section>
 
       {/* Features */}
@@ -277,6 +312,141 @@ export default async function HomePage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Case page preview */}
+      <section className="relative overflow-hidden border-t border-gray-100 pt-24 sm:pt-32">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">Inside every case</p>
+          <h2 className="max-w-xl text-4xl font-black leading-[1.05] tracking-tight text-gray-900 sm:text-5xl">
+            The whole matter,
+            <br />
+            one page deep.
+          </h2>
+          <p className="mt-4 max-w-md text-gray-600">
+            Case details, related proceedings, and a timeline of every hearing and note — organized the moment
+            you open it.
+          </p>
+
+          {/* MacBook mockup — deliberately cut off flat at the section boundary below, like it's still scrolling */}
+          <div className="-mb-16 mt-16 sm:-mb-20 sm:mt-20">
+            <div className="rounded-t-xl bg-gray-900 p-1.5">
+              <div className="mx-auto mb-1 h-1 w-1 rounded-full bg-gray-700" />
+              <div className="overflow-hidden rounded-t-md bg-white">
+                {/* Browser chrome */}
+                <div className="flex items-center gap-3 border-b border-gray-100 bg-gray-50 px-4 py-2.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-gray-300" />
+                    <span className="h-2 w-2 rounded-full bg-gray-300" />
+                    <span className="h-2 w-2 rounded-full bg-gray-300" />
+                  </div>
+                  <div className="mx-auto flex items-center gap-1.5 rounded-md border border-gray-100 bg-white px-3 py-1 text-xs text-gray-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+                    mylitigo.com/cases/sharma-vs-verma
+                  </div>
+                </div>
+
+                {/* Mini nav bar */}
+                <div className="flex items-center justify-between gap-4 border-b border-gray-200 px-4 py-2 text-left">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-gray-900">Litigo</span>
+                    <div className="hidden items-center gap-2.5 text-[11px] font-medium sm:flex">
+                      <span className="text-gray-900">Cases</span>
+                      <span className="text-gray-400">Today</span>
+                      <span className="text-gray-400">Calendar</span>
+                      <span className="text-gray-400">Notes</span>
+                    </div>
+                  </div>
+                  <span className="h-4 w-4 shrink-0 rounded-full bg-gray-200" />
+                </div>
+
+                {/* Case detail content */}
+                <div className="p-5 text-left">
+                  <div className="mb-3 rounded-md border border-gray-200 p-3">
+                    <div className="mb-1.5 flex items-start justify-between gap-2">
+                      <p className="text-sm font-semibold text-gray-900">{MOCK_CASE_DETAIL.title}</p>
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${MOCK_CASE_DETAIL.statusStyle}`}
+                      >
+                        {MOCK_CASE_DETAIL.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[11px] text-gray-500">
+                      <p>
+                        Client: <span className="text-gray-700">{MOCK_CASE_DETAIL.client}</span>
+                      </p>
+                      <p>
+                        Court: <span className="text-gray-700">{MOCK_CASE_DETAIL.court}</span>
+                      </p>
+                      <p>
+                        Case type: <span className="text-gray-700">{MOCK_CASE_DETAIL.caseType}</span>
+                      </p>
+                      <p>
+                        Next hearing:{" "}
+                        <span className="font-medium text-gray-900">{MOCK_CASE_DETAIL.nextHearing}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mb-3 rounded-md border border-gray-200 p-3">
+                    <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-gray-400">
+                      Related proceedings
+                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-medium text-gray-900">{MOCK_RELATED_CASE.title}</span>
+                        <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">
+                          {MOCK_RELATED_CASE.type}
+                        </span>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${MOCK_RELATED_CASE.statusStyle}`}
+                      >
+                        {MOCK_RELATED_CASE.status}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-[10px] text-gray-400">
+                      Last hearing: {MOCK_RELATED_CASE.lastHearing} — {MOCK_RELATED_CASE.lastPurpose}
+                    </p>
+                  </div>
+
+                  <div className="mb-3 flex items-center gap-3 border-b border-gray-100 pb-2 text-[11px] font-medium">
+                    <span className="rounded-md bg-gray-100 px-2 py-1 text-gray-900">Timeline</span>
+                    <span className="text-gray-400">Hearings · 2</span>
+                    <span className="hidden text-gray-400 sm:inline">Tasks</span>
+                    <span className="hidden text-gray-400 sm:inline">Documents</span>
+                    <span className="text-gray-400">Notes · 1</span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {MOCK_TIMELINE.map((item) => (
+                      <div key={item.date} className="flex gap-3">
+                        <span className="w-14 shrink-0 pt-0.5 text-right text-[10px] text-gray-400">
+                          {item.date}
+                        </span>
+                        <div className="min-w-0 flex-1 rounded-md border border-gray-100 bg-gray-50/60 p-2.5">
+                          <span className="mb-1 inline-block rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+                            {item.badge}
+                          </span>
+                          {item.kind === "note" ? (
+                            <p className="text-[11px] text-gray-600">{item.content}</p>
+                          ) : (
+                            <>
+                              <p className="text-[11px] font-medium text-gray-900">{item.purpose}</p>
+                              <p className="mt-1 rounded bg-gray-100/80 px-2 py-1 text-[10px] text-gray-500">
+                                Next hearing: <span className="font-medium text-gray-700">{item.next}</span>
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

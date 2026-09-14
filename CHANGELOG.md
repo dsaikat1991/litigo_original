@@ -5,6 +5,13 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ## [Unreleased]
 
 ### Changed
+- Hero's closing divider (below the caption strip) now spans the full page width instead of stopping at the content column's edges, matching the section borders used elsewhere on the landing page.
+- "Inside every case" MacBook mockup widened to the full content column (was capped at `max-w-3xl`) and the bezel thinned down; the separate laptop base/hinge stays removed. Its bottom is now deliberately clipped flat by the section boundary (`overflow-hidden` on the section + a negative bottom margin on the mockup, tuned to reveal both timeline entries before the cut) instead of bleeding over the next section's background or closing itself off with rounded corners — it reads as if the page is still scrolling past, cut off right at the divider into "How it works".
+
+### Added
+- Landing page: new "Inside every case" section between Features and How it works, showing a case detail page preview (case card, related proceedings, Timeline tab with a note and a hearing entry) inside a MacBook-style mockup — dark bezel with a camera dot, laptop base/hinge below the screen. Dummy case: "Sharma vs Verma" with a linked "IA No. 5 of 2026", reusing the same fictional case shown in the hero's dashboard mockup for continuity.
+
+### Changed
 - Fixed the "How it works" section using `max-w-5xl` while every other landing-page section uses `max-w-6xl` — its content was sitting further right than the hero/features above it. Now flush with the rest of the page.
 - Removed the hero's vertical lines entirely (both the three accent lines threading through the heading and the general background grid texture) — decided against after seeing them rendered. The soft radial blur behind the heading stays.
 - Fixed a stacking bug that made the hero's background grid texture and accent lines invisible in practice: they used a negative `z-index` with no ancestor establishing a real stacking context, so they were painting behind the page's own white background the whole time. The hero section now anchors its own stacking context (`z-0`), so both are actually visible — repositioned the three accent lines to 26%/52%/76% so they thread through the heading text itself, and confirmed the product-preview card (now `relative`, so it wins normal DOM-order stacking) still fully hides the lines passing behind it rather than the lines bleeding through.
