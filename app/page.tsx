@@ -282,7 +282,7 @@ export default async function HomePage() {
 
       {/* How it works */}
       <section className="border-t border-gray-100 bg-gray-50 py-24 sm:py-32">
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-6xl px-6">
           <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">How it works</p>
           <h2 className="max-w-xl text-4xl font-black leading-[1.05] tracking-tight text-gray-900 sm:text-5xl">
             Set up once.
