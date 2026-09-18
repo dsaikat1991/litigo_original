@@ -53,7 +53,11 @@ export async function updateSession(request: NextRequest) {
     "/sitemap.xml",
     "/opengraph-image",
     "/twitter-image",
-    "/api/cron",
+    // Every API route handles its own auth (a session check returning 401
+    // JSON, a shared-secret header, or a webhook signature) and must respond
+    // in kind to a fetch() caller — redirecting to the /login HTML page
+    // instead would break every client-side error handler expecting JSON.
+    "/api",
   ];
   const isAuthRoute =
     request.nextUrl.pathname === "/" ||

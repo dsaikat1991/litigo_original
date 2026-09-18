@@ -371,6 +371,42 @@ export type Database = {
           },
         ];
       };
+      subscriptions: {
+        Row: {
+          id: string;
+          advocate_id: string;
+          razorpay_customer_id: string | null;
+          razorpay_subscription_id: string | null;
+          plan: "free" | "pro";
+          billing_cycle: "monthly" | "annual" | null;
+          status: "created" | "active" | "cancelled" | "past_due";
+          current_period_end: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          advocate_id: string;
+          razorpay_customer_id?: string | null;
+          razorpay_subscription_id?: string | null;
+          plan?: "free" | "pro";
+          billing_cycle?: "monthly" | "annual" | null;
+          status?: "created" | "active" | "cancelled" | "past_due";
+          current_period_end?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["subscriptions"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {

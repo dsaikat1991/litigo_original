@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { createCase, listCases, type CaseListItem } from "@/lib/data/cases";
+import { getProfile } from "@/lib/data/profiles";
+import { getSubscription } from "@/lib/data/subscriptions";
+import { FREE_CASE_LIMIT, isGrandfathered } from "@/lib/billing";
 import { CASE_TYPES, type CaseType } from "@/lib/constants";
 import { NavBar } from "@/components/layout/nav-bar";
 
@@ -24,9 +28,32 @@ export default function NewCasePage() {
   const [otherCases, setOtherCases] = useState<CaseListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
+  const [checkingLimit, setCheckingLimit] = useState(true);
 
   useEffect(() => {
     listCases(supabase).then(({ data }) => setOtherCases(data ?? []));
+
+    async function checkLimit() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const [{ data: cases }, { data: profile }, { data: subscription }] = await Promise.all([
+        listCases(supabase),
+        getProfile(supabase, user.id),
+        getSubscription(supabase, user.id),
+      ]);
+
+      const isPro = subscription?.plan === "pro" && subscription?.status === "active";
+      const grandfathered = profile ? isGrandfathered(profile.created_at) : false;
+      const nonDisposedCount = (cases ?? []).filter((c) => c.status !== "disposed").length;
+
+      setLimitReached(!isPro && !grandfathered && nonDisposedCount >= FREE_CASE_LIMIT);
+      setCheckingLimit(false);
+    }
+    checkLimit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -76,7 +103,29 @@ export default function NewCasePage() {
       <main className="mx-auto max-w-2xl px-6 py-8">
         <h1 className="mb-6 text-lg font-semibold text-gray-900">New case</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-md border border-gray-200 bg-white p-6">
+        {limitReached && (
+          <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-4">
+            <p className="text-sm font-medium text-amber-900">
+              You&rsquo;ve reached the free plan&rsquo;s {FREE_CASE_LIMIT}-case limit.
+            </p>
+            <p className="mt-1 text-sm text-amber-800">
+              Close out a disposed matter, or{" "}
+              <Link href="/pricing" className="font-medium underline">
+                upgrade to Litigo Pro
+              </Link>{" "}
+              for unlimited active cases.
+            </p>
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className={`space-y-4 rounded-md border border-gray-200 bg-white p-6 ${
+            limitReached ? "pointer-events-none opacity-50" : ""
+          }`}
+          aria-disabled={limitReached}
+          inert={limitReached || checkingLimit ? true : undefined}
+        >
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Case title *</label>
             <input
