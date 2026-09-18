@@ -7,16 +7,13 @@ import { getSubscription } from "@/lib/data/subscriptions";
 import { isGrandfathered } from "@/lib/billing";
 import { NavBar } from "@/components/layout/nav-bar";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { UpgradeButton } from "@/components/billing/upgrade-button";
+import { ProPlanCard } from "@/components/billing/pro-plan-card";
 
 export const metadata: Metadata = {
   title: "Pricing",
   description:
     "Litigo is free for up to 5 active cases. Upgrade to Pro (₹299/month or ₹2,999/year) for unlimited cases.",
 };
-
-const upgradeButtonClass =
-  "flex w-full items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50";
 
 export default async function PricingPage() {
   const supabase = await createClient();
@@ -113,48 +110,7 @@ export default async function PricingPage() {
             </div>
           </div>
 
-          {/* Pro */}
-          <div className="rounded-lg border-2 border-gray-900 p-8">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Pro</h2>
-            <p className="mt-2 text-3xl font-bold text-gray-900">₹299</p>
-            <p className="mt-1 text-sm text-gray-500">per month, or ₹2,999/year (2 months free)</p>
-            <ul className="mt-6 space-y-3 text-sm text-gray-700">
-              <li className="flex items-start gap-2">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-gray-900" />
-                Everything in Free
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-gray-900" />
-                <span className="font-medium text-gray-900">Unlimited active cases</span>
-              </li>
-            </ul>
-            <div className="mt-8 space-y-2">
-              {isPro ? (
-                <p className="rounded-md bg-gray-50 py-2 text-center text-sm font-medium text-gray-500">
-                  Current plan
-                </p>
-              ) : user ? (
-                <>
-                  <UpgradeButton cycle="monthly" className={upgradeButtonClass}>
-                    Upgrade — Monthly
-                  </UpgradeButton>
-                  <UpgradeButton
-                    cycle="annual"
-                    className="flex w-full items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Upgrade — Annual
-                  </UpgradeButton>
-                </>
-              ) : (
-                <Link
-                  href="/signup"
-                  className="flex w-full items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-                >
-                  Sign up to upgrade
-                </Link>
-              )}
-            </div>
-          </div>
+          <ProPlanCard isPro={isPro} isLoggedIn={!!user} />
         </div>
 
         <p className="mt-10 text-center text-sm text-gray-500">
