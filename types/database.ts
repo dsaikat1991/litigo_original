@@ -343,6 +343,34 @@ export type Database = {
           },
         ];
       };
+      reminder_email_log: {
+        Row: {
+          id: string;
+          advocate_id: string;
+          item_kind: "hearing" | "task";
+          item_id: string;
+          threshold_days: number;
+          sent_at: string;
+        };
+        Insert: {
+          id?: string;
+          advocate_id: string;
+          item_kind: "hearing" | "task";
+          item_id: string;
+          threshold_days: number;
+          sent_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["reminder_email_log"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "reminder_email_log_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {

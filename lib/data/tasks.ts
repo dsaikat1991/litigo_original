@@ -26,6 +26,21 @@ export function listUpcomingTasks(supabase: TypedClient, days: number) {
     .order("due_date", { ascending: true, nullsFirst: false });
 }
 
+/**
+ * Same as `listUpcomingTasks`, but scoped by an explicit `advocateId` instead of
+ * relying on RLS — for the reminder-email cron, which runs on a service-role
+ * client with RLS bypassed and must filter per advocate itself.
+ */
+export function listUpcomingTasksForAdvocate(supabase: TypedClient, advocateId: string, days: number) {
+  return supabase
+    .from("tasks")
+    .select("*, case:cases(id, case_title)")
+    .eq("advocate_id", advocateId)
+    .eq("is_done", false)
+    .lte("due_date", isoDateDaysFromNow(days))
+    .order("due_date", { ascending: true, nullsFirst: false });
+}
+
 /** Every open (not-done) task flagged as a critical deadline, across all of the advocate's cases. */
 export function listOpenCriticalTasks(supabase: TypedClient) {
   return supabase

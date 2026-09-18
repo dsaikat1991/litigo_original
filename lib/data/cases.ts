@@ -38,6 +38,22 @@ export function listCasesWithHearingWithin(supabase: TypedClient, days: number) 
     .order("next_hearing_date", { ascending: true });
 }
 
+/**
+ * Same as `listCasesWithHearingWithin`, but scoped by an explicit `advocateId`
+ * instead of relying on RLS — for the reminder-email cron, which runs on a
+ * service-role client with RLS bypassed and must filter per advocate itself.
+ */
+export function listCasesWithHearingWithinForAdvocate(supabase: TypedClient, advocateId: string, days: number) {
+  return supabase
+    .from("cases")
+    .select(CASE_LIST_COLUMNS)
+    .eq("advocate_id", advocateId)
+    .not("next_hearing_date", "is", null)
+    .neq("status", "disposed")
+    .lte("next_hearing_date", isoDateDaysFromNow(days))
+    .order("next_hearing_date", { ascending: true });
+}
+
 const CAUSE_LIST_COLUMNS =
   "id, case_title, client_name, opposing_party, court, case_number, cnr_number, case_type, status, next_hearing_date" as const;
 

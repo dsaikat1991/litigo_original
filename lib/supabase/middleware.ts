@@ -53,6 +53,7 @@ export async function updateSession(request: NextRequest) {
     "/sitemap.xml",
     "/opengraph-image",
     "/twitter-image",
+    "/api/cron",
   ];
   const isAuthRoute =
     request.nextUrl.pathname === "/" ||
