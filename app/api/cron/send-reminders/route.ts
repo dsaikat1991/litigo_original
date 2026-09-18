@@ -78,7 +78,7 @@ export async function GET(request: Request) {
       const { subject, html, text } = buildReminderDigestEmail(profile.full_name, toSend);
 
       if (fromEmail) {
-        await resend.emails.send({ from: fromEmail, to: user.email, subject, html, text });
+        await resend.emails.send({ from: `Reminder: Litigo <${fromEmail}>`, to: user.email, subject, html, text });
       }
 
       await recordReminderEmailsSent(
