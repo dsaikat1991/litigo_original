@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Help Centre" };
+export const metadata: Metadata = {
+  title: "Help Centre",
+  description:
+    "Answers to common questions about Litigo — data privacy, sharing cases, mobile access, and account deletion.",
+};
 
 export default function HelpPage() {
   return (

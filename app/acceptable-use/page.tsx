@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Acceptable Use Policy" };
+export const metadata: Metadata = {
+  title: "Acceptable Use Policy",
+  description: "The acceptable and prohibited uses of Litigo's website and services.",
+};
 
 export default function AcceptableUsePage() {
   return (

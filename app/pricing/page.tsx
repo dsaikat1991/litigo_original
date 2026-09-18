@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Pricing" };
+export const metadata: Metadata = {
+  title: "Pricing",
+  description:
+    "Litigo is free to use during early development — case tracking, hearings, tasks, notes, research, and document uploads, all at no cost.",
+};
 
 export default function PricingPage() {
   return (

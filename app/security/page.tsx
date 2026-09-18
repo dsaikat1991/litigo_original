@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Security" };
+export const metadata: Metadata = {
+  title: "Security",
+  description:
+    "How Litigo protects your case data — row-level security enforced at the database level, Supabase-managed authentication, and private document storage.",
+};
 
 export default function SecurityPage() {
   return (

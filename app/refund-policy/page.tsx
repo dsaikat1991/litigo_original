@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Refund & Cancellation Policy" };
+export const metadata: Metadata = {
+  title: "Refund & Cancellation Policy",
+  description: "Litigo is currently free to use — there are no paid plans, subscriptions, or charges to refund or cancel.",
+};
 
 export default function RefundPolicyPage() {
   return (

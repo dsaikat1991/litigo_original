@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Documentation" };
+export const metadata: Metadata = {
+  title: "Documentation",
+  description: "How to use Litigo — cases, timeline, hearings, tasks, research, documents, and search, explained.",
+};
 
 export default function DocsPage() {
   return (

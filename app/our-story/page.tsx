@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Our Story" };
+export const metadata: Metadata = {
+  title: "Our Story",
+  description:
+    "Built by Saikat Das, a practicing advocate in Kolkata, out of the same case-knowledge problem he lives with in his own litigation practice.",
+};
 
 export default function OurStoryPage() {
   return (

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Privacy Policy" };
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How Litigo collects, uses, and protects your personal and case data, in line with India's DPDP Act 2023.",
+};
 
 export default function PrivacyPage() {
   return (

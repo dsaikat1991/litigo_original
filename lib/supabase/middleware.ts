@@ -49,6 +49,10 @@ export async function updateSession(request: NextRequest) {
     "/cookie-policy",
     "/refund-policy",
     "/acceptable-use",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/opengraph-image",
+    "/twitter-image",
   ];
   const isAuthRoute =
     request.nextUrl.pathname === "/" ||

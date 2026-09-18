@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Blog" };
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Updates and posts from the Litigo team. No posts yet — check back soon.",
+  robots: { index: false, follow: true },
+};
 
 export default function BlogPage() {
   return (

@@ -1,9 +1,52 @@
 import { Fragment } from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ClipboardList, Layers, Search, ArrowRight, ChevronRight, BookOpen, Plus, Scale, Check } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SiteFooter } from "@/components/marketing/site-footer";
+
+const PAGE_TITLE = "Litigo — Digital Case Diary for Indian Advocates & Litigators";
+const PAGE_DESCRIPTION =
+  "Replace the physical diary, WhatsApp threads, and Excel sheets. Litigo tracks every case, hearing date, and note in one place — built to work as fast as you do in court.";
+
+export const metadata: Metadata = {
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "Litigo",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+  },
+};
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Litigo",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description: PAGE_DESCRIPTION,
+  url: "https://mylitigo.com",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "INR",
+  },
+  audience: {
+    "@type": "Audience",
+    audienceType: "Solo advocates and litigators in India",
+  },
+};
 
 const CAPTURE_BUILD_FIND = [
   {
@@ -123,6 +166,11 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
       <header className="sticky top-0 z-30 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -151,7 +199,7 @@ export default async function HomePage() {
           <div className="max-w-3xl">
             <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-gray-600">
               <span className="h-1.5 w-1.5 rounded-full bg-gray-900" />
-              Built for solo advocates in India
+              Built for Litigators in India
             </span>
             <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-gray-900 sm:text-7xl">
               Your case diary,

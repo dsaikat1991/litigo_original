@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Cookie Policy" };
+export const metadata: Metadata = {
+  title: "Cookie Policy",
+  description: "How Litigo uses essential, performance, and functional cookies, and the third-party services that set them.",
+};
 
 export default function CookiePolicyPage() {
   return (

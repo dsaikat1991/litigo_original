@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Careers" };
+export const metadata: Metadata = {
+  title: "Careers",
+  description: "Litigo is currently built and maintained by a small, focused team. Not hiring right now.",
+};
 
 export default function CareersPage() {
   return (

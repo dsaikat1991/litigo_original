@@ -3,7 +3,10 @@ import path from "node:path";
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Changelog" };
+export const metadata: Metadata = {
+  title: "Changelog",
+  description: "Every notable feature, fix, and design change shipped to Litigo, in one place.",
+};
 
 type Section = { heading: string; items: string[] };
 type Release = { version: string; sections: Section[] };

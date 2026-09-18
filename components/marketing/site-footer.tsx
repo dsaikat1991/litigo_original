@@ -17,7 +17,6 @@ const COMPANY_LINKS: FooterLink[] = [
 ];
 
 const RESOURCES_LINKS: FooterLink[] = [
-  { label: "Blog", href: "/blog" },
   { label: "Documentation", href: "/docs" },
   { label: "Help Centre", href: "/help" },
 ];

@@ -4,7 +4,13 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added
+- SEO pass: root layout now sets `metadataBase`, a keyword-rich default title/description, Open Graph + Twitter card metadata, and explicit robots directives. Homepage gets its own tailored title/description/OG/Twitter override plus `SoftwareApplication` JSON-LD structured data. A branded Open Graph image is now generated on the fly at `/opengraph-image` (`app/opengraph-image.tsx`, dark background matching the app icon, wordmark + tagline) and used as the fallback social-share image site-wide. Added `app/robots.ts` (disallows authenticated app routes: dashboard, cases, today, calendar, notes, settings, profile, notifications, search, reset-password) and `app/sitemap.ts` listing all public marketing/legal pages. Added a `description` to every public marketing/legal page's metadata (pricing, security, changelog, about, our-story, careers, contact, docs, help, cookie-policy, refund-policy, acceptable-use, terms, privacy); `/blog` gets a `noindex` since it has no posts yet (thin-content page, left out of the sitemap too).
+- Fixed a real bug found while testing this: `/opengraph-image`, `/robots.txt`, and `/sitemap.xml` weren't in the auth middleware's public-path allowlist, so an unauthenticated crawler (no session cookie) would have been redirected to `/login` instead of reaching any of them — silently breaking search indexing and social-share previews in production. Added all three to `PUBLIC_PATH_PREFIXES` in `lib/supabase/middleware.ts`.
+
 ### Changed
+- Removed the "Blog" link from the footer's Resources column — decided against keeping an empty blog linked from the site until there's an actual content plan to publish to it. The `/blog` route itself stays (already `noindex`), just unlinked for now.
+- Hero badge copy changed from "Built for solo advocates in India" to "Built for Litigators in India".
 - Hero's closing divider (below the caption strip) now spans the full page width instead of stopping at the content column's edges, matching the section borders used elsewhere on the landing page.
 - "Inside every case" MacBook mockup widened to the full content column (was capped at `max-w-3xl`) and the bezel thinned down; the separate laptop base/hinge stays removed. Its bottom is now deliberately clipped flat by the section boundary (`overflow-hidden` on the section + a negative bottom margin on the mockup, tuned to reveal both timeline entries before the cut) instead of bleeding over the next section's background or closing itself off with rounded corners — it reads as if the page is still scrolling past, cut off right at the divider into "How it works".
 

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "Terms of Use" };
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description: "The terms governing your use of Litigo's digital case diary service.",
+};
 
 export default function TermsPage() {
   return (

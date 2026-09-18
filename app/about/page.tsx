@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { InfoPage } from "@/components/marketing/info-page";
 
-export const metadata: Metadata = { title: "About" };
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Litigo is a permanent, searchable record of an advocate's own case-by-case legal experience — not case management software, built India-first for litigating advocates.",
+};
 
 export default function AboutPage() {
   return (
