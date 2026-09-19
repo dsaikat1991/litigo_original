@@ -5,63 +5,59 @@ import { InfoPage } from "@/components/marketing/info-page";
 
 export const metadata: Metadata = {
   title: "Changelog",
-  description: "Every notable feature, fix, and design change shipped to Litigo, in one place.",
+  description: "What's new in Litigo, most recent first.",
 };
 
-type Section = { heading: string; items: string[] };
-type Release = { version: string; sections: Section[] };
+type Release = { heading: string; items: string[] };
 
-/** Strips inline markdown (`code`, **bold**, [text](url)) down to plain text. */
+/** Strips inline markdown (`code`, [text](url)) down to plain text — keeps **bold** for `renderBold` to turn into <strong> at render time. */
 function stripInlineMarkdown(text: string) {
-  return text
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+  return text.replace(/`([^`]+)`/g, "$1").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 }
 
+/**
+ * Parses PUBLIC_CHANGELOG.md — a hand-curated, customer-facing summary. This
+ * is deliberately a separate file from CHANGELOG.md (the full engineering
+ * log, which stays internal-only): that one has table names, migration
+ * files, and security implementation detail that's meaningless — or
+ * needlessly revealing — to an advocate using the product.
+ */
 function parseChangelog(markdown: string): Release[] {
   const releases: Release[] = [];
-  let currentRelease: Release | null = null;
-  let currentSection: Section | null = null;
+  let current: Release | null = null;
 
   for (const rawLine of markdown.split("\n")) {
     const line = rawLine.trimEnd();
     if (line.startsWith("## ")) {
-      currentRelease = { version: stripInlineMarkdown(line.replace(/^##\s*/, "")), sections: [] };
-      releases.push(currentRelease);
-      currentSection = null;
-    } else if (line.startsWith("### ") && currentRelease) {
-      currentSection = { heading: line.replace(/^###\s*/, ""), items: [] };
-      currentRelease.sections.push(currentSection);
-    } else if (line.startsWith("- ") && currentSection) {
-      currentSection.items.push(stripInlineMarkdown(line.slice(2)));
+      current = { heading: stripInlineMarkdown(line.replace(/^##\s*/, "")), items: [] };
+      releases.push(current);
+    } else if (line.startsWith("- ") && current) {
+      current.items.push(stripInlineMarkdown(line.slice(2)));
     }
   }
 
   return releases;
 }
 
+function renderBold(text: string) {
+  const parts = text.split(/\*\*([^*]+)\*\*/g);
+  return parts.map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part));
+}
+
 export default function ChangelogPage() {
-  const markdown = fs.readFileSync(path.join(process.cwd(), "CHANGELOG.md"), "utf-8");
+  const markdown = fs.readFileSync(path.join(process.cwd(), "PUBLIC_CHANGELOG.md"), "utf-8");
   const releases = parseChangelog(markdown);
 
   return (
-    <InfoPage title="Changelog" disclaimer="What's shipped, most recent first.">
+    <InfoPage title="Changelog" disclaimer="What's new in Litigo, most recent first.">
       {releases.map((release) => (
-        <section key={release.version}>
-          <h2 className="mb-2 font-semibold text-gray-900">{release.version}</h2>
-          <div className="space-y-3">
-            {release.sections.map((section) => (
-              <div key={section.heading}>
-                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-400">{section.heading}</p>
-                <ul className="list-disc space-y-1 pl-5">
-                  {section.items.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
+        <section key={release.heading}>
+          <h2 className="mb-2 font-semibold text-gray-900">{release.heading}</h2>
+          <ul className="list-disc space-y-1 pl-5">
+            {release.items.map((item, i) => (
+              <li key={i}>{renderBold(item)}</li>
             ))}
-          </div>
+          </ul>
         </section>
       ))}
     </InfoPage>
