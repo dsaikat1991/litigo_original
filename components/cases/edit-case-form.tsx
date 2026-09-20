@@ -8,7 +8,10 @@ import { CASE_TYPES, CASE_STATUSES, type CaseType, type CaseStatus } from "@/lib
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { MultiNameInput } from "@/components/cases/multi-name-input";
 import { joinNames, splitNames } from "@/lib/names";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Case } from "@/types/database";
+
+const NO_PARENT_CASE = "__none__";
 
 export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCases: CaseListItem[] }) {
   const router = useRouter();
@@ -249,18 +252,22 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Related to an existing case (optional)
           </label>
-          <select
-            value={parentCaseId}
-            onChange={(e) => setParentCaseId(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          <Select
+            value={parentCaseId || NO_PARENT_CASE}
+            onValueChange={(value) => setParentCaseId(value === NO_PARENT_CASE ? "" : value)}
           >
-            <option value="">— None —</option>
-            {otherCases.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.case_title}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_PARENT_CASE}>— None —</SelectItem>
+              {otherCases.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.case_title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <p className="mt-1 text-xs text-gray-400">
             Use this for an IA, interim application, appeal, or execution arising from another case.
           </p>

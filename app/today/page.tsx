@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { listTodaysCases } from "@/lib/data/cases";
-import { isoDateDaysFromNow, daysAwayLabel, daysAwayStyle } from "@/lib/dates";
+import { isoDateDaysFromNow } from "@/lib/dates";
 import { NavBar } from "@/components/layout/nav-bar";
 import { PrintButton } from "@/components/shared/print-button";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
@@ -53,16 +53,9 @@ export default async function TodayPage() {
               >
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <h2 className="font-medium text-gray-900">{c.case_title}</h2>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.next_hearing_date!)}`}
-                    >
-                      {daysAwayLabel(c.next_hearing_date!)}
-                    </span>
-                    <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
-                      {c.status}
-                    </span>
-                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
+                    {c.status}
+                  </span>
                 </div>
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm text-gray-600 sm:grid-cols-2">
                   <div>

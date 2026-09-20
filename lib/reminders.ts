@@ -62,7 +62,11 @@ export function buildReminders(
  * Keeps only reminders the advocate actually wants to see, per their
  * `profiles.reminder_days` preference (the 7/3/1/0-day toggles in Settings).
  * Overdue items are shown whenever the 0-day (same-day) threshold is on,
- * since something overdue is at least as urgent as something due today.
+ * since something overdue is at least as urgent as something due today —
+ * except overdue hearings, which are excluded here entirely: they already
+ * have a standing, always-visible home in the dashboard's "Overdue — not
+ * yet updated" section, so surfacing them here too would just be the same
+ * thing twice.
  */
 export function filterRemindersByPreference(reminders: ReminderItem[], enabledDays: number[]): ReminderItem[] {
   if (enabledDays.length === 0) return [];
@@ -70,7 +74,7 @@ export function filterRemindersByPreference(reminders: ReminderItem[], enabledDa
 
   return reminders.filter((r) => {
     const diff = daysAway(r.date);
-    if (diff < 0) return thresholds.has(0);
+    if (diff < 0) return r.kind !== "hearing" && thresholds.has(0);
     return thresholds.has(diff);
   });
 }

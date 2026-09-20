@@ -8,6 +8,10 @@ What's new in Litigo, most recent first.
 - Client name and Opposing party now support more than one name — click the **+** beside either field to add another.
 - Added **Diary number**, **Client phone/email**, and **Opposing counsel** to case records — client phone and email are now clickable to call or email directly. All are searchable from the search bar.
 - Added a **Limitation date** field — shown as a prominent red banner on the case page and a badge on your case list, so a statutory deadline is hard to miss. It now also triggers in-app and email reminders, same as hearings and tasks, using your existing reminder settings. Also added an **Act & section** field for the governing law.
+- Restyled the "Related to an existing case" dropdown on the New/Edit case forms to match the rest of the app instead of your browser's default dropdown look.
+- Added an **"Overdue — not yet updated"** section to the dashboard — a standing list of cases whose hearing date has passed but hasn't been logged yet, always visible regardless of your reminder settings.
+- `/today` now shows only what's genuinely listed today — overdue hearings moved exclusively to the dashboard's new Overdue section, so Today's cause list isn't mixing the two anymore.
+- Overdue hearings no longer also show up in the "Upcoming in the next 7 days" list — they now live only in the dashboard's Overdue section, so you won't see the same one twice.
 
 ## Litigo Pro and email reminders
 

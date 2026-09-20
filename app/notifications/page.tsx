@@ -36,7 +36,8 @@ export default async function NotificationsPage() {
       <main className="mx-auto max-w-2xl px-6 py-8">
         <h1 className="mb-1 text-lg font-semibold text-gray-900">Notifications</h1>
         <p className="mb-6 text-sm text-gray-500">
-          Every hearing, task, and limitation date due in the next {REMINDER_WINDOW_DAYS} days, including anything overdue.
+          Every hearing, task, and limitation date due in the next {REMINDER_WINDOW_DAYS} days, including overdue tasks and
+          limitation dates. Overdue hearings are on the dashboard instead.
         </p>
 
         {reminders.length === 0 ? (

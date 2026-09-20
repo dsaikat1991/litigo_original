@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { listCases, listCasesWithHearingWithin, listCasesWithLimitationWithin } from "@/lib/data/cases";
+import { listCases, listCasesWithHearingWithin, listCasesWithLimitationWithin, listOverdueCases } from "@/lib/data/cases";
 import { listUpcomingTasks, listOpenCriticalTasks } from "@/lib/data/tasks";
 import { getProfile } from "@/lib/data/profiles";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
-import { daysAwayLabel, daysAwayStyle } from "@/lib/dates";
+import { daysAway, daysAwayLabel, daysAwayStyle } from "@/lib/dates";
 import { NavBar } from "@/components/layout/nav-bar";
 import { ReminderRow } from "@/components/reminders/reminder-row";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
@@ -25,6 +25,7 @@ export default async function DashboardPage() {
     { data: reminderCases },
     { data: reminderTasks },
     { data: reminderLimitationCases },
+    { data: overdueCases },
     { data: profile },
     { data: criticalTasks },
   ] = await Promise.all([
@@ -32,6 +33,7 @@ export default async function DashboardPage() {
     listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
     listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
     listCasesWithLimitationWithin(supabase, REMINDER_WINDOW_DAYS),
+    listOverdueCases(supabase),
     user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
     listOpenCriticalTasks(supabase),
   ]);
@@ -67,6 +69,39 @@ export default async function DashboardPage() {
             </div>
           ))}
         </div>
+
+        {overdueCases && overdueCases.length > 0 && (
+          <div className="mb-8">
+            <div className="mb-3">
+              <h2 className="text-sm font-semibold text-gray-900">Overdue — not yet updated</h2>
+              <p className="text-xs text-gray-500">
+                These hearings have passed. Log what happened and set the next date to clear them from this list.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {overdueCases.map((c) => {
+                const days = Math.abs(daysAway(c.next_hearing_date!));
+                return (
+                  <Link
+                    key={c.id}
+                    href={`/cases/${c.id}`}
+                    className="flex items-center justify-between gap-3 rounded-md border border-red-200 bg-red-50/40 p-3 text-sm transition-colors hover:bg-red-50"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-gray-900">{c.case_title}</p>
+                      <p className="truncate text-xs text-gray-500">
+                        {c.client_name ?? "—"} · {c.court ?? "—"}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                      {days} {days === 1 ? "day" : "days"} overdue
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {reminders.length > 0 && (
           <div className="mb-8">

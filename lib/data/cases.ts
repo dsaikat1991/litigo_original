@@ -55,6 +55,21 @@ export function listCasesWithHearingWithinForAdvocate(supabase: TypedClient, adv
     .order("next_hearing_date", { ascending: true });
 }
 
+/**
+ * Cases (not disposed) whose next hearing date has already passed — almost
+ * always meaning the hearing happened but the outcome/next date hasn't been
+ * logged yet, distinct from a hearing genuinely coming up.
+ */
+export function listOverdueCases(supabase: TypedClient) {
+  return supabase
+    .from("cases")
+    .select(CASE_LIST_COLUMNS)
+    .not("next_hearing_date", "is", null)
+    .neq("status", "disposed")
+    .lt("next_hearing_date", isoDateDaysFromNow(0))
+    .order("next_hearing_date", { ascending: true });
+}
+
 /** Cases (not disposed) with a limitation date within `days` from today — includes overdue. */
 export function listCasesWithLimitationWithin(supabase: TypedClient, days: number) {
   return supabase
@@ -99,19 +114,18 @@ export type CauseListItem = Pick<
 >;
 
 /**
- * Today's cause list — cases (not disposed) whose next hearing is today or
- * earlier. "Earlier" is included deliberately: a next_hearing_date in the
- * past almost always means the hearing already happened but hasn't been
- * logged yet, which the advocate needs to know about just as urgently as
- * today's actual listings.
+ * Today's cause list — cases (not disposed) whose next hearing is exactly
+ * today. Overdue hearings (a past next_hearing_date not yet logged) are
+ * deliberately excluded — they get their own standing "Overdue — not yet
+ * updated" section on the dashboard instead, so this page stays a clean
+ * list of what's actually listed today.
  */
 export function listTodaysCases(supabase: TypedClient) {
   return supabase
     .from("cases")
     .select(CAUSE_LIST_COLUMNS)
-    .not("next_hearing_date", "is", null)
     .neq("status", "disposed")
-    .lte("next_hearing_date", isoDateDaysFromNow(0))
+    .eq("next_hearing_date", isoDateDaysFromNow(0))
     .order("next_hearing_date", { ascending: true });
 }
 
