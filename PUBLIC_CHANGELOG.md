@@ -2,6 +2,13 @@
 
 What's new in Litigo, most recent first.
 
+## Multiple parties per case
+
+- "Case title" is now labelled **Cause Title**.
+- Client name and Opposing party now support more than one name — click the **+** beside either field to add another.
+- Added **Diary number**, **Client phone/email**, and **Opposing counsel** to case records — client phone and email are now clickable to call or email directly. All are searchable from the search bar.
+- Added a **Limitation date** field — shown as a prominent red banner on the case page and a badge on your case list, so a statutory deadline is hard to miss. It now also triggers in-app and email reminders, same as hearings and tasks, using your existing reminder settings. Also added an **Act & section** field for the governing law.
+
 ## Litigo Pro and email reminders
 
 - Introduced **Litigo Pro** (₹299/month or ₹2,999/year) — unlimited active cases. The free plan covers up to 5 active cases and is otherwise fully featured.

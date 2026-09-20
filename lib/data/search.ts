@@ -64,6 +64,9 @@ export async function quickSearch(
           `opposing_party.ilike.${pattern}`,
           `case_number.ilike.${pattern}`,
           `cnr_number.ilike.${pattern}`,
+          `diary_number.ilike.${pattern}`,
+          `opposing_counsel.ilike.${pattern}`,
+          `act_section.ilike.${pattern}`,
           `court.ilike.${pattern}`,
         ].join(","),
       )
@@ -156,6 +159,9 @@ export async function searchAll(supabase: TypedClient, filters: SearchFilters) {
         `opposing_party.ilike.${pattern}`,
         `case_number.ilike.${pattern}`,
         `cnr_number.ilike.${pattern}`,
+        `diary_number.ilike.${pattern}`,
+        `opposing_counsel.ilike.${pattern}`,
+        `act_section.ilike.${pattern}`,
         `court.ilike.${pattern}`,
       ].join(",")
     );

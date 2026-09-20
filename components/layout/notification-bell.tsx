@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { listCasesWithHearingWithin } from "@/lib/data/cases";
+import { listCasesWithHearingWithin, listCasesWithLimitationWithin } from "@/lib/data/cases";
 import { listUpcomingTasks } from "@/lib/data/tasks";
 import { getProfile } from "@/lib/data/profiles";
 import { buildReminders, filterRemindersByPreference, type ReminderItem } from "@/lib/reminders";
@@ -28,14 +28,18 @@ export function NotificationBell() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      const [{ data: cases }, { data: tasks }, { data: profile }] = await Promise.all([
+      const [{ data: cases }, { data: tasks }, { data: limitationCases }, { data: profile }] = await Promise.all([
         listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
         listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
+        listCasesWithLimitationWithin(supabase, REMINDER_WINDOW_DAYS),
         user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
       ]);
       if (!cancelled) {
         setReminders(
-          filterRemindersByPreference(buildReminders(cases ?? [], tasks ?? []), profile?.reminder_days ?? [7, 3, 1, 0]),
+          filterRemindersByPreference(
+            buildReminders(cases ?? [], tasks ?? [], limitationCases ?? []),
+            profile?.reminder_days ?? [7, 3, 1, 0],
+          ),
         );
       }
     }

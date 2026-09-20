@@ -52,9 +52,15 @@ export type Database = {
           court: string | null;
           case_number: string | null;
           cnr_number: string | null;
+          diary_number: string | null;
+          client_phone: string | null;
+          client_email: string | null;
+          opposing_counsel: string | null;
+          act_section: string | null;
           case_type: CaseType;
           status: CaseStatus;
           filing_date: string | null;
+          limitation_date: string | null;
           next_hearing_date: string | null;
           tags: string[];
           parent_case_id: string | null;
@@ -70,9 +76,15 @@ export type Database = {
           court?: string | null;
           case_number?: string | null;
           cnr_number?: string | null;
+          diary_number?: string | null;
+          client_phone?: string | null;
+          client_email?: string | null;
+          opposing_counsel?: string | null;
+          act_section?: string | null;
           case_type?: CaseType;
           status?: CaseStatus;
           filing_date?: string | null;
+          limitation_date?: string | null;
           next_hearing_date?: string | null;
           tags?: string[];
           parent_case_id?: string | null;
@@ -347,7 +359,7 @@ export type Database = {
         Row: {
           id: string;
           advocate_id: string;
-          item_kind: "hearing" | "task";
+          item_kind: "hearing" | "task" | "limitation";
           item_id: string;
           threshold_days: number;
           sent_at: string;
@@ -355,7 +367,7 @@ export type Database = {
         Insert: {
           id?: string;
           advocate_id: string;
-          item_kind: "hearing" | "task";
+          item_kind: "hearing" | "task" | "limitation";
           item_id: string;
           threshold_days: number;
           sent_at?: string;

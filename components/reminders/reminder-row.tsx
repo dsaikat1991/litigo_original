@@ -15,7 +15,7 @@ export function ReminderRow({ item }: { item: ReminderItem }) {
               Critical
             </span>
           )}
-          {item.kind === "hearing" ? "Hearing — " : "Task — "}
+          {item.kind === "hearing" ? "Hearing — " : item.kind === "limitation" ? "Limitation — " : "Task — "}
           {item.title}
         </p>
         {item.kind === "task" && <p className="truncate text-xs text-gray-500">{item.caseTitle}</p>}

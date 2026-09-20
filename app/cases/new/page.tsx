@@ -8,21 +8,29 @@ import { createCase, listCases, type CaseListItem } from "@/lib/data/cases";
 import { getProfile } from "@/lib/data/profiles";
 import { getSubscription } from "@/lib/data/subscriptions";
 import { FREE_CASE_LIMIT, isGrandfathered } from "@/lib/billing";
+import { joinNames } from "@/lib/names";
 import { CASE_TYPES, type CaseType } from "@/lib/constants";
 import { NavBar } from "@/components/layout/nav-bar";
+import { MultiNameInput } from "@/components/cases/multi-name-input";
 
 export default function NewCasePage() {
   const router = useRouter();
   const supabase = createClient();
 
   const [caseTitle, setCaseTitle] = useState("");
-  const [clientName, setClientName] = useState("");
-  const [opposingParty, setOpposingParty] = useState("");
+  const [clientNames, setClientNames] = useState<string[]>([""]);
+  const [opposingParties, setOpposingParties] = useState<string[]>([""]);
   const [court, setCourt] = useState("");
   const [caseNumber, setCaseNumber] = useState("");
   const [cnrNumber, setCnrNumber] = useState("");
+  const [diaryNumber, setDiaryNumber] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [opposingCounsel, setOpposingCounsel] = useState("");
+  const [actSection, setActSection] = useState("");
   const [caseType, setCaseType] = useState<CaseType>("other");
   const [filingDate, setFilingDate] = useState("");
+  const [limitationDate, setLimitationDate] = useState("");
   const [tags, setTags] = useState("");
   const [parentCaseId, setParentCaseId] = useState("");
   const [otherCases, setOtherCases] = useState<CaseListItem[]>([]);
@@ -75,13 +83,19 @@ export default function NewCasePage() {
     const { data, error } = await createCase(supabase, {
       advocate_id: user.id,
       case_title: caseTitle,
-      client_name: clientName || null,
-      opposing_party: opposingParty || null,
+      client_name: joinNames(clientNames),
+      opposing_party: joinNames(opposingParties),
       court: court || null,
       case_number: caseNumber || null,
       cnr_number: cnrNumber || null,
+      diary_number: diaryNumber || null,
+      client_phone: clientPhone || null,
+      client_email: clientEmail || null,
+      opposing_counsel: opposingCounsel || null,
+      act_section: actSection || null,
       case_type: caseType,
       filing_date: filingDate || null,
+      limitation_date: limitationDate || null,
       tags: tags
         ? tags.split(",").map((t) => t.trim()).filter(Boolean)
         : [],
@@ -127,7 +141,7 @@ export default function NewCasePage() {
           inert={limitReached || checkingLimit ? true : undefined}
         >
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Case title *</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Cause Title *</label>
             <input
               required
               value={caseTitle}
@@ -138,19 +152,47 @@ export default function NewCasePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <MultiNameInput label="Client name" values={clientNames} onChange={setClientNames} />
+            <MultiNameInput label="Opposing party" values={opposingParties} onChange={setOpposingParties} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Client name</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Client phone</label>
               <input
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
+                type="tel"
+                value={clientPhone}
+                onChange={(e) => setClientPhone(e.target.value)}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Opposing party</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Client email</label>
               <input
-                value={opposingParty}
-                onChange={(e) => setOpposingParty(e.target.value)}
+                type="email"
+                value={clientEmail}
+                onChange={(e) => setClientEmail(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Opposing counsel</label>
+              <input
+                value={opposingCounsel}
+                onChange={(e) => setOpposingCounsel(e.target.value)}
+                placeholder="Advocate representing the other side"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Act &amp; section</label>
+              <input
+                value={actSection}
+                onChange={(e) => setActSection(e.target.value)}
+                placeholder="e.g. Section 138, Negotiable Instruments Act"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
@@ -201,6 +243,16 @@ export default function NewCasePage() {
             </div>
           </div>
 
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Diary number</label>
+            <input
+              value={diaryNumber}
+              onChange={(e) => setDiaryNumber(e.target.value)}
+              placeholder="Assigned on e-filing, before a case number is issued"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            />
+          </div>
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Filing date</label>
@@ -212,14 +264,24 @@ export default function NewCasePage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Tags (comma separated)</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Limitation date</label>
               <input
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="e.g. bail, urgent"
+                type="date"
+                value={limitationDate}
+                onChange={(e) => setLimitationDate(e.target.value)}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Tags (comma separated)</label>
+            <input
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="e.g. bail, urgent"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            />
           </div>
 
           <div>

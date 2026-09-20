@@ -5,15 +5,19 @@ import { daysAway } from "@/lib/dates";
 export type ReminderItem = {
   id: string;
   date: string;
-  kind: "hearing" | "task";
+  kind: "hearing" | "task" | "limitation";
   title: string;
   caseId: string;
   caseTitle: string;
   isCritical: boolean;
 };
 
-/** Merges upcoming hearings and task due dates into one date-sorted list for the dashboard. */
-export function buildReminders(cases: CaseListItem[], tasks: TaskWithCase[]): ReminderItem[] {
+/** Merges upcoming hearings, task due dates, and case limitation dates into one date-sorted list for the dashboard. */
+export function buildReminders(
+  cases: CaseListItem[],
+  tasks: TaskWithCase[],
+  limitationCases: CaseListItem[] = [],
+): ReminderItem[] {
   const hearingItems: ReminderItem[] = cases
     .filter((c): c is CaseListItem & { next_hearing_date: string } => c.next_hearing_date !== null)
     .map((c) => ({
@@ -38,7 +42,20 @@ export function buildReminders(cases: CaseListItem[], tasks: TaskWithCase[]): Re
       isCritical: t.is_critical,
     }));
 
-  return [...hearingItems, ...taskItems].sort((a, b) => a.date.localeCompare(b.date));
+  // Limitation dates are inherently critical — missing one can be fatal to the matter.
+  const limitationItems: ReminderItem[] = limitationCases
+    .filter((c): c is CaseListItem & { limitation_date: string } => c.limitation_date !== null)
+    .map((c) => ({
+      id: `limitation-${c.id}`,
+      date: c.limitation_date,
+      kind: "limitation",
+      title: c.case_title,
+      caseId: c.id,
+      caseTitle: c.case_title,
+      isCritical: true,
+    }));
+
+  return [...hearingItems, ...taskItems, ...limitationItems].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**

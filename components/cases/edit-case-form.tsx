@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { updateCase, deleteCase, type CaseListItem } from "@/lib/data/cases";
 import { CASE_TYPES, CASE_STATUSES, type CaseType, type CaseStatus } from "@/lib/constants";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
+import { MultiNameInput } from "@/components/cases/multi-name-input";
+import { joinNames, splitNames } from "@/lib/names";
 import type { Case } from "@/types/database";
 
 export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCases: CaseListItem[] }) {
@@ -13,14 +15,20 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
   const supabase = createClient();
 
   const [caseTitle, setCaseTitle] = useState(caseRow.case_title);
-  const [clientName, setClientName] = useState(caseRow.client_name ?? "");
-  const [opposingParty, setOpposingParty] = useState(caseRow.opposing_party ?? "");
+  const [clientNames, setClientNames] = useState<string[]>(splitNames(caseRow.client_name));
+  const [opposingParties, setOpposingParties] = useState<string[]>(splitNames(caseRow.opposing_party));
   const [court, setCourt] = useState(caseRow.court ?? "");
   const [caseNumber, setCaseNumber] = useState(caseRow.case_number ?? "");
   const [cnrNumber, setCnrNumber] = useState(caseRow.cnr_number ?? "");
+  const [diaryNumber, setDiaryNumber] = useState(caseRow.diary_number ?? "");
+  const [clientPhone, setClientPhone] = useState(caseRow.client_phone ?? "");
+  const [clientEmail, setClientEmail] = useState(caseRow.client_email ?? "");
+  const [opposingCounsel, setOpposingCounsel] = useState(caseRow.opposing_counsel ?? "");
+  const [actSection, setActSection] = useState(caseRow.act_section ?? "");
   const [caseType, setCaseType] = useState<CaseType>(caseRow.case_type);
   const [status, setStatus] = useState<CaseStatus>(caseRow.status);
   const [filingDate, setFilingDate] = useState(caseRow.filing_date ?? "");
+  const [limitationDate, setLimitationDate] = useState(caseRow.limitation_date ?? "");
   const [tags, setTags] = useState(caseRow.tags.join(", "));
   const [parentCaseId, setParentCaseId] = useState(caseRow.parent_case_id ?? "");
   const [error, setError] = useState<string | null>(null);
@@ -34,14 +42,20 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
 
     const { error } = await updateCase(supabase, caseRow.id, {
       case_title: caseTitle,
-      client_name: clientName || null,
-      opposing_party: opposingParty || null,
+      client_name: joinNames(clientNames),
+      opposing_party: joinNames(opposingParties),
       court: court || null,
       case_number: caseNumber || null,
       cnr_number: cnrNumber || null,
+      diary_number: diaryNumber || null,
+      client_phone: clientPhone || null,
+      client_email: clientEmail || null,
+      opposing_counsel: opposingCounsel || null,
+      act_section: actSection || null,
       case_type: caseType,
       status,
       filing_date: filingDate || null,
+      limitation_date: limitationDate || null,
       tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
       parent_case_id: parentCaseId || null,
     });
@@ -76,7 +90,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4 rounded-md border border-gray-200 bg-white p-6">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Case title *</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Cause Title *</label>
           <input
             required
             value={caseTitle}
@@ -86,19 +100,47 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <MultiNameInput label="Client name" values={clientNames} onChange={setClientNames} />
+          <MultiNameInput label="Opposing party" values={opposingParties} onChange={setOpposingParties} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Client name</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Client phone</label>
             <input
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
+              type="tel"
+              value={clientPhone}
+              onChange={(e) => setClientPhone(e.target.value)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Opposing party</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Client email</label>
             <input
-              value={opposingParty}
-              onChange={(e) => setOpposingParty(e.target.value)}
+              type="email"
+              value={clientEmail}
+              onChange={(e) => setClientEmail(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Opposing counsel</label>
+            <input
+              value={opposingCounsel}
+              onChange={(e) => setOpposingCounsel(e.target.value)}
+              placeholder="Advocate representing the other side"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Act &amp; section</label>
+            <input
+              value={actSection}
+              onChange={(e) => setActSection(e.target.value)}
+              placeholder="e.g. Section 138, Negotiable Instruments Act"
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
@@ -148,6 +190,16 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
           </div>
         </div>
 
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Diary number</label>
+          <input
+            value={diaryNumber}
+            onChange={(e) => setDiaryNumber(e.target.value)}
+            placeholder="Assigned on e-filing, before a case number is issued"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          />
+        </div>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Filing date</label>
@@ -159,19 +211,29 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as CaseStatus)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm capitalize transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-            >
-              {CASE_STATUSES.map((s) => (
-                <option key={s} value={s} className="capitalize">
-                  {s}
-                </option>
-              ))}
-            </select>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Limitation date</label>
+            <input
+              type="date"
+              value={limitationDate}
+              onChange={(e) => setLimitationDate(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            />
           </div>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as CaseStatus)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm capitalize transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          >
+            {CASE_STATUSES.map((s) => (
+              <option key={s} value={s} className="capitalize">
+                {s}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

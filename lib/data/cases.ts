@@ -4,11 +4,12 @@ import { isoDateDaysFromNow } from "@/lib/dates";
 
 type TypedClient = SupabaseClient<Database>;
 
-const CASE_LIST_COLUMNS = "id, case_title, client_name, court, case_type, status, next_hearing_date" as const;
+const CASE_LIST_COLUMNS =
+  "id, case_title, client_name, court, case_type, status, next_hearing_date, limitation_date" as const;
 
 export type CaseListItem = Pick<
   Database["public"]["Tables"]["cases"]["Row"],
-  "id" | "case_title" | "client_name" | "court" | "case_type" | "status" | "next_hearing_date"
+  "id" | "case_title" | "client_name" | "court" | "case_type" | "status" | "next_hearing_date" | "limitation_date"
 >;
 
 export function listCases(supabase: TypedClient) {
@@ -52,6 +53,32 @@ export function listCasesWithHearingWithinForAdvocate(supabase: TypedClient, adv
     .neq("status", "disposed")
     .lte("next_hearing_date", isoDateDaysFromNow(days))
     .order("next_hearing_date", { ascending: true });
+}
+
+/** Cases (not disposed) with a limitation date within `days` from today — includes overdue. */
+export function listCasesWithLimitationWithin(supabase: TypedClient, days: number) {
+  return supabase
+    .from("cases")
+    .select(CASE_LIST_COLUMNS)
+    .not("limitation_date", "is", null)
+    .neq("status", "disposed")
+    .lte("limitation_date", isoDateDaysFromNow(days))
+    .order("limitation_date", { ascending: true });
+}
+
+/**
+ * Same as `listCasesWithLimitationWithin`, but scoped by an explicit
+ * `advocateId` for the reminder-email cron's service-role client.
+ */
+export function listCasesWithLimitationWithinForAdvocate(supabase: TypedClient, advocateId: string, days: number) {
+  return supabase
+    .from("cases")
+    .select(CASE_LIST_COLUMNS)
+    .eq("advocate_id", advocateId)
+    .not("limitation_date", "is", null)
+    .neq("status", "disposed")
+    .lte("limitation_date", isoDateDaysFromNow(days))
+    .order("limitation_date", { ascending: true });
 }
 
 const CAUSE_LIST_COLUMNS =

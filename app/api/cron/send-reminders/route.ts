@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { listAllProfilesForReminders } from "@/lib/data/profiles";
-import { listCasesWithHearingWithinForAdvocate } from "@/lib/data/cases";
+import { listCasesWithHearingWithinForAdvocate, listCasesWithLimitationWithinForAdvocate } from "@/lib/data/cases";
 import { listUpcomingTasksForAdvocate } from "@/lib/data/tasks";
 import { listReminderEmailLog, recordReminderEmailsSent } from "@/lib/data/reminder-email-log";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
@@ -47,14 +47,15 @@ export async function GET(request: Request) {
     if (profile.reminder_email_days.length === 0) continue;
 
     try {
-      const [{ data: cases }, { data: tasks }, { data: alreadySent }] = await Promise.all([
+      const [{ data: cases }, { data: tasks }, { data: limitationCases }, { data: alreadySent }] = await Promise.all([
         listCasesWithHearingWithinForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
         listUpcomingTasksForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
+        listCasesWithLimitationWithinForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
         listReminderEmailLog(supabase, profile.id),
       ]);
 
       const reminders = filterRemindersByPreference(
-        buildReminders(cases ?? [], tasks ?? []),
+        buildReminders(cases ?? [], tasks ?? [], limitationCases ?? []),
         profile.reminder_email_days
       );
 

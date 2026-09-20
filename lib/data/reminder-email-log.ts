@@ -5,7 +5,7 @@ type TypedClient = SupabaseClient<Database>;
 
 export type ReminderEmailLogEntry = {
   advocate_id: string;
-  item_kind: "hearing" | "task";
+  item_kind: "hearing" | "task" | "limitation";
   item_id: string;
   threshold_days: number;
 };

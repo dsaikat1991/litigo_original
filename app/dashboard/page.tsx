@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { listCases, listCasesWithHearingWithin } from "@/lib/data/cases";
+import { listCases, listCasesWithHearingWithin, listCasesWithLimitationWithin } from "@/lib/data/cases";
 import { listUpcomingTasks, listOpenCriticalTasks } from "@/lib/data/tasks";
 import { getProfile } from "@/lib/data/profiles";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
@@ -20,17 +20,24 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: cases }, { data: reminderCases }, { data: reminderTasks }, { data: profile }, { data: criticalTasks }] =
-    await Promise.all([
-      listCases(supabase),
-      listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
-      listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
-      user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
-      listOpenCriticalTasks(supabase),
-    ]);
+  const [
+    { data: cases },
+    { data: reminderCases },
+    { data: reminderTasks },
+    { data: reminderLimitationCases },
+    { data: profile },
+    { data: criticalTasks },
+  ] = await Promise.all([
+    listCases(supabase),
+    listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
+    listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
+    listCasesWithLimitationWithin(supabase, REMINDER_WINDOW_DAYS),
+    user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
+    listOpenCriticalTasks(supabase),
+  ]);
 
   const reminders = filterRemindersByPreference(
-    buildReminders(reminderCases ?? [], reminderTasks ?? []),
+    buildReminders(reminderCases ?? [], reminderTasks ?? [], reminderLimitationCases ?? []),
     profile?.reminder_days ?? [7, 3, 1, 0],
   );
 
@@ -123,6 +130,14 @@ export default async function DashboardPage() {
                       </span>
                     )}
                   </div>
+                  {c.limitation_date && (
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <span className="text-xs text-red-700">Limitation:</span>
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.limitation_date)}`}>
+                        {daysAwayLabel(c.limitation_date)}
+                      </span>
+                    </div>
+                  )}
                 </Link>
               ))}
             </div>
@@ -150,6 +165,11 @@ export default async function DashboardPage() {
                           <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-500">
                             {c.case_type}
                           </span>
+                          {c.limitation_date && (
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.limitation_date)}`}>
+                              Limitation: {daysAwayLabel(c.limitation_date)}
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-gray-600">{c.client_name ?? "—"}</td>

@@ -72,7 +72,9 @@ export function NotificationPreferencesForm({ profile }: { profile: Profile }) {
 
       {expanded && (
         <div className="mt-1">
-          <p className="text-sm text-gray-500">Choose which hearing reminders you want, and how you want them.</p>
+          <p className="text-sm text-gray-500">
+            Choose which hearing, task, and limitation-date reminders you want, and how you want them.
+          </p>
 
           <div className="mt-4 border-t border-gray-100 pt-4">
             <div className="grid grid-cols-[1fr_64px_64px] items-center gap-y-3">

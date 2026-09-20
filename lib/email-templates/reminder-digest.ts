@@ -11,10 +11,16 @@ function escapeHtml(value: string) {
     .replace(/"/g, "&quot;");
 }
 
+function kindLabelOf(kind: ReminderItem["kind"]) {
+  if (kind === "hearing") return "Hearing";
+  if (kind === "limitation") return "Limitation";
+  return "Task";
+}
+
 function rowHtml(item: ReminderItem) {
   const label = daysAwayLabel(item.date);
-  const kindLabel = item.kind === "hearing" ? "Hearing" : "Task";
-  const title = item.kind === "hearing" ? item.caseTitle : `${item.title} — ${item.caseTitle}`;
+  const kindLabel = kindLabelOf(item.kind);
+  const title = item.kind === "task" ? `${item.title} — ${item.caseTitle}` : item.caseTitle;
   const critical = item.isCritical
     ? ' <span style="color:#b91c1c;font-weight:600;font-size:11px;text-transform:uppercase;">Critical</span>'
     : "";
@@ -40,8 +46,8 @@ export function buildReminderDigestEmail(recipientName: string | null, items: Re
     "",
     ...items.map(
       (item) =>
-        `${item.kind === "hearing" ? "Hearing" : "Task"}: ${
-          item.kind === "hearing" ? item.caseTitle : `${item.title} — ${item.caseTitle}`
+        `${kindLabelOf(item.kind)}: ${
+          item.kind === "task" ? `${item.title} — ${item.caseTitle}` : item.caseTitle
         } (${item.date}, ${daysAwayLabel(item.date)})${item.isCritical ? " [CRITICAL]" : ""}`
     ),
     "",

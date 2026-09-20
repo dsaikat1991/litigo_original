@@ -23,6 +23,7 @@ import { DocumentItem } from "@/components/cases/document-item";
 import { CaseTimeline } from "@/components/cases/case-timeline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
+import { daysAwayLabel, daysAwayStyle } from "@/lib/dates";
 
 export async function generateMetadata({
   params,
@@ -87,6 +88,16 @@ export default async function CaseDetailPage({
               ↳ Related to: {caseRow.parent_case.case_title}
             </Link>
           )}
+          {caseRow.limitation_date && (
+            <div className="mb-3 flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-3 py-2">
+              <p className="text-sm font-medium text-red-900">
+                Limitation date: {caseRow.limitation_date}
+              </p>
+              <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(caseRow.limitation_date)}`}>
+                {daysAwayLabel(caseRow.limitation_date)}
+              </span>
+            </div>
+          )}
           <div className="mb-2 flex items-start justify-between">
             <h1 className="text-lg font-semibold text-gray-900">{caseRow.case_title}</h1>
             <div className="flex items-center gap-2">
@@ -104,10 +115,25 @@ export default async function CaseDetailPage({
           <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-600">
             <div><dt className="inline text-gray-400">Client: </dt><dd className="inline">{caseRow.client_name ?? "—"}</dd></div>
             <div><dt className="inline text-gray-400">Opposing party: </dt><dd className="inline">{caseRow.opposing_party ?? "—"}</dd></div>
+            {caseRow.client_phone && (
+              <div>
+                <dt className="inline text-gray-400">Client phone: </dt>
+                <dd className="inline"><a href={`tel:${caseRow.client_phone}`} className="hover:text-gray-900 hover:underline">{caseRow.client_phone}</a></dd>
+              </div>
+            )}
+            <div><dt className="inline text-gray-400">Opposing counsel: </dt><dd className="inline">{caseRow.opposing_counsel ?? "—"}</dd></div>
+            {caseRow.client_email && (
+              <div>
+                <dt className="inline text-gray-400">Client email: </dt>
+                <dd className="inline"><a href={`mailto:${caseRow.client_email}`} className="hover:text-gray-900 hover:underline">{caseRow.client_email}</a></dd>
+              </div>
+            )}
             <div><dt className="inline text-gray-400">Court: </dt><dd className="inline">{caseRow.court ?? "—"}</dd></div>
             <div><dt className="inline text-gray-400">Case type: </dt><dd className="inline capitalize">{caseRow.case_type}</dd></div>
             <div><dt className="inline text-gray-400">Case number: </dt><dd className="inline">{caseRow.case_number ?? "—"}</dd></div>
             <div><dt className="inline text-gray-400">CNR number: </dt><dd className="inline">{caseRow.cnr_number ?? "—"}</dd></div>
+            <div><dt className="inline text-gray-400">Diary number: </dt><dd className="inline">{caseRow.diary_number ?? "—"}</dd></div>
+            <div><dt className="inline text-gray-400">Act &amp; section: </dt><dd className="inline">{caseRow.act_section ?? "—"}</dd></div>
             <div><dt className="inline text-gray-400">Filing date: </dt><dd className="inline">{caseRow.filing_date ?? "—"}</dd></div>
             <div><dt className="inline text-gray-400">Next hearing: </dt><dd className="inline font-medium text-gray-900">{caseRow.next_hearing_date ?? "—"}</dd></div>
           </dl>
