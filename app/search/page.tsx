@@ -7,6 +7,7 @@ import { NavBar } from "@/components/layout/nav-bar";
 import { DateField } from "@/components/shared/date-field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CASE_STATUS_STYLES, NOTE_TYPE_STYLES, RESEARCH_SOURCE_TYPE_STYLES } from "@/lib/constants";
+import { formatDateDDMMYYYY, formatTime12h } from "@/lib/dates";
 
 export const metadata: Metadata = { title: "Search" };
 
@@ -42,7 +43,8 @@ export default async function SearchPage({
       results.hearings.length +
       results.tasks.length +
       results.research.length +
-      results.documents.length
+      results.documents.length +
+      results.appointments.length
     : 0;
 
   return (
@@ -243,6 +245,34 @@ export default async function SearchPage({
                     >
                       <span className="font-medium text-gray-900">{d.file_name}</span>
                       <p className="mt-0.5 text-gray-500">{d.created_at.slice(0, 10)}</p>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {results!.appointments.length > 0 && (
+              <section>
+                <h2 className="mb-3 text-sm font-semibold text-gray-900">Appointments</h2>
+                <div className="space-y-2">
+                  {results!.appointments.map((a) => (
+                    <Link
+                      key={a.id}
+                      href={a.case_id ? `/cases/${a.case_id}` : "/appointments"}
+                      className="block rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={a.is_done ? "text-gray-400 line-through" : "font-medium text-gray-900"}>
+                          {a.title}
+                        </span>
+                        {a.appointment_time && (
+                          <span className="shrink-0 text-xs text-gray-500">{formatTime12h(a.appointment_time)}</span>
+                        )}
+                      </div>
+                      <p className="mt-0.5 text-gray-500">
+                        {formatDateDDMMYYYY(a.appointment_date)}
+                        {a.location ? ` · ${a.location}` : ""}
+                      </p>
                     </Link>
                   ))}
                 </div>

@@ -3,6 +3,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { listAllProfilesForReminders } from "@/lib/data/profiles";
 import { listCasesWithHearingWithinForAdvocate, listCasesWithLimitationWithinForAdvocate } from "@/lib/data/cases";
 import { listUpcomingTasksForAdvocate } from "@/lib/data/tasks";
+import { listUpcomingAppointmentsForAdvocate } from "@/lib/data/appointments";
 import { listReminderEmailLog, recordReminderEmailsSent } from "@/lib/data/reminder-email-log";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
 import { daysAway } from "@/lib/dates";
@@ -47,15 +48,17 @@ export async function GET(request: Request) {
     if (profile.reminder_email_days.length === 0) continue;
 
     try {
-      const [{ data: cases }, { data: tasks }, { data: limitationCases }, { data: alreadySent }] = await Promise.all([
-        listCasesWithHearingWithinForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
-        listUpcomingTasksForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
-        listCasesWithLimitationWithinForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
-        listReminderEmailLog(supabase, profile.id),
-      ]);
+      const [{ data: cases }, { data: tasks }, { data: limitationCases }, { data: appointments }, { data: alreadySent }] =
+        await Promise.all([
+          listCasesWithHearingWithinForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
+          listUpcomingTasksForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
+          listCasesWithLimitationWithinForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
+          listUpcomingAppointmentsForAdvocate(supabase, profile.id, MAX_THRESHOLD_DAYS),
+          listReminderEmailLog(supabase, profile.id),
+        ]);
 
       const reminders = filterRemindersByPreference(
-        buildReminders(cases ?? [], tasks ?? [], limitationCases ?? []),
+        buildReminders(cases ?? [], tasks ?? [], limitationCases ?? [], appointments ?? []),
         profile.reminder_email_days
       );
 

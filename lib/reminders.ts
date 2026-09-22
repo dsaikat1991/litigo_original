@@ -1,22 +1,25 @@
 import type { CaseListItem } from "@/lib/data/cases";
 import type { TaskWithCase } from "@/lib/data/tasks";
+import type { AppointmentWithCase } from "@/lib/data/appointments";
 import { daysAway } from "@/lib/dates";
 
 export type ReminderItem = {
   id: string;
   date: string;
-  kind: "hearing" | "task" | "limitation";
+  kind: "hearing" | "task" | "limitation" | "appointment";
   title: string;
-  caseId: string;
+  /** Absent for a standalone appointment not linked to any case. */
+  caseId?: string;
   caseTitle: string;
   isCritical: boolean;
 };
 
-/** Merges upcoming hearings, task due dates, and case limitation dates into one date-sorted list for the dashboard. */
+/** Merges upcoming hearings, task due dates, case limitation dates, and appointments into one date-sorted list for the dashboard. */
 export function buildReminders(
   cases: CaseListItem[],
   tasks: TaskWithCase[],
   limitationCases: CaseListItem[] = [],
+  appointments: AppointmentWithCase[] = [],
 ): ReminderItem[] {
   const hearingItems: ReminderItem[] = cases
     .filter((c): c is CaseListItem & { next_hearing_date: string } => c.next_hearing_date !== null)
@@ -55,7 +58,19 @@ export function buildReminders(
       isCritical: true,
     }));
 
-  return [...hearingItems, ...taskItems, ...limitationItems].sort((a, b) => a.date.localeCompare(b.date));
+  const appointmentItems: ReminderItem[] = appointments.map((a) => ({
+    id: `appointment-${a.id}`,
+    date: a.appointment_date,
+    kind: "appointment",
+    title: a.title,
+    caseId: a.case_id ?? undefined,
+    caseTitle: a.case?.case_title ?? "—",
+    isCritical: false,
+  }));
+
+  return [...hearingItems, ...taskItems, ...limitationItems, ...appointmentItems].sort((a, b) =>
+    a.date.localeCompare(b.date),
+  );
 }
 
 /**

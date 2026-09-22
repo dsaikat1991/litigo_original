@@ -6,6 +6,7 @@ import { getCase, listChildCases } from "@/lib/data/cases";
 import { listHearingsForCase, listHearingsForCases } from "@/lib/data/hearings";
 import { listNotesForCase } from "@/lib/data/notes";
 import { listTasksForCase } from "@/lib/data/tasks";
+import { listAppointmentsForCase } from "@/lib/data/appointments";
 import { listResearchForCase } from "@/lib/data/research";
 import { listDocumentsForCase } from "@/lib/data/case-documents";
 import { buildTimeline } from "@/lib/timeline";
@@ -13,11 +14,13 @@ import { NavBar } from "@/components/layout/nav-bar";
 import { AddHearingForm } from "@/components/cases/add-hearing-form";
 import { AddNoteForm } from "@/components/cases/add-note-form";
 import { AddTaskForm } from "@/components/cases/add-task-form";
+import { AddAppointmentForm } from "@/components/cases/add-appointment-form";
 import { AddResearchForm } from "@/components/cases/add-research-form";
 import { UploadDocumentForm } from "@/components/cases/upload-document-form";
 import { HearingItem } from "@/components/cases/hearing-item";
 import { NoteItem } from "@/components/cases/note-item";
 import { TaskItem } from "@/components/cases/task-item";
+import { AppointmentItem } from "@/components/cases/appointment-item";
 import { ResearchItem } from "@/components/cases/research-item";
 import { DocumentItem } from "@/components/cases/document-item";
 import { CaseTimeline } from "@/components/cases/case-timeline";
@@ -50,15 +53,23 @@ export default async function CaseDetailPage({
     notFound();
   }
 
-  const [{ data: hearings }, { data: notes }, { data: tasks }, { data: research }, { data: documents }, { data: childCases }] =
-    await Promise.all([
-      listHearingsForCase(supabase, id),
-      listNotesForCase(supabase, id),
-      listTasksForCase(supabase, id),
-      listResearchForCase(supabase, id),
-      listDocumentsForCase(supabase, id),
-      listChildCases(supabase, id),
-    ]);
+  const [
+    { data: hearings },
+    { data: notes },
+    { data: tasks },
+    { data: appointments },
+    { data: research },
+    { data: documents },
+    { data: childCases },
+  ] = await Promise.all([
+    listHearingsForCase(supabase, id),
+    listNotesForCase(supabase, id),
+    listTasksForCase(supabase, id),
+    listAppointmentsForCase(supabase, id),
+    listResearchForCase(supabase, id),
+    listDocumentsForCase(supabase, id),
+    listChildCases(supabase, id),
+  ]);
 
   const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? [], childCases ?? []);
 
@@ -193,6 +204,9 @@ export default async function CaseDetailPage({
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="hearings">Hearings{hearings && hearings.length > 0 ? ` · ${hearings.length}` : ""}</TabsTrigger>
             <TabsTrigger value="tasks">Tasks{tasks && tasks.length > 0 ? ` · ${tasks.length}` : ""}</TabsTrigger>
+            <TabsTrigger value="appointments">
+              Appointments{appointments && appointments.length > 0 ? ` · ${appointments.length}` : ""}
+            </TabsTrigger>
             <TabsTrigger value="research">Research{research && research.length > 0 ? ` · ${research.length}` : ""}</TabsTrigger>
             <TabsTrigger value="documents">Documents{documents && documents.length > 0 ? ` · ${documents.length}` : ""}</TabsTrigger>
             <TabsTrigger value="notes">Notes &amp; learnings{notes && notes.length > 0 ? ` · ${notes.length}` : ""}</TabsTrigger>
@@ -233,6 +247,19 @@ export default async function CaseDetailPage({
                 <p className="text-sm text-gray-500">No tasks yet.</p>
               ) : (
                 tasks.map((t) => <TaskItem key={t.id} task={t} />)
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="appointments">
+            <div className="mb-4">
+              <AddAppointmentForm caseId={id} />
+            </div>
+            <div className="space-y-2">
+              {!appointments || appointments.length === 0 ? (
+                <p className="text-sm text-gray-500">No appointments yet.</p>
+              ) : (
+                appointments.map((a) => <AppointmentItem key={a.id} appointment={a} />)
               )}
             </div>
           </TabsContent>

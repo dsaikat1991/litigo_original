@@ -14,13 +14,20 @@ function escapeHtml(value: string) {
 function kindLabelOf(kind: ReminderItem["kind"]) {
   if (kind === "hearing") return "Hearing";
   if (kind === "limitation") return "Limitation";
+  if (kind === "appointment") return "Appointment";
   return "Task";
+}
+
+function titleOf(item: ReminderItem) {
+  if (item.kind === "hearing" || item.kind === "limitation") return item.caseTitle;
+  if (item.caseId) return `${item.title} — ${item.caseTitle}`;
+  return item.title;
 }
 
 function rowHtml(item: ReminderItem) {
   const label = daysAwayLabel(item.date);
   const kindLabel = kindLabelOf(item.kind);
-  const title = item.kind === "task" ? `${item.title} — ${item.caseTitle}` : item.caseTitle;
+  const title = titleOf(item);
   const critical = item.isCritical
     ? ' <span style="color:#b91c1c;font-weight:600;font-size:11px;text-transform:uppercase;">Critical</span>'
     : "";
@@ -46,9 +53,9 @@ export function buildReminderDigestEmail(recipientName: string | null, items: Re
     "",
     ...items.map(
       (item) =>
-        `${kindLabelOf(item.kind)}: ${
-          item.kind === "task" ? `${item.title} — ${item.caseTitle}` : item.caseTitle
-        } (${item.date}, ${daysAwayLabel(item.date)})${item.isCritical ? " [CRITICAL]" : ""}`
+        `${kindLabelOf(item.kind)}: ${titleOf(item)} (${item.date}, ${daysAwayLabel(item.date)})${
+          item.isCritical ? " [CRITICAL]" : ""
+        }`
     ),
     "",
     `Open Litigo: ${SITE_URL}/dashboard`,

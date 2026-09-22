@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { listCases, listCasesWithHearingWithin, listCasesWithLimitationWithin, listOverdueCases } from "@/lib/data/cases";
 import { listUpcomingTasks, listOpenCriticalTasks } from "@/lib/data/tasks";
+import { listUpcomingAppointments } from "@/lib/data/appointments";
 import { getProfile } from "@/lib/data/profiles";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
 import { daysAway, daysAwayLabel, daysAwayStyle, formatDateDDMMYYYY } from "@/lib/dates";
@@ -25,6 +26,7 @@ export default async function DashboardPage() {
     { data: reminderCases },
     { data: reminderTasks },
     { data: reminderLimitationCases },
+    { data: reminderAppointments },
     { data: overdueCases },
     { data: profile },
     { data: criticalTasks },
@@ -33,13 +35,14 @@ export default async function DashboardPage() {
     listCasesWithHearingWithin(supabase, REMINDER_WINDOW_DAYS),
     listUpcomingTasks(supabase, REMINDER_WINDOW_DAYS),
     listCasesWithLimitationWithin(supabase, REMINDER_WINDOW_DAYS),
+    listUpcomingAppointments(supabase, REMINDER_WINDOW_DAYS),
     listOverdueCases(supabase),
     user ? getProfile(supabase, user.id) : Promise.resolve({ data: null }),
     listOpenCriticalTasks(supabase),
   ]);
 
   const reminders = filterRemindersByPreference(
-    buildReminders(reminderCases ?? [], reminderTasks ?? [], reminderLimitationCases ?? []),
+    buildReminders(reminderCases ?? [], reminderTasks ?? [], reminderLimitationCases ?? [], reminderAppointments ?? []),
     profile?.reminder_days ?? [7, 3, 1, 0],
   );
 

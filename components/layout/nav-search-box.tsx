@@ -15,6 +15,7 @@ const RESULT_TYPE_LABELS: Record<QuickSearchResult["type"], string> = {
   note: "Note",
   research: "Research",
   document: "Document",
+  appointment: "Appointment",
 };
 
 const DROPDOWN_LIMIT = 5;

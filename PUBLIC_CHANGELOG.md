@@ -2,6 +2,13 @@
 
 What's new in Litigo, most recent first.
 
+## Appointments
+
+- Added **Appointments** — for client conferences, meetings with co-counsel, or anything time-bound that isn't a court hearing. Give it a title, date, and optional time, location, and case link.
+- A new **Appointments** page lists everything you've scheduled, standalone or tied to a case — reachable from the nav bar.
+- Case pages get their own **Appointments** tab, same as Hearings and Tasks.
+- Appointments show up everywhere hearings and tasks already do: the dashboard's "Upcoming" list, notifications, email reminders, the Calendar (as a distinct blue entry), Today's page, and search.
+
 ## Multiple parties per case
 
 - "Case title" is now labelled **Cause Title**.

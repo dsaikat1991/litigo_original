@@ -173,8 +173,10 @@ export default async function HomePage() {
       />
       <header className="sticky top-0 z-30 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+          <Link href="/" className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="Litigo" className="h-5 w-auto" />
+          </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
               Sign in

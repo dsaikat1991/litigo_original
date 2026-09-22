@@ -43,3 +43,12 @@ export function formatDateDDMMYYYY(dateStr: string): string {
   const [year, month, day] = dateStr.slice(0, 10).split("-");
   return `${day}-${month}-${year}`;
 }
+
+/** Formats a Postgres "HH:MM:SS" time string as "h:mm AM/PM", for display. */
+export function formatTime12h(timeStr: string): string {
+  const [hStr, mStr] = timeStr.split(":");
+  const hour = Number(hStr);
+  const period = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${hour12}:${mStr.padStart(2, "0")} ${period}`;
+}

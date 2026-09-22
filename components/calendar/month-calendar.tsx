@@ -2,9 +2,15 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import type { Case } from "@/types/database";
+import type { Case, Appointment } from "@/types/database";
+import { formatTime12h } from "@/lib/dates";
 
 type UpcomingCase = Pick<Case, "id" | "case_title" | "status" | "next_hearing_date">;
+type CalendarAppointment = Pick<Appointment, "id" | "title" | "appointment_date" | "appointment_time" | "case_id">;
+
+type CalendarEntry =
+  | { kind: "hearing"; id: string; label: string; href: string }
+  | { kind: "appointment"; id: string; label: string; href: string };
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -16,22 +22,33 @@ function dateKey(year: number, month: number, day: number) {
   return `${year}-${pad(month + 1)}-${pad(day)}`;
 }
 
-export function MonthCalendar({ cases }: { cases: UpcomingCase[] }) {
+export function MonthCalendar({ cases, appointments = [] }: { cases: UpcomingCase[]; appointments?: CalendarAppointment[] }) {
   const [viewDate, setViewDate] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
 
-  const casesByDate = useMemo(() => {
-    const map = new Map<string, UpcomingCase[]>();
+  const entriesByDate = useMemo(() => {
+    const map = new Map<string, CalendarEntry[]>();
     for (const c of cases) {
       if (!c.next_hearing_date) continue;
       const list = map.get(c.next_hearing_date) ?? [];
-      list.push(c);
+      list.push({ kind: "hearing", id: c.id, label: c.case_title, href: `/cases/${c.id}` });
       map.set(c.next_hearing_date, list);
     }
+    for (const a of appointments) {
+      const list = map.get(a.appointment_date) ?? [];
+      const label = a.appointment_time ? `${formatTime12h(a.appointment_time)} ${a.title}` : a.title;
+      list.push({
+        kind: "appointment",
+        id: a.id,
+        label,
+        href: a.case_id ? `/cases/${a.case_id}` : "/appointments",
+      });
+      map.set(a.appointment_date, list);
+    }
     return map;
-  }, [cases]);
+  }, [cases, appointments]);
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
@@ -84,7 +101,7 @@ export function MonthCalendar({ cases }: { cases: UpcomingCase[] }) {
           }
 
           const key = dateKey(year, month, dayNumber);
-          const dayCases = casesByDate.get(key) ?? [];
+          const dayEntries = entriesByDate.get(key) ?? [];
           const isToday =
             year === today.getFullYear() && month === today.getMonth() && dayNumber === today.getDate();
 
@@ -100,18 +117,20 @@ export function MonthCalendar({ cases }: { cases: UpcomingCase[] }) {
                 {dayNumber}
               </span>
               <div className="mt-1 space-y-0.5">
-                {dayCases.slice(0, 2).map((c) => (
+                {dayEntries.slice(0, 2).map((entry) => (
                   <Link
-                    key={c.id}
-                    href={`/cases/${c.id}`}
-                    title={c.case_title}
-                    className="block truncate rounded bg-gray-100 px-1 py-0.5 text-[11px] text-gray-700 hover:bg-gray-200"
+                    key={`${entry.kind}-${entry.id}`}
+                    href={entry.href}
+                    title={entry.label}
+                    className={`block truncate rounded px-1 py-0.5 text-[11px] hover:opacity-80 ${
+                      entry.kind === "appointment" ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-700"
+                    }`}
                   >
-                    {c.case_title}
+                    {entry.label}
                   </Link>
                 ))}
-                {dayCases.length > 2 && (
-                  <span className="block px-1 text-[11px] text-gray-400">+{dayCases.length - 2} more</span>
+                {dayEntries.length > 2 && (
+                  <span className="block px-1 text-[11px] text-gray-400">+{dayEntries.length - 2} more</span>
                 )}
               </div>
             </div>

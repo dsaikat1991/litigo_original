@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: "/dashboard", label: "Cases" },
   { href: "/today", label: "Today" },
   { href: "/calendar", label: "Calendar" },
+  { href: "/appointments", label: "Appointments" },
   { href: "/notes", label: "Notes" },
 ];
 

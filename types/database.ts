@@ -357,11 +357,56 @@ export type Database = {
           },
         ];
       };
+      appointments: {
+        Row: {
+          id: string;
+          advocate_id: string;
+          case_id: string | null;
+          title: string;
+          appointment_date: string;
+          appointment_time: string | null;
+          location: string | null;
+          notes: string | null;
+          is_done: boolean;
+          completed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          advocate_id: string;
+          case_id?: string | null;
+          title: string;
+          appointment_date: string;
+          appointment_time?: string | null;
+          location?: string | null;
+          notes?: string | null;
+          is_done?: boolean;
+          completed_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["appointments"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "appointments_case_id_fkey";
+            columns: ["case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "appointments_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       reminder_email_log: {
         Row: {
           id: string;
           advocate_id: string;
-          item_kind: "hearing" | "task" | "limitation";
+          item_kind: "hearing" | "task" | "limitation" | "appointment";
           item_id: string;
           threshold_days: number;
           sent_at: string;
@@ -369,7 +414,7 @@ export type Database = {
         Insert: {
           id?: string;
           advocate_id: string;
-          item_kind: "hearing" | "task" | "limitation";
+          item_kind: "hearing" | "task" | "limitation" | "appointment";
           item_id: string;
           threshold_days: number;
           sent_at?: string;
@@ -446,3 +491,4 @@ export type Note = Database["public"]["Tables"]["notes"]["Row"];
 export type Task = Database["public"]["Tables"]["tasks"]["Row"];
 export type ResearchItem = Database["public"]["Tables"]["research_items"]["Row"];
 export type CaseDocument = Database["public"]["Tables"]["case_documents"]["Row"];
+export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
