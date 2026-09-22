@@ -1,7 +1,7 @@
-import type { Hearing, Note, Task } from "@/types/database";
+import type { Hearing, HearingArgument, Note, Task } from "@/types/database";
 import type { TimelineItem } from "@/lib/timeline";
 import type { ChildCase } from "@/lib/data/cases";
-import { NOTE_TYPE_STYLES } from "@/lib/constants";
+import { ARGUMENT_OUTCOME_LABELS, ARGUMENT_OUTCOME_STYLES, NOTE_TYPE_STYLES } from "@/lib/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -46,6 +46,7 @@ export function CaseTimeline({ items }: { items: TimelineItem[] }) {
                   <HearingEntry
                     hearing={item.hearing}
                     hearingTasks={item.hearingTasks}
+                    hearingArguments={item.hearingArguments}
                     applicationCase={item.applicationCase}
                   />
                 )}
@@ -63,14 +64,17 @@ export function CaseTimeline({ items }: { items: TimelineItem[] }) {
 function HearingEntry({
   hearing,
   hearingTasks,
+  hearingArguments,
   applicationCase,
 }: {
   hearing: Hearing;
   hearingTasks: Task[];
+  hearingArguments: HearingArgument[];
   applicationCase: ChildCase | null;
 }) {
   const hasDetails =
     hearing.arguments_made ||
+    hearing.opposing_arguments ||
     hearing.court_direction ||
     hearing.court_observations ||
     applicationCase ||
@@ -104,6 +108,31 @@ function HearingEntry({
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Arguments made</p>
               <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.arguments_made}</p>
+            </div>
+          )}
+          {hearingArguments.length > 0 && (
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Your arguments</p>
+              <ul className="mt-1 space-y-1">
+                {hearingArguments.map((a) => (
+                  <li key={a.id} className="flex items-start gap-2 text-sm">
+                    <span className="flex-1 text-gray-600">{a.argument_text}</span>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                        a.outcome ? ARGUMENT_OUTCOME_STYLES[a.outcome] : "bg-gray-100 text-gray-500"
+                      }`}
+                    >
+                      {a.outcome ? ARGUMENT_OUTCOME_LABELS[a.outcome] : "Not yet known"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {hearing.opposing_arguments && (
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Opposing party&rsquo;s arguments</p>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm text-gray-600">{hearing.opposing_arguments}</p>
             </div>
           )}
           {hearing.court_direction && (

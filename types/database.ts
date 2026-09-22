@@ -1,4 +1,4 @@
-import type { CaseStatus, CaseType, NoteType, ResearchSourceType } from "@/lib/constants";
+import type { ArgumentOutcome, CaseStatus, CaseType, NoteType, ResearchSourceType } from "@/lib/constants";
 
 /**
  * Hand-written to mirror `supabase/migrations/0001_init.sql`, matching the
@@ -120,6 +120,7 @@ export type Database = {
           purpose: string | null;
           order_notes: string | null;
           arguments_made: string | null;
+          opposing_arguments: string | null;
           court_direction: string | null;
           documents_filed: string[];
           bench: string | null;
@@ -142,6 +143,7 @@ export type Database = {
           purpose?: string | null;
           order_notes?: string | null;
           arguments_made?: string | null;
+          opposing_arguments?: string | null;
           court_direction?: string | null;
           documents_filed?: string[];
           bench?: string | null;
@@ -174,6 +176,41 @@ export type Database = {
           },
           {
             foreignKeyName: "hearings_advocate_id_fkey";
+            columns: ["advocate_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      hearing_arguments: {
+        Row: {
+          id: string;
+          hearing_id: string;
+          advocate_id: string;
+          argument_text: string;
+          outcome: ArgumentOutcome | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          hearing_id: string;
+          advocate_id: string;
+          argument_text: string;
+          outcome?: ArgumentOutcome | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["hearing_arguments"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "hearing_arguments_hearing_id_fkey";
+            columns: ["hearing_id"];
+            isOneToOne: false;
+            referencedRelation: "hearings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "hearing_arguments_advocate_id_fkey";
             columns: ["advocate_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
@@ -479,6 +516,7 @@ export type Database = {
       case_type: CaseType;
       note_type: NoteType;
       research_source_type: ResearchSourceType;
+      argument_outcome: ArgumentOutcome;
     };
     CompositeTypes: Record<string, never>;
   };
@@ -492,3 +530,4 @@ export type Task = Database["public"]["Tables"]["tasks"]["Row"];
 export type ResearchItem = Database["public"]["Tables"]["research_items"]["Row"];
 export type CaseDocument = Database["public"]["Tables"]["case_documents"]["Row"];
 export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+export type HearingArgument = Database["public"]["Tables"]["hearing_arguments"]["Row"];

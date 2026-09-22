@@ -6,10 +6,11 @@ import { createClient } from "@/lib/supabase/client";
 import { updateHearing, deleteHearing } from "@/lib/data/hearings";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { HearingTasks } from "@/components/cases/hearing-tasks";
+import { HearingArguments } from "@/components/cases/hearing-arguments";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateField } from "@/components/shared/date-field";
 import type { ChildCase } from "@/lib/data/cases";
-import type { CaseDocument, Hearing, Task } from "@/types/database";
+import type { CaseDocument, Hearing, HearingArgument, Task } from "@/types/database";
 
 const inputClass =
   "w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10";
@@ -19,11 +20,13 @@ const NO_APPLICATION_CASE = "__none__";
 export function HearingItem({
   hearing,
   tasks,
+  arguments: argumentsList,
   documents,
   childCases,
 }: {
   hearing: Hearing;
   tasks: Task[];
+  arguments: HearingArgument[];
   documents: CaseDocument[];
   childCases: ChildCase[];
 }) {
@@ -35,6 +38,7 @@ export function HearingItem({
   const [purpose, setPurpose] = useState(hearing.purpose ?? "");
   const [orderNotes, setOrderNotes] = useState(hearing.order_notes ?? "");
   const [argumentsMade, setArgumentsMade] = useState(hearing.arguments_made ?? "");
+  const [opposingArguments, setOpposingArguments] = useState(hearing.opposing_arguments ?? "");
   const [courtDirection, setCourtDirection] = useState(hearing.court_direction ?? "");
   const [documentsFiled, setDocumentsFiled] = useState(hearing.documents_filed.join(", "));
   const [nextDate, setNextDate] = useState(hearing.next_date ?? "");
@@ -64,6 +68,7 @@ export function HearingItem({
       purpose: purpose || null,
       order_notes: orderNotes || null,
       arguments_made: argumentsMade || null,
+      opposing_arguments: opposingArguments || null,
       court_direction: courtDirection || null,
       documents_filed: documentsFiled ? documentsFiled.split(",").map((d) => d.trim()).filter(Boolean) : [],
       next_date: nextDate || null,
@@ -165,6 +170,16 @@ export function HearingItem({
               className={inputClass}
             />
           </div>
+        </div>
+        <div>
+          <label className={labelClass}>Opposing party&rsquo;s arguments</label>
+          <textarea
+            value={opposingArguments}
+            onChange={(e) => setOpposingArguments(e.target.value)}
+            rows={2}
+            placeholder="What the other side argued..."
+            className={inputClass}
+          />
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
@@ -326,6 +341,12 @@ export function HearingItem({
           <p className="mt-0.5 text-gray-600">{hearing.arguments_made}</p>
         </div>
       )}
+      {hearing.opposing_arguments && (
+        <div className="mt-2">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Opposing party&rsquo;s arguments</p>
+          <p className="mt-0.5 text-gray-600">{hearing.opposing_arguments}</p>
+        </div>
+      )}
       {hearing.court_direction && (
         <div className="mt-2">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Court direction</p>
@@ -397,6 +418,7 @@ export function HearingItem({
       )}
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
 
+      <HearingArguments hearingId={hearing.id} arguments={argumentsList} />
       <HearingTasks caseId={hearing.case_id} hearingId={hearing.id} tasks={tasks} />
     </div>
   );

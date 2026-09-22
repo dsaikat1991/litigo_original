@@ -21,6 +21,7 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
   const [purpose, setPurpose] = useState("");
   const [orderNotes, setOrderNotes] = useState("");
   const [argumentsMade, setArgumentsMade] = useState("");
+  const [opposingArguments, setOpposingArguments] = useState("");
   const [courtDirection, setCourtDirection] = useState("");
   const [documentsFiled, setDocumentsFiled] = useState("");
   const [nextDate, setNextDate] = useState("");
@@ -64,6 +65,7 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
       purpose: purpose || null,
       order_notes: orderNotes || null,
       arguments_made: argumentsMade || null,
+      opposing_arguments: opposingArguments || null,
       court_direction: courtDirection || null,
       documents_filed: documentsFiled ? documentsFiled.split(",").map((d) => d.trim()).filter(Boolean) : [],
       next_date: nextDate || null,
@@ -90,6 +92,7 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
     setPurpose("");
     setOrderNotes("");
     setArgumentsMade("");
+    setOpposingArguments("");
     setCourtDirection("");
     setDocumentsFiled("");
     setNextDate("");
@@ -151,6 +154,16 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
             className={inputClass}
           />
         </div>
+      </div>
+      <div>
+        <label className={labelClass}>Opposing party&rsquo;s arguments</label>
+        <textarea
+          value={opposingArguments}
+          onChange={(e) => setOpposingArguments(e.target.value)}
+          rows={2}
+          placeholder="What the other side argued..."
+          className={inputClass}
+        />
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCase, listChildCases } from "@/lib/data/cases";
 import { listHearingsForCase, listHearingsForCases } from "@/lib/data/hearings";
+import { listArgumentsForHearings } from "@/lib/data/hearing-arguments";
 import { listNotesForCase } from "@/lib/data/notes";
 import { listTasksForCase } from "@/lib/data/tasks";
 import { listAppointmentsForCase } from "@/lib/data/appointments";
@@ -71,7 +72,11 @@ export default async function CaseDetailPage({
     listChildCases(supabase, id),
   ]);
 
-  const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? [], childCases ?? []);
+  const hearingIds = (hearings ?? []).map((h) => h.id);
+  const { data: hearingArguments } =
+    hearingIds.length > 0 ? await listArgumentsForHearings(supabase, hearingIds) : { data: [] };
+
+  const timeline = buildTimeline(hearings ?? [], tasks ?? [], notes ?? [], childCases ?? [], hearingArguments ?? []);
 
   const childCaseIds = (childCases ?? []).map((c) => c.id);
   const { data: childHearings } =
@@ -230,6 +235,7 @@ export default async function CaseDetailPage({
                     key={h.id}
                     hearing={h}
                     tasks={(tasks ?? []).filter((t) => t.hearing_id === h.id)}
+                    arguments={(hearingArguments ?? []).filter((a) => a.hearing_id === h.id)}
                     documents={(documents ?? []).filter((d) => d.hearing_id === h.id)}
                     childCases={childCases ?? []}
                   />

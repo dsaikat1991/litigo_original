@@ -1,8 +1,16 @@
-import type { Hearing, Note, Task } from "@/types/database";
+import type { Hearing, HearingArgument, Note, Task } from "@/types/database";
 import type { ChildCase } from "@/lib/data/cases";
 
 export type TimelineItem =
-  | { id: string; date: string; kind: "hearing"; hearing: Hearing; hearingTasks: Task[]; applicationCase: ChildCase | null }
+  | {
+      id: string;
+      date: string;
+      kind: "hearing";
+      hearing: Hearing;
+      hearingTasks: Task[];
+      hearingArguments: HearingArgument[];
+      applicationCase: ChildCase | null;
+    }
   | { id: string; date: string; kind: "task"; task: Task & { completed_at: string } }
   | { id: string; date: string; kind: "note"; note: Note };
 
@@ -24,6 +32,7 @@ export function buildTimeline(
   tasks: Task[],
   notes: Note[],
   childCases: ChildCase[] = [],
+  hearingArguments: HearingArgument[] = [],
 ): TimelineItem[] {
   const hearingItems: TimelineItem[] = hearings.map((h) => ({
     id: `hearing-${h.id}`,
@@ -31,6 +40,7 @@ export function buildTimeline(
     kind: "hearing",
     hearing: h,
     hearingTasks: tasks.filter((t) => t.hearing_id === h.id),
+    hearingArguments: hearingArguments.filter((a) => a.hearing_id === h.id),
     applicationCase: childCases.find((c) => c.id === h.application_case_id) ?? null,
   }));
 

@@ -2,6 +2,12 @@
 
 What's new in Litigo, most recent first.
 
+## Hearing arguments
+
+- Record your own arguments made at each hearing as a running list, and mark each one **Worked**, **Partially worked**, or **Didn't work** with a single click — no need to know the outcome right away, add it whenever it becomes clear.
+- Added an **Opposing party's arguments** field on each hearing, for a quick summary of what the other side argued.
+- Both show up in the case's Hearings tab and its Timeline.
+
 ## Appointments
 
 - Added **Appointments** — for client conferences, meetings with co-counsel, or anything time-bound that isn't a court hearing. Give it a title, date, and optional time, location, and case link.
