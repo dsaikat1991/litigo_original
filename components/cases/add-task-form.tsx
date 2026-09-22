@@ -63,7 +63,7 @@ export function AddTaskForm({ caseId }: { caseId: string }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. File rejoinder before next date"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
         <div>

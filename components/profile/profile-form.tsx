@@ -62,7 +62,7 @@ export function ProfileForm({ profile, email }: { profile: Profile; email: strin
         <input
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
         />
       </div>
 
@@ -72,7 +72,7 @@ export function ProfileForm({ profile, email }: { profile: Profile; email: strin
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
         <div>
@@ -80,7 +80,7 @@ export function ProfileForm({ profile, email }: { profile: Profile; email: strin
           <input
             value={barEnrollmentNo}
             onChange={(e) => setBarEnrollmentNo(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
       </div>
@@ -91,7 +91,7 @@ export function ProfileForm({ profile, email }: { profile: Profile; email: strin
           <input
             value={practiceCity}
             onChange={(e) => setPracticeCity(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
         <div>
@@ -100,7 +100,7 @@ export function ProfileForm({ profile, email }: { profile: Profile; email: strin
             value={courts}
             onChange={(e) => setCourts(e.target.value)}
             placeholder="e.g. Alipore District Court, Calcutta High Court"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
       </div>

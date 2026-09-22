@@ -80,7 +80,7 @@ export function TaskItem({ task }: { task: Task }) {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <DateField label="Due date" labelClassName="sr-only" value={dueDate} onChange={setDueDate} className="w-auto" />

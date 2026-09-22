@@ -62,6 +62,7 @@ export type Database = {
           filing_date: string | null;
           limitation_date: string | null;
           next_hearing_date: string | null;
+          current_stage: string | null;
           tags: string[];
           parent_case_id: string | null;
           created_at: string;
@@ -86,6 +87,7 @@ export type Database = {
           filing_date?: string | null;
           limitation_date?: string | null;
           next_hearing_date?: string | null;
+          current_stage?: string | null;
           tags?: string[];
           parent_case_id?: string | null;
           created_at?: string;

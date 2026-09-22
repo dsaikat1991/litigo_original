@@ -12,7 +12,7 @@ import type { ChildCase } from "@/lib/data/cases";
 import type { CaseDocument, Hearing, Task } from "@/types/database";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10";
+  "w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10";
 const labelClass = "mb-1 block text-xs font-medium text-gray-700";
 const NO_APPLICATION_CASE = "__none__";
 

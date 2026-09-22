@@ -33,7 +33,7 @@ export function createNote(supabase: TypedClient, input: NewNoteInput) {
 
 export type NoteUpdateInput = Omit<
   Database["public"]["Tables"]["notes"]["Update"],
-  "id" | "case_id" | "advocate_id" | "created_at"
+  "id" | "advocate_id" | "created_at"
 >;
 
 export function updateNote(supabase: TypedClient, id: string, input: NoteUpdateInput) {

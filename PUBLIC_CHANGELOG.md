@@ -15,6 +15,11 @@ What's new in Litigo, most recent first.
 - Simplified the look of the "Upcoming" reminder lists (dashboard, Notifications, and the bell dropdown) — a clean divided list instead of a separate box around each item.
 - Replaced the browser's default calendar popup with a custom-styled one on the Search page and the search filters dialog, so picking a date range looks like the rest of Litigo instead of your OS's own calendar widget.
 - Extended that same custom styling across the app — every dropdown, checkbox, and date picker now matches Litigo's look instead of your browser's defaults: case type/status, hearing/note/research type pickers, task checkboxes, notification toggles, and every date field (filing date, limitation date, hearing dates, due dates).
+- Fixed the dashboard's "Critical deadlines open" and "Hearings this week" counts, which weren't accounting for critical limitation dates and overdue hearings correctly.
+- "Your cases" table on the dashboard now shows **Stage** (from the most recently logged hearing) instead of Client, alongside Case, Court, Next date, and Status.
+- Dates in "Your cases" now show as DD-MM-YYYY and no longer wrap awkwardly onto two lines.
+- Notes, learnings, and updates can now be linked to a case right from the standalone Notes page — pick one from the new "Case (optional)" field when adding or editing.
+- Removed the heavy black focus outline that appeared on form fields across the app — focus is now shown with a subtle ring instead.
 
 ## Litigo Pro and email reminders
 

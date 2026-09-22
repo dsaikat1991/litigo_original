@@ -83,7 +83,7 @@ export function AddResearchForm({ caseId }: { caseId: string }) {
             value={citation}
             onChange={(e) => setCitation(e.target.value)}
             placeholder="e.g. Section 138, Negotiable Instruments Act"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
       </div>
@@ -96,7 +96,7 @@ export function AddResearchForm({ caseId }: { caseId: string }) {
             value={link}
             onChange={(e) => setLink(e.target.value)}
             placeholder="https://..."
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
         <div>
@@ -104,7 +104,7 @@ export function AddResearchForm({ caseId }: { caseId: string }) {
           <input
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
       </div>
@@ -116,7 +116,7 @@ export function AddResearchForm({ caseId }: { caseId: string }) {
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="Why this is relevant..."
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
         />
       </div>
 

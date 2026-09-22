@@ -37,3 +37,9 @@ export function daysAwayStyle(dateStr: string): string {
   if (label === "Tomorrow") return "bg-amber-50 text-amber-700";
   return "bg-gray-100 text-gray-600";
 }
+
+/** Formats an ISO "YYYY-MM-DD" date string as "DD-MM-YYYY", for display. */
+export function formatDateDDMMYYYY(dateStr: string): string {
+  const [year, month, day] = dateStr.slice(0, 10).split("-");
+  return `${day}-${month}-${year}`;
+}

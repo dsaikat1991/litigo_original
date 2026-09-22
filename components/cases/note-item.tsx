@@ -9,10 +9,21 @@ import { NOTE_TYPES, NOTE_TYPE_STYLES, type NoteType } from "@/lib/constants";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Note } from "@/types/database";
+import type { CaseListItem } from "@/lib/data/cases";
 
 type LinkedCase = { id: string; case_title: string } | null;
 
-export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: LinkedCase }) {
+const NO_LINKED_CASE = "__none__";
+
+export function NoteItem({
+  note,
+  linkedCase,
+  cases,
+}: {
+  note: Note;
+  linkedCase?: LinkedCase;
+  cases?: CaseListItem[];
+}) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -20,6 +31,7 @@ export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: Linked
   const [type, setType] = useState<NoteType>(note.type);
   const [content, setContent] = useState(note.content);
   const [tags, setTags] = useState(note.tags.join(", "));
+  const [linkedCaseId, setLinkedCaseId] = useState(note.case_id ?? "");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -33,6 +45,7 @@ export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: Linked
       type,
       content,
       tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+      ...(cases ? { case_id: linkedCaseId || null } : {}),
     });
 
     if (error) {
@@ -85,17 +98,40 @@ export function NoteItem({ note, linkedCase }: { note: Note; linkedCase?: Linked
             <input
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
+
+        {cases && cases.length > 0 && (
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-700">Case (optional)</label>
+            <Select
+              value={linkedCaseId || NO_LINKED_CASE}
+              onValueChange={(value) => setLinkedCaseId(value === NO_LINKED_CASE ? "" : value)}
+            >
+              <SelectTrigger className="py-1.5">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NO_LINKED_CASE}>— None —</SelectItem>
+                {cases.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.case_title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <div>
           <textarea
             required
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={3}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 

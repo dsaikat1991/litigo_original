@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { listAllNotes, type NoteWithCase } from "@/lib/data/notes";
+import { listCases } from "@/lib/data/cases";
 import { NavBar } from "@/components/layout/nav-bar";
 import { AddNoteForm } from "@/components/cases/add-note-form";
 import { NoteItem } from "@/components/cases/note-item";
@@ -9,7 +10,7 @@ export const metadata: Metadata = { title: "Notes" };
 
 export default async function NotesPage() {
   const supabase = await createClient();
-  const { data } = await listAllNotes(supabase);
+  const [{ data }, { data: cases }] = await Promise.all([listAllNotes(supabase), listCases(supabase)]);
   const notes = (data ?? []) as NoteWithCase[];
 
   return (
@@ -23,7 +24,7 @@ export default async function NotesPage() {
         </p>
 
         <div className="mb-6">
-          <AddNoteForm />
+          <AddNoteForm cases={cases ?? []} />
         </div>
 
         <div className="space-y-2">
@@ -32,7 +33,7 @@ export default async function NotesPage() {
               No notes yet. Jot something down above.
             </p>
           ) : (
-            notes.map((n) => <NoteItem key={n.id} note={n} linkedCase={n.case} />)
+            notes.map((n) => <NoteItem key={n.id} note={n} linkedCase={n.case} cases={cases ?? []} />)
           )}
         </div>
       </main>

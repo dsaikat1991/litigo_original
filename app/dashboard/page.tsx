@@ -5,7 +5,7 @@ import { listCases, listCasesWithHearingWithin, listCasesWithLimitationWithin, l
 import { listUpcomingTasks, listOpenCriticalTasks } from "@/lib/data/tasks";
 import { getProfile } from "@/lib/data/profiles";
 import { buildReminders, filterRemindersByPreference } from "@/lib/reminders";
-import { daysAway, daysAwayLabel, daysAwayStyle } from "@/lib/dates";
+import { daysAway, daysAwayLabel, daysAwayStyle, formatDateDDMMYYYY } from "@/lib/dates";
 import { NavBar } from "@/components/layout/nav-bar";
 import { ReminderRow } from "@/components/reminders/reminder-row";
 import { CASE_STATUS_STYLES } from "@/lib/constants";
@@ -44,11 +44,13 @@ export default async function DashboardPage() {
   );
 
   const activeCount = (cases ?? []).filter((c) => c.status === "active").length;
-  const criticalCount = criticalTasks?.length ?? 0;
+  const openLimitationCount = (cases ?? []).filter((c) => c.limitation_date !== null).length;
+  const criticalCount = (criticalTasks?.length ?? 0) + openLimitationCount;
+  const upcomingHearingCount = (reminderCases ?? []).filter((c) => daysAway(c.next_hearing_date!) >= 0).length;
 
   const stats = [
     { label: "Active cases", value: activeCount, critical: false },
-    { label: "Hearings this week", value: (reminderCases ?? []).length, critical: false },
+    { label: "Hearings this week", value: upcomingHearingCount, critical: false },
     { label: "Tasks due this week", value: (reminderTasks ?? []).length, critical: false },
     { label: "Critical deadlines open", value: criticalCount, critical: criticalCount > 0 },
   ];
@@ -158,7 +160,9 @@ export default async function DashboardPage() {
                   </div>
                   <p className="text-sm text-gray-600">{c.client_name ?? "—"} · {c.court ?? "—"}</p>
                   <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-sm text-gray-500">{c.next_hearing_date ?? "—"}</span>
+                    <span className="text-sm text-gray-500">
+                      {c.next_hearing_date ? formatDateDDMMYYYY(c.next_hearing_date) : "—"}
+                    </span>
                     {c.next_hearing_date && (
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.next_hearing_date)}`}>
                         {daysAwayLabel(c.next_hearing_date)}
@@ -183,9 +187,9 @@ export default async function DashboardPage() {
                 <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
                   <tr>
                     <th className="px-4 py-2 font-medium">Case</th>
-                    <th className="px-4 py-2 font-medium">Client</th>
                     <th className="px-4 py-2 font-medium">Court</th>
                     <th className="px-4 py-2 font-medium">Next date</th>
+                    <th className="px-4 py-2 font-medium">Stage</th>
                     <th className="px-4 py-2 font-medium">Status</th>
                   </tr>
                 </thead>
@@ -207,12 +211,11 @@ export default async function DashboardPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">{c.client_name ?? "—"}</td>
                       <td className="px-4 py-3 text-gray-600">{c.court ?? "—"}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         {c.next_hearing_date ? (
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-600">{c.next_hearing_date}</span>
+                            <span className="text-gray-600">{formatDateDDMMYYYY(c.next_hearing_date)}</span>
                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${daysAwayStyle(c.next_hearing_date)}`}>
                               {daysAwayLabel(c.next_hearing_date)}
                             </span>
@@ -221,6 +224,7 @@ export default async function DashboardPage() {
                           <span className="text-gray-400">—</span>
                         )}
                       </td>
+                      <td className="px-4 py-3 text-gray-600">{c.current_stage ?? "—"}</td>
                       <td className="px-4 py-3">
                         <span className={`rounded-full px-2 py-0.5 text-xs capitalize ${CASE_STATUS_STYLES[c.status]}`}>
                           {c.status}

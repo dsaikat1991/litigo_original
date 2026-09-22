@@ -110,7 +110,7 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Add a task for before the next hearing..."
-            className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
           <button
             type="submit"

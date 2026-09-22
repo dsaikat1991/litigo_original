@@ -5,11 +5,19 @@ import { isoDateDaysFromNow } from "@/lib/dates";
 type TypedClient = SupabaseClient<Database>;
 
 const CASE_LIST_COLUMNS =
-  "id, case_title, client_name, court, case_type, status, next_hearing_date, limitation_date" as const;
+  "id, case_title, client_name, court, case_type, status, next_hearing_date, limitation_date, current_stage" as const;
 
 export type CaseListItem = Pick<
   Database["public"]["Tables"]["cases"]["Row"],
-  "id" | "case_title" | "client_name" | "court" | "case_type" | "status" | "next_hearing_date" | "limitation_date"
+  | "id"
+  | "case_title"
+  | "client_name"
+  | "court"
+  | "case_type"
+  | "status"
+  | "next_hearing_date"
+  | "limitation_date"
+  | "current_stage"
 >;
 
 export function listCases(supabase: TypedClient) {
@@ -158,7 +166,7 @@ export function listChildCases(supabase: TypedClient, parentCaseId: string) {
 
 export type NewCaseInput = Omit<
   Database["public"]["Tables"]["cases"]["Insert"],
-  "id" | "created_at" | "updated_at" | "next_hearing_date"
+  "id" | "created_at" | "updated_at" | "next_hearing_date" | "current_stage"
 >;
 
 export function createCase(supabase: TypedClient, input: NewCaseInput) {
@@ -167,7 +175,7 @@ export function createCase(supabase: TypedClient, input: NewCaseInput) {
 
 export type CaseUpdateInput = Omit<
   Database["public"]["Tables"]["cases"]["Update"],
-  "id" | "advocate_id" | "created_at" | "updated_at" | "next_hearing_date"
+  "id" | "advocate_id" | "created_at" | "updated_at" | "next_hearing_date" | "current_stage"
 >;
 
 export function updateCase(supabase: TypedClient, id: string, input: CaseUpdateInput) {

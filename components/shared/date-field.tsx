@@ -75,7 +75,7 @@ export function DateField({
           <button
             type="button"
             className={cn(
-              "flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-left text-sm text-gray-900 transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 data-[empty=true]:text-gray-400",
+              "flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-left text-sm text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10 data-[empty=true]:text-gray-400",
               className
             )}
             data-empty={!current}

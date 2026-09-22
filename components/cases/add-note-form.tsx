@@ -6,14 +6,18 @@ import { createClient } from "@/lib/supabase/client";
 import { createNote } from "@/lib/data/notes";
 import { NOTE_TYPES, type NoteType } from "@/lib/constants";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { CaseListItem } from "@/lib/data/cases";
 
-export function AddNoteForm({ caseId }: { caseId?: string }) {
+const NO_LINKED_CASE = "__none__";
+
+export function AddNoteForm({ caseId, cases }: { caseId?: string; cases?: CaseListItem[] }) {
   const router = useRouter();
   const supabase = createClient();
 
   const [type, setType] = useState<NoteType>("note");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
+  const [linkedCaseId, setLinkedCaseId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +38,7 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
 
     const { error } = await createNote(supabase, {
       advocate_id: user.id,
-      case_id: caseId ?? null,
+      case_id: caseId ?? (linkedCaseId || null),
       type,
       content,
       tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
@@ -48,6 +52,7 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
 
     setContent("");
     setTags("");
+    setLinkedCaseId("");
     setLoading(false);
     router.refresh();
   }
@@ -75,10 +80,33 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
           <input
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
       </div>
+
+      {caseId === undefined && cases && cases.length > 0 && (
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Case (optional)</label>
+          <Select
+            value={linkedCaseId || NO_LINKED_CASE}
+            onValueChange={(value) => setLinkedCaseId(value === NO_LINKED_CASE ? "" : value)}
+          >
+            <SelectTrigger className="py-1.5">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_LINKED_CASE}>— None —</SelectItem>
+              {cases.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.case_title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       <div>
         <textarea
           required
@@ -86,7 +114,7 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
           onChange={(e) => setContent(e.target.value)}
           rows={3}
           placeholder="Write your note..."
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
         />
       </div>
 

@@ -99,7 +99,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
             required
             value={caseTitle}
             onChange={(e) => setCaseTitle(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 
@@ -115,7 +115,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
               type="tel"
               value={clientPhone}
               onChange={(e) => setClientPhone(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -124,7 +124,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
               type="email"
               value={clientEmail}
               onChange={(e) => setClientEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
@@ -136,7 +136,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
               value={opposingCounsel}
               onChange={(e) => setOpposingCounsel(e.target.value)}
               placeholder="Advocate representing the other side"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -145,7 +145,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
               value={actSection}
               onChange={(e) => setActSection(e.target.value)}
               placeholder="e.g. Section 138, Negotiable Instruments Act"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
@@ -156,7 +156,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
             <input
               value={court}
               onChange={(e) => setCourt(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -182,7 +182,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
             <input
               value={caseNumber}
               onChange={(e) => setCaseNumber(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
           <div>
@@ -190,7 +190,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
             <input
               value={cnrNumber}
               onChange={(e) => setCnrNumber(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
         </div>
@@ -201,7 +201,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
             value={diaryNumber}
             onChange={(e) => setDiaryNumber(e.target.value)}
             placeholder="Assigned on e-filing, before a case number is issued"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 
@@ -243,7 +243,7 @@ export function EditCaseForm({ caseRow, otherCases }: { caseRow: Case; otherCase
           <input
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900/10"
           />
         </div>
 
