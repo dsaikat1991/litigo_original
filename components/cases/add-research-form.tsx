@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createResearchItem } from "@/lib/data/research";
 import { RESEARCH_SOURCE_TYPES, type ResearchSourceType } from "@/lib/constants";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function AddResearchForm({ caseId }: { caseId: string }) {
   const router = useRouter();
@@ -62,17 +63,18 @@ export function AddResearchForm({ caseId }: { caseId: string }) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr]">
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-700">Source type</label>
-          <select
-            value={sourceType}
-            onChange={(e) => setSourceType(e.target.value as ResearchSourceType)}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm capitalize transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-          >
-            {RESEARCH_SOURCE_TYPES.map((t) => (
-              <option key={t} value={t} className="capitalize">
-                {t}
-              </option>
-            ))}
-          </select>
+          <Select value={sourceType} onValueChange={(value) => setSourceType(value as ResearchSourceType)}>
+            <SelectTrigger className="py-1.5 capitalize">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {RESEARCH_SOURCE_TYPES.map((t) => (
+                <SelectItem key={t} value={t} className="capitalize">
+                  {t}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-700">Citation</label>

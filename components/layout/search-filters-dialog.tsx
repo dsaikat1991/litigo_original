@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { listAllTags } from "@/lib/data/tags";
+import { DateField } from "@/components/shared/date-field";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10";
 
 export function SearchFiltersDialog({ query }: { query: string }) {
   const router = useRouter();
@@ -69,14 +68,8 @@ export function SearchFiltersDialog({ query }: { query: string }) {
 
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-gray-700">From date</label>
-              <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className={inputClass} />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-gray-700">To date</label>
-              <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className={inputClass} />
-            </div>
+            <DateField label="From date" value={dateFrom} onChange={setDateFrom} />
+            <DateField label="To date" value={dateTo} onChange={setDateTo} />
           </div>
 
           {availableTags.length > 0 && (
@@ -84,12 +77,15 @@ export function SearchFiltersDialog({ query }: { query: string }) {
               <span className="mb-1 block text-xs font-medium text-gray-700">Tags</span>
               <div className="flex flex-wrap gap-3">
                 {availableTags.map((tag) => (
-                  <label key={tag} className="flex items-center gap-1.5 text-sm text-gray-700">
-                    <input
-                      type="checkbox"
+                  <label
+                    key={tag}
+                    htmlFor={`filter-tag-${tag}`}
+                    className="flex cursor-pointer items-center gap-1.5 text-sm text-gray-700"
+                  >
+                    <Checkbox
+                      id={`filter-tag-${tag}`}
                       checked={selectedTags.includes(tag)}
-                      onChange={() => toggleTag(tag)}
-                      className="rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
+                      onCheckedChange={() => toggleTag(tag)}
                     />
                     {tag}
                   </label>

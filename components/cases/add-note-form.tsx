@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createNote } from "@/lib/data/notes";
 import { NOTE_TYPES, type NoteType } from "@/lib/constants";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function AddNoteForm({ caseId }: { caseId?: string }) {
   const router = useRouter();
@@ -56,17 +57,18 @@ export function AddNoteForm({ caseId }: { caseId?: string }) {
       <div className="grid grid-cols-[auto_1fr] gap-3">
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-700">Type</label>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as NoteType)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm capitalize transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-          >
-            {NOTE_TYPES.map((t) => (
-              <option key={t} value={t} className="capitalize">
-                {t}
-              </option>
-            ))}
-          </select>
+          <Select value={type} onValueChange={(value) => setType(value as NoteType)}>
+            <SelectTrigger className="w-auto py-1.5 capitalize">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {NOTE_TYPES.map((t) => (
+                <SelectItem key={t} value={t} className="capitalize">
+                  {t}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-700">Tags (comma separated)</label>

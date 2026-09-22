@@ -13,6 +13,7 @@ import { CASE_TYPES, type CaseType } from "@/lib/constants";
 import { NavBar } from "@/components/layout/nav-bar";
 import { MultiNameInput } from "@/components/cases/multi-name-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DateField } from "@/components/shared/date-field";
 
 const NO_PARENT_CASE = "__none__";
 
@@ -213,17 +214,18 @@ export default function NewCasePage() {
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Case type</label>
-              <select
-                value={caseType}
-                onChange={(e) => setCaseType(e.target.value as CaseType)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-              >
-                {CASE_TYPES.map((t) => (
-                  <option key={t} value={t} className="capitalize">
-                    {t}
-                  </option>
-                ))}
-              </select>
+              <Select value={caseType} onValueChange={(value) => setCaseType(value as CaseType)}>
+                <SelectTrigger className="capitalize">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CASE_TYPES.map((t) => (
+                    <SelectItem key={t} value={t} className="capitalize">
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -257,24 +259,20 @@ export default function NewCasePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Filing date</label>
-              <input
-                type="date"
-                value={filingDate}
-                onChange={(e) => setFilingDate(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Limitation date</label>
-              <input
-                type="date"
-                value={limitationDate}
-                onChange={(e) => setLimitationDate(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-              />
-            </div>
+            <DateField
+              label="Filing date"
+              labelClassName="mb-1 block text-sm font-medium text-gray-700"
+              value={filingDate}
+              onChange={setFilingDate}
+              className="py-2"
+            />
+            <DateField
+              label="Limitation date"
+              labelClassName="mb-1 block text-sm font-medium text-gray-700"
+              value={limitationDate}
+              onChange={setLimitationDate}
+              className="py-2"
+            />
           </div>
 
           <div>

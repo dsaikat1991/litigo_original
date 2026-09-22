@@ -2,6 +2,7 @@ import type { Hearing, Note, Task } from "@/types/database";
 import type { TimelineItem } from "@/lib/timeline";
 import type { ChildCase } from "@/lib/data/cases";
 import { NOTE_TYPE_STYLES } from "@/lib/constants";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -157,12 +158,7 @@ function HearingEntry({
           <ul className="mt-1 space-y-1">
             {hearingTasks.map((t) => (
               <li key={t.id} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={t.is_done}
-                  disabled
-                  className="h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-gray-900"
-                />
+                <Checkbox checked={t.is_done} disabled className="size-3.5" />
                 <span className={t.is_done ? "text-gray-400 line-through" : "text-gray-700"}>
                   {t.is_critical && !t.is_done && (
                     <span className="mr-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">

@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { updateTask, deleteTask } from "@/lib/data/tasks";
 import { isoDateDaysFromNow } from "@/lib/dates";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DateField } from "@/components/shared/date-field";
 import type { Task } from "@/types/database";
 
 function isOverdue(dueDate: string | null, isDone: boolean) {
@@ -81,12 +83,7 @@ export function TaskItem({ task }: { task: Task }) {
               className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
             />
           </div>
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-          />
+          <DateField label="Due date" labelClassName="sr-only" value={dueDate} onChange={setDueDate} className="w-auto" />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex justify-end gap-2">
             <button
@@ -105,12 +102,12 @@ export function TaskItem({ task }: { task: Task }) {
             </button>
           </div>
         </div>
-        <label className="flex items-center gap-2 text-xs text-gray-600">
-          <input
-            type="checkbox"
+        <label htmlFor={`task-critical-${task.id}`} className="flex cursor-pointer items-center gap-2 text-xs text-gray-600">
+          <Checkbox
+            id={`task-critical-${task.id}`}
             checked={isCritical}
-            onChange={(e) => setIsCritical(e.target.checked)}
-            className="h-3.5 w-3.5 rounded border-gray-300 text-red-600 focus:ring-red-600/20"
+            onCheckedChange={(checked) => setIsCritical(checked === true)}
+            className="size-3.5 data-[state=checked]:border-red-600 data-[state=checked]:bg-red-600"
           />
           Critical deadline (e.g. limitation period)
         </label>
@@ -126,12 +123,11 @@ export function TaskItem({ task }: { task: Task }) {
         task.is_critical && !task.is_done ? "border-red-200 bg-red-50/40" : "border-gray-200"
       }`}
     >
-      <input
-        type="checkbox"
+      <Checkbox
         checked={task.is_done}
-        onChange={handleToggle}
+        onCheckedChange={handleToggle}
         disabled={toggling}
-        className="h-4 w-4 shrink-0 rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
+        aria-label={task.is_done ? "Mark as not done" : "Mark as done"}
       />
       <div className="min-w-0 flex-1">
         <p className={task.is_done ? "truncate text-gray-400 line-through" : "truncate text-gray-900"}>

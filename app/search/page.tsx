@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { searchAll } from "@/lib/data/search";
 import { listAllTags } from "@/lib/data/tags";
 import { NavBar } from "@/components/layout/nav-bar";
+import { DateField } from "@/components/shared/date-field";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CASE_STATUS_STYLES, NOTE_TYPE_STYLES, RESEARCH_SOURCE_TYPE_STYLES } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Search" };
@@ -65,24 +67,8 @@ export default async function SearchPage({
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-gray-700">From date</label>
-              <input
-                type="date"
-                name="from"
-                defaultValue={dateFrom}
-                className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-gray-700">To date</label>
-              <input
-                type="date"
-                name="to"
-                defaultValue={dateTo}
-                className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
-              />
-            </div>
+            <DateField label="From date" name="from" defaultValue={dateFrom} />
+            <DateField label="To date" name="to" defaultValue={dateTo} />
           </div>
 
           {availableTags.length > 0 && (
@@ -90,13 +76,16 @@ export default async function SearchPage({
               <span className="mb-1 block text-xs font-medium text-gray-700">Tags</span>
               <div className="flex flex-wrap gap-3">
                 {availableTags.map((tag) => (
-                  <label key={tag} className="flex items-center gap-1.5 text-sm text-gray-700">
-                    <input
-                      type="checkbox"
+                  <label
+                    key={tag}
+                    htmlFor={`search-tag-${tag}`}
+                    className="flex cursor-pointer items-center gap-1.5 text-sm text-gray-700"
+                  >
+                    <Checkbox
+                      id={`search-tag-${tag}`}
                       name="tags"
                       value={tag}
                       defaultChecked={selectedTags.includes(tag)}
-                      className="rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
                     />
                     {tag}
                   </label>

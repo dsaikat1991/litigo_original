@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createHearing } from "@/lib/data/hearings";
 import type { ChildCase } from "@/lib/data/cases";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DateField } from "@/components/shared/date-field";
 
 const inputClass =
   "w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10";
 const labelClass = "mb-1 block text-xs font-medium text-gray-700";
+const NO_APPLICATION_CASE = "__none__";
 
 export function AddHearingForm({ caseId, childCases }: { caseId: string; childCases: ChildCase[] }) {
   const router = useRouter();
@@ -37,6 +40,10 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!hearingDate) {
+      setError("Hearing date is required.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -103,13 +110,12 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
     <form onSubmit={handleSubmit} className="space-y-3 rounded-md border border-gray-200 bg-white p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Hearing date *</label>
-          <input
-            type="date"
-            required
+          <DateField
+            label="Hearing date *"
+            labelClassName={labelClass}
             value={hearingDate}
-            onChange={(e) => setHearingDate(e.target.value)}
-            className={inputClass}
+            onChange={setHearingDate}
+            clearable={false}
           />
         </div>
         <div>
@@ -152,8 +158,7 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
           <input value={documentsFiled} onChange={(e) => setDocumentsFiled(e.target.value)} className={inputClass} />
         </div>
         <div>
-          <label className={labelClass}>Next date fixed</label>
-          <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className={inputClass} />
+          <DateField label="Next date fixed" labelClassName={labelClass} value={nextDate} onChange={setNextDate} />
         </div>
       </div>
 
@@ -194,18 +199,22 @@ export function AddHearingForm({ caseId, childCases }: { caseId: string; childCa
             {childCases.length > 0 && (
               <div>
                 <label className={labelClass}>Application heard</label>
-                <select
-                  value={applicationCaseId}
-                  onChange={(e) => setApplicationCaseId(e.target.value)}
-                  className={inputClass}
+                <Select
+                  value={applicationCaseId || NO_APPLICATION_CASE}
+                  onValueChange={(value) => setApplicationCaseId(value === NO_APPLICATION_CASE ? "" : value)}
                 >
-                  <option value="">— None —</option>
-                  {childCases.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.case_title}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="py-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_APPLICATION_CASE}>— None —</SelectItem>
+                    {childCases.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.case_title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
           </div>

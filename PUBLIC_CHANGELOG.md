@@ -12,6 +12,9 @@ What's new in Litigo, most recent first.
 - Added an **"Overdue — not yet updated"** section to the dashboard — a standing list of cases whose hearing date has passed but hasn't been logged yet, always visible regardless of your reminder settings.
 - `/today` now shows only what's genuinely listed today — overdue hearings moved exclusively to the dashboard's new Overdue section, so Today's cause list isn't mixing the two anymore.
 - Overdue hearings no longer also show up in the "Upcoming in the next 7 days" list — they now live only in the dashboard's Overdue section, so you won't see the same one twice.
+- Simplified the look of the "Upcoming" reminder lists (dashboard, Notifications, and the bell dropdown) — a clean divided list instead of a separate box around each item.
+- Replaced the browser's default calendar popup with a custom-styled one on the Search page and the search filters dialog, so picking a date range looks like the rest of Litigo instead of your OS's own calendar widget.
+- Extended that same custom styling across the app — every dropdown, checkbox, and date picker now matches Litigo's look instead of your browser's defaults: case type/status, hearing/note/research type pickers, task checkboxes, notification toggles, and every date field (filing date, limitation date, hearing dates, due dates).
 
 ## Litigo Pro and email reminders
 

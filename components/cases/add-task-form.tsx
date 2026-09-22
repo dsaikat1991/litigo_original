@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createTask } from "@/lib/data/tasks";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DateField } from "@/components/shared/date-field";
 
 export function AddTaskForm({ caseId }: { caseId: string }) {
   const router = useRouter();
@@ -65,12 +67,12 @@ export function AddTaskForm({ caseId }: { caseId: string }) {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Due date</label>
-          <input
-            type="date"
+          <DateField
+            label="Due date"
+            labelClassName="mb-1 block text-xs font-medium text-gray-700"
             value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+            onChange={setDueDate}
+            className="w-auto"
           />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -82,12 +84,12 @@ export function AddTaskForm({ caseId }: { caseId: string }) {
           {loading ? "Adding..." : "Add task"}
         </button>
       </div>
-      <label className="flex items-center gap-2 text-xs text-gray-600">
-        <input
-          type="checkbox"
+      <label htmlFor="add-task-critical" className="flex cursor-pointer items-center gap-2 text-xs text-gray-600">
+        <Checkbox
+          id="add-task-critical"
           checked={isCritical}
-          onChange={(e) => setIsCritical(e.target.checked)}
-          className="h-3.5 w-3.5 rounded border-gray-300 text-red-600 focus:ring-red-600/20"
+          onCheckedChange={(checked) => setIsCritical(checked === true)}
+          className="size-3.5 data-[state=checked]:border-red-600 data-[state=checked]:bg-red-600"
         />
         Critical deadline (e.g. limitation period) — missing this is not just a delay
       </label>

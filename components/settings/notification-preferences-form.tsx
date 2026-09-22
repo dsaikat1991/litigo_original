@@ -6,6 +6,7 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { updateProfile } from "@/lib/data/profiles";
 import { emitProfileUpdated } from "@/lib/profile-events";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { Profile } from "@/types/database";
 
 const THRESHOLDS: { days: number; label: string }[] = [
@@ -86,19 +87,17 @@ export function NotificationPreferencesForm({ profile }: { profile: Profile }) {
                 <Fragment key={days}>
                   <span className="text-sm text-gray-700">{label}</span>
                   <span className="flex justify-center">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={reminderDays.includes(days)}
-                      onChange={() => toggle(days, "inApp")}
-                      className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
+                      onCheckedChange={() => toggle(days, "inApp")}
+                      aria-label={`${label}, in-app`}
                     />
                   </span>
                   <span className="flex justify-center">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={reminderEmailDays.includes(days)}
-                      onChange={() => toggle(days, "email")}
-                      className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
+                      onCheckedChange={() => toggle(days, "email")}
+                      aria-label={`${label}, email`}
                     />
                   </span>
                 </Fragment>

@@ -6,7 +6,7 @@ export function ReminderRow({ item }: { item: ReminderItem }) {
   return (
     <Link
       href={`/cases/${item.caseId}`}
-      className="flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-white p-3 text-sm transition-colors hover:bg-gray-50"
+      className="flex items-center justify-between gap-3 border-b border-gray-100 px-3 py-2.5 text-sm transition-colors last:border-b-0 hover:bg-gray-50"
     >
       <div className="min-w-0">
         <p className="truncate font-medium text-gray-900">

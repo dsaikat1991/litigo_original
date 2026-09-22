@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createTask, deleteTask, updateTask } from "@/lib/data/tasks";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { Task } from "@/types/database";
 
 /** Inline checklist of tasks tied to a specific hearing ("tasks before next hearing"). */
@@ -78,11 +79,11 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
         <ul className="mb-2 space-y-1.5">
           {tasks.map((t) => (
             <li key={t.id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={t.is_done}
-                onChange={() => handleToggle(t)}
-                className="h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-gray-900 focus:ring-gray-900/10"
+                onCheckedChange={() => handleToggle(t)}
+                className="size-3.5"
+                aria-label={t.is_done ? "Mark as not done" : "Mark as done"}
               />
               <span className={`flex-1 text-sm ${t.is_done ? "text-gray-400 line-through" : "text-gray-700"}`}>
                 {t.is_critical && !t.is_done && (
@@ -119,12 +120,12 @@ export function HearingTasks({ caseId, hearingId, tasks }: { caseId: string; hea
             Add
           </button>
         </div>
-        <label className="flex items-center gap-2 text-xs text-gray-500">
-          <input
-            type="checkbox"
+        <label htmlFor="hearing-task-critical" className="flex cursor-pointer items-center gap-2 text-xs text-gray-500">
+          <Checkbox
+            id="hearing-task-critical"
             checked={isCritical}
-            onChange={(e) => setIsCritical(e.target.checked)}
-            className="h-3.5 w-3.5 rounded border-gray-300 text-red-600 focus:ring-red-600/20"
+            onCheckedChange={(checked) => setIsCritical(checked === true)}
+            className="size-3.5 data-[state=checked]:border-red-600 data-[state=checked]:bg-red-600"
           />
           Critical deadline
         </label>

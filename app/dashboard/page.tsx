@@ -113,7 +113,7 @@ export default async function DashboardPage() {
                 View all
               </Link>
             </div>
-            <div className="space-y-2">
+            <div className="overflow-hidden rounded-md border border-gray-200 bg-white">
               {reminders.map((r) => (
                 <ReminderRow key={r.id} item={r} />
               ))}

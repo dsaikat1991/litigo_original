@@ -6,12 +6,15 @@ import { createClient } from "@/lib/supabase/client";
 import { updateHearing, deleteHearing } from "@/lib/data/hearings";
 import { ConfirmDeleteDialog } from "@/components/shared/confirm-delete-dialog";
 import { HearingTasks } from "@/components/cases/hearing-tasks";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DateField } from "@/components/shared/date-field";
 import type { ChildCase } from "@/lib/data/cases";
 import type { CaseDocument, Hearing, Task } from "@/types/database";
 
 const inputClass =
   "w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10";
 const labelClass = "mb-1 block text-xs font-medium text-gray-700";
+const NO_APPLICATION_CASE = "__none__";
 
 export function HearingItem({
   hearing,
@@ -126,13 +129,12 @@ export function HearingItem({
       <form onSubmit={handleSave} className="space-y-3 rounded-md border border-gray-200 bg-white p-3 text-sm">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className={labelClass}>Hearing date *</label>
-            <input
-              type="date"
-              required
+            <DateField
+              label="Hearing date *"
+              labelClassName={labelClass}
               value={hearingDate}
-              onChange={(e) => setHearingDate(e.target.value)}
-              className={inputClass}
+              onChange={setHearingDate}
+              clearable={false}
             />
           </div>
           <div>
@@ -170,8 +172,7 @@ export function HearingItem({
             <input value={documentsFiled} onChange={(e) => setDocumentsFiled(e.target.value)} className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Next date fixed</label>
-            <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className={inputClass} />
+            <DateField label="Next date fixed" labelClassName={labelClass} value={nextDate} onChange={setNextDate} />
           </div>
         </div>
 
@@ -202,18 +203,22 @@ export function HearingItem({
               {childCases.length > 0 && (
                 <div>
                   <label className={labelClass}>Application heard</label>
-                  <select
-                    value={applicationCaseId}
-                    onChange={(e) => setApplicationCaseId(e.target.value)}
-                    className={inputClass}
+                  <Select
+                    value={applicationCaseId || NO_APPLICATION_CASE}
+                    onValueChange={(value) => setApplicationCaseId(value === NO_APPLICATION_CASE ? "" : value)}
                   >
-                    <option value="">— None —</option>
-                    {childCases.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.case_title}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="py-1.5">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_APPLICATION_CASE}>— None —</SelectItem>
+                      {childCases.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.case_title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
             </div>

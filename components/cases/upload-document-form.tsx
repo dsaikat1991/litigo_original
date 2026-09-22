@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createCaseDocument } from "@/lib/data/case-documents";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Hearing } from "@/types/database";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const NO_RELATED_HEARING = "__none__";
 
 function sanitizeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
@@ -80,19 +82,23 @@ export function UploadDocumentForm({ caseId, hearings }: { caseId: string; heari
       {hearings.length > 0 && (
         <div className="max-w-xs">
           <label className="mb-1 block text-xs font-medium text-gray-700">Related hearing (optional)</label>
-          <select
-            value={hearingId}
-            onChange={(e) => setHearingId(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+          <Select
+            value={hearingId || NO_RELATED_HEARING}
+            onValueChange={(value) => setHearingId(value === NO_RELATED_HEARING ? "" : value)}
           >
-            <option value="">— None —</option>
-            {hearings.map((h) => (
-              <option key={h.id} value={h.id}>
-                {h.hearing_date}
-                {h.purpose ? ` — ${h.purpose}` : ""}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="py-1.5">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_RELATED_HEARING}>— None —</SelectItem>
+              {hearings.map((h) => (
+                <SelectItem key={h.id} value={h.id}>
+                  {h.hearing_date}
+                  {h.purpose ? ` — ${h.purpose}` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
       <div>

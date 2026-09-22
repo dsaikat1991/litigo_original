@@ -45,7 +45,7 @@ export default async function NotificationsPage() {
             Nothing due soon — you&rsquo;re all caught up.
           </p>
         ) : (
-          <div className="space-y-2">
+          <div className="overflow-hidden rounded-md border border-gray-200 bg-white">
             {reminders.map((r) => (
               <ReminderRow key={r.id} item={r} />
             ))}

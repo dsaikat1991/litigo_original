@@ -73,7 +73,7 @@ export function NotificationBell() {
         ) : reminders.length === 0 ? (
           <p className="py-4 text-center text-sm text-gray-500">You&rsquo;re all caught up.</p>
         ) : (
-          <div className="space-y-2">
+          <div className="-mx-3">
             {reminders.slice(0, DROPDOWN_LIMIT).map((r) => (
               <ReminderRow key={r.id} item={r} />
             ))}
